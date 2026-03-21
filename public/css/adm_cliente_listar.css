@@ -1,0 +1,479 @@
+/* --- CONFIGURAÇÕES DO CONTAINER --- */
+.admin-container {
+    padding: 30px 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+}
+
+/* --- HEADER --- */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e0e0e0;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.header-content h2 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.8rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-content p {
+    margin: 5px 0 0;
+    color: #7f8c8d;
+}
+
+.header-actions {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+/* Busca */
+.search-box {
+    position: relative;
+    width: 300px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 12px 15px 12px 40px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+.search-box input:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.search-box i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+}
+
+/* Botão Novo */
+.btn-novo {
+    background-color: #2980b9;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, background 0.3s;
+}
+
+.btn-novo:hover {
+    background-color: #3498db;
+    transform: translateY(-2px);
+}
+
+/* --- TABELA --- */
+.painel-tabela {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.tabela-clientes {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabela-clientes th {
+    background-color: #f8f9fa;
+    color: #636e72;
+    padding: 18px 20px;
+    text-align: left;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #ecf0f1;
+    font-weight: 700;
+}
+
+.tabela-clientes td {
+    padding: 15px 20px;
+    border-bottom: 1px solid #f1f1f1;
+    vertical-align: middle;
+    color: #2d3436;
+}
+
+.tabela-clientes tr:hover {
+    background-color: #fafafa;
+}
+
+/* --- ELEMENTOS DA TABELA --- */
+.badge-id {
+    background: #dfe6e9;
+    color: #636e72;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-family: monospace;
+    font-weight: bold;
+}
+
+/* Perfil Usuário */
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar-circle {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+    box-shadow: 0 2px 5px rgba(52, 152, 219, 0.3);
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #2c3e50;
+}
+
+.user-since {
+    font-size: 0.8rem;
+    color: #95a5a6;
+}
+
+/* Contato */
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.9rem;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #555;
+}
+
+.contact-item i {
+    color: #bdc3c7;
+    width: 16px;
+    text-align: center;
+}
+
+/* Localização */
+.location-text {
+    color: #555;
+    font-size: 0.9rem;
+}
+
+.location-text i {
+    color: #e74c3c;
+    margin-right: 5px;
+    opacity: 0.7;
+}
+
+/* Ações */
+.action-group {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-start;
+}
+
+.col-actions {
+    text-align: right;
+    width: 150px;
+}
+
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    border: none;
+    transition: all 0.2s;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.btn-edit {
+    background-color: #f39c12;
+    color: white;
+}
+
+.btn-edit:hover {
+    background-color: #d35400;
+}
+
+.btn-whatsapp {
+    background-color: #25D366;
+    color: white;
+}
+
+.btn-whatsapp:hover {
+    background-color: #128C7E;
+}
+
+.btn-delete {
+    background-color: #fdedec;
+    color: #e74c3c;
+}
+
+.btn-delete:hover {
+    background-color: #e74c3c;
+    color: white;
+}
+
+/* Estados Vazios */
+.empty-state,
+.no-results {
+    text-align: center;
+    padding: 50px;
+    color: #b2bec3;
+}
+
+.empty-state i,
+.no-results i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    display: block;
+    opacity: 0.5;
+}
+
+.no-results {
+    display: none;
+}
+
+
+/* --- MODAL ESTILIZADO --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(3px);
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: white;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 12px;
+    padding: 25px;
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.modal-overlay.active .modal-content {
+    transform: translateY(0);
+}
+
+.modal-header i {
+    font-size: 3rem;
+    color: #e74c3c;
+    margin-bottom: 15px;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.5rem;
+}
+
+.modal-body {
+    margin: 20px 0;
+    color: #555;
+}
+
+.highlight-name {
+    display: block;
+    margin: 10px 0;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.warning-text {
+    font-size: 0.85rem;
+    color: #e74c3c;
+    font-style: italic;
+}
+
+.modal-footer {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.modal-footer button,
+.modal-footer a {
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 0.95rem;
+}
+
+.btn-cancelar {
+    background: #ecf0f1;
+    color: #7f8c8d;
+}
+
+.btn-cancelar:hover {
+    background: #bdc3c7;
+    color: white;
+}
+
+.btn-confirmar {
+    background: #e74c3c;
+    color: white;
+}
+
+.btn-confirmar:hover {
+    background: #c0392b;
+}
+
+/* --- RESPONSIVIDADE (MOBILE) --- */
+@media (max-width: 900px) {
+    .col-id {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .header-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .search-box {
+        width: 100%;
+    }
+
+    .btn-novo {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Cards Mobile */
+    .tabela-clientes thead {
+        display: none;
+    }
+
+    .tabela-clientes,
+    tbody,
+    tr,
+    td {
+        display: block;
+        width: 100%;
+    }
+
+    .linha-cliente {
+        background: white;
+        margin-bottom: 15px;
+        border-radius: 12px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        padding: 15px;
+        border: 1px solid #eee;
+    }
+
+    .tabela-clientes td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: right;
+        padding: 10px 0;
+        border-bottom: 1px solid #f9f9f9;
+    }
+
+    .tabela-clientes td:last-child {
+        border-bottom: none;
+    }
+
+    .tabela-clientes td::before {
+        content: attr(data-label);
+        font-weight: 700;
+        color: #95a5a6;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        text-align: left;
+    }
+
+    /* Ajustes específicos de layout no card */
+    .user-profile {
+        flex-direction: row-reverse;
+    }
+
+    /* Nome na direita, label na esquerda */
+
+    .action-group {
+        justify-content: flex-end;
+        width: 100%;
+    }
+
+    .col-actions {
+        width: 100%;
+    }
+
+    .tabela-clientes tr:hover {
+        transform: translateY(-2px);
+        transition: transform 0.2s;
+    }
+}

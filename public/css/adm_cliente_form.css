@@ -1,0 +1,305 @@
+
+
+/* --- CONFIGURAÇÕES GERAIS --- */
+:root {
+    --primary-color: #3498db;
+    --success-color: #27ae60;
+    --text-color: #2c3e50;
+    --border-color: #ddd;
+    --bg-input: #f9f9f9;
+}
+
+.admin-container {
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* --- CARD DO FORMULÁRIO --- */
+.form-card {
+    background: white;
+    width: 100%;
+    max-width: 700px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    padding: 40px;
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.form-header h2 {
+    color: var(--text-color);
+    margin: 0 0 10px 0;
+    font-size: 1.8rem;
+}
+
+.form-header p {
+    color: #7f8c8d;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+/* --- STEPPER (INDICADOR) --- */
+.step-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 40px;
+    position: relative;
+}
+
+.step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 2;
+    background: white;
+    /* Para cobrir a linha */
+    padding: 0 10px;
+}
+
+.step-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #ecf0f1;
+    color: #95a5a6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    border: 2px solid #ecf0f1;
+    transition: all 0.3s ease;
+}
+
+.step-label {
+    font-size: 0.85rem;
+    color: #95a5a6;
+    margin-top: 8px;
+    font-weight: 500;
+}
+
+.step-line {
+    height: 2px;
+    background: #ecf0f1;
+    flex: 1;
+    max-width: 150px;
+    margin-top: -25px;
+    /* Alinha com o meio das bolinhas */
+    z-index: 1;
+}
+
+/* Estado Ativo do Stepper */
+.step-item.active .step-circle {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.2);
+}
+
+.step-item.active .step-label {
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+/* --- FORMULÁRIO E INPUTS --- */
+.form-step {
+    display: none;
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+.form-step.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.step-title {
+    color: var(--primary-color);
+    font-size: 1.1rem;
+    border-bottom: 1px solid #f1f1f1;
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #555;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background-color: var(--bg-input);
+    transition: all 0.3s;
+    box-sizing: border-box;
+    /* Importante para não estourar largura */
+}
+
+.form-input:focus {
+    border-color: var(--primary-color);
+    background-color: white;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.form-input[readonly] {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+}
+
+/* Ícones dentro do input */
+.input-with-icon {
+    position: relative;
+}
+
+.search-cep-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #95a5a6;
+}
+
+/* --- GRIDS E RESPONSIVIDADE --- */
+
+/* Duas colunas iguais (CPF/Tel) */
+.two-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* Grid de Endereço (CEP - Cidade - UF) */
+.address-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 2fr 0.8fr;
+    /* Proporções */
+    gap: 20px;
+}
+
+/* Rua e Número */
+.two-columns-biased {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    /* Rua grande, número pequeno */
+    gap: 20px;
+}
+
+/* --- BOTÕES --- */
+.form-footer {
+    margin-top: 30px;
+    display: flex;
+}
+
+.right-align {
+    justify-content: flex-end;
+}
+
+.space-between {
+    justify-content: space-between;
+}
+
+.btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn-next {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-next:hover {
+    background-color: #2980b9;
+}
+
+.btn-prev {
+    background-color: #95a5a6;
+    color: white;
+}
+
+.btn-prev:hover {
+    background-color: #7f8c8d;
+}
+
+.btn-save {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.btn-save:hover {
+    background-color: #219150;
+}
+
+/* --- MEDIA QUERIES (CELULAR) --- */
+@media (max-width: 600px) {
+    .form-card {
+        padding: 25px 20px;
+    }
+
+    /* Tudo vira uma coluna no mobile */
+    .two-columns,
+    .address-grid,
+    .two-columns-biased {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    /* Ajuste visual do Stepper no mobile */
+    .step-label {
+        display: none;
+    }
+
+    /* Esconde o texto, deixa só a bolinha */
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .form-footer.space-between {
+        flex-direction: column-reverse;
+        /* Botão Salvar em cima */
+        gap: 15px;
+    }
+}

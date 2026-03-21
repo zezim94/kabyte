@@ -1,0 +1,14 @@
+RewriteEngine On
+Options -Indexes
+
+# --- A CORREÇÃO ESTÁ AQUI ---
+# Se o arquivo solicitado existe (!-f), NÃO redireciona
+RewriteCond %{REQUEST_FILENAME} !-f
+
+# Se a pasta solicitada existe (!-d), NÃO redireciona
+RewriteCond %{REQUEST_FILENAME} !-d
+# -----------------------------
+
+# Só redireciona se não for arquivo nem pasta real
+RewriteRule ^(.*)$ index.php?rota=$1 [QSA,L]
+php_value display_errors On

@@ -1,0 +1,208 @@
+:root {
+    --header-bg: #2c3e50;
+    --header-text: #ecf0f1;
+    --accent-color: #3498db;
+    --hover-bg: #34495e;
+    --pdv-btn-bg: #27ae60;
+    --pdv-btn-hover: #2ecc71;
+}
+
+::-webkit-scrollbar {
+    height: 0;
+    width: 0;
+}
+
+* {
+    box-sizing: border-box;
+    outline: none;
+}
+
+html,
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    height: 100vh;
+}
+
+/* Reset básico para o header */
+.admin-header {
+    background-color: var(--header-bg);
+    color: var(--header-text);
+    width: 100%;
+    position: sticky;
+    /* Fixa o menu no topo */
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.header-container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
+    height: 70px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* --- Logo --- */
+.logo-area {
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    white-space: nowrap;
+}
+
+.logo-area i {
+    color: var(--accent-color);
+    font-size: 1.4rem;
+}
+
+/* --- Menu Desktop --- */
+.menu-area {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.menu-item {
+    color: var(--header-text);
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    transition: background 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.menu-item:hover {
+    background-color: var(--hover-bg);
+}
+
+/* Botão PDV Específico */
+.menu-item.btn-pdv {
+    background-color: var(--pdv-btn-bg);
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.menu-item.btn-pdv:hover {
+    background-color: var(--pdv-btn-hover);
+}
+
+/* --- User Area Desktop --- */
+.user-area-desktop {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 0.9rem;
+}
+
+.user-area-desktop .btn-logout {
+    color: #e74c3c;
+    font-size: 1.1rem;
+    transition: transform 0.2s;
+}
+
+.user-area-desktop .btn-logout:hover {
+    transform: scale(1.1);
+}
+
+/* --- Mobile Elements (Hidden on Desktop) --- */
+.menu-toggle {
+    display: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.user-area-mobile {
+    display: none;
+    /* Escondido no desktop */
+}
+
+/* --- RESPONSIVIDADE (Mobile/Tablet) --- */
+@media (max-width: 992px) {
+    .header-container {
+        padding: 0 15px;
+    }
+
+    /* Esconde a user area do desktop para economizar espaço */
+    .user-area-desktop {
+        display: none;
+    }
+
+    /* Mostra o botão sanduíche */
+    .menu-toggle {
+        display: block;
+    }
+
+    /* Transforma o menu horizontal em vertical */
+    .menu-area {
+        position: absolute;
+        top: 70px;
+        /* Altura do header */
+        left: 0;
+        width: 100%;
+        background-color: var(--header-bg);
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 20px;
+        gap: 15px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+        /* Animação de esconder/mostrar */
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        transition: max-height 0.4s ease, opacity 0.4s ease;
+        visibility: hidden;
+    }
+
+    /* Classe ativa adicionada via JS */
+    .menu-area.active {
+        max-height: 500px;
+        /* Altura suficiente para os itens */
+        opacity: 1;
+        visibility: visible;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .menu-item {
+        width: 100%;
+        padding: 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .menu-item.btn-pdv {
+        margin-left: 0;
+        text-align: center;
+        justify-content: center;
+        margin-top: 10px;
+    }
+
+    /* Mostra a área do usuário dentro do menu no mobile */
+    .user-area-mobile {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        color: #bdc3c7;
+    }
+
+    .user-area-mobile .btn-logout {
+        color: #e74c3c;
+        text-decoration: none;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+}

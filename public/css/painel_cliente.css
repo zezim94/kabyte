@@ -1,0 +1,370 @@
+
+::-webkit-scrollbar {
+    height: 0;
+    width: 0;
+}
+
+* {
+    box-sizing: border-box;
+    outline: none;
+}
+/* =========================================
+   ESTRUTURA GERAL
+   ========================================= */
+.dashboard-container {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    /* Permite quebrar linha no mobile */
+    gap: 15px;
+}
+
+.dashboard-header h2 {
+    margin: 0;
+    color: #2c3e50;
+}
+
+.user-actions {
+    font-size: 1rem;
+}
+
+.btn-sair {
+    color: #e74c3c;
+    font-weight: bold;
+    margin-left: 10px;
+    text-decoration: none;
+}
+
+/* =========================================
+   CARDS DE KPI (RESUMO)
+   ========================================= */
+.dashboard-grid {
+    display: grid;
+    /* Adaptação automática: Mínimo de 150px por card (2 por linha no mobile) */
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.card-kpi {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border-left: 5px solid #ccc;
+    transition: transform 0.2s;
+}
+
+.card-kpi:hover {
+    transform: translateY(-3px);
+}
+
+.card-kpi h3 {
+    font-size: 0.85rem;
+    color: #7f8c8d;
+    margin: 0 0 8px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.card-kpi .valor {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #2c3e50;
+}
+
+/* Cores dos Cards */
+.kpi-total {
+    border-color: #3498db;
+}
+
+.kpi-gasto {
+    border-color: #27ae60;
+}
+
+.kpi-pago {
+    border-color: #2ecc71;
+}
+
+.kpi-pendente {
+    border-color: #e74c3c;
+}
+
+/* =========================================
+   ÁREA DE GRÁFICOS E FERRAMENTAS
+   ========================================= */
+.section-tools {
+    margin-bottom: 30px;
+}
+
+.chart-container {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    position: relative;
+    height: 350px;
+    /* Altura fixa para o gráfico */
+    width: 100%;
+}
+
+.filter-container {
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.filter-select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #f9f9f9;
+    font-size: 0.95rem;
+    min-width: 150px;
+}
+
+/* =========================================
+   TABELA RESPONSIVA (TABLE TO CARD)
+   ========================================= */
+.tabela-container {
+    width: 100%;
+    overflow-x: auto;
+    /* Rolagem apenas se estritamente necessário */
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: #f4f6f9;
+}
+
+th {
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #555;
+    border-bottom: 2px solid #eee;
+}
+
+td {
+    padding: 15px;
+    border-bottom: 1px solid #f0f0f0;
+    color: #333;
+}
+
+/* STATUS BADGES */
+.status-badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.st-pago {
+    background: #d4edda;
+    color: #155724;
+}
+
+.st-pendente {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.st-parcial {
+    background: #fff3cd;
+    color: #856404;
+}
+
+/* BOTÕES */
+.btn-acao {
+    padding: 6px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: 0.2s;
+    margin-right: 5px;
+}
+
+.btn-detalhes {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-detalhes:hover {
+    background: #5a6268;
+}
+
+.btn-pagar {
+    background: #27ae60;
+    color: white;
+}
+
+.btn-pagar:hover {
+    background: #219150;
+}
+
+/* =========================================
+   MEDIA QUERY: CELULARES (max-width: 768px)
+   TRANSFORMA TABELA EM CARDS
+   ========================================= */
+@media (max-width: 768px) {
+
+    /* Esconde o cabeçalho da tabela */
+    table thead {
+        display: none;
+    }
+
+    /* Transforma a tabela em blocos */
+    table,
+    tbody,
+    tr,
+    td {
+        display: block;
+        width: 100%;
+    }
+
+    /* Estilo do "Card" (cada linha vira um card) */
+    table tr {
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        background: #fff;
+        padding: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+    }
+
+    /* Ajusta as células para ficarem lado a lado (Label : Valor) */
+    table td {
+        text-align: right;
+        padding: 10px 5px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    table td:last-child {
+        border-bottom: none;
+        justify-content: flex-end;
+        gap: 5px;
+    }
+
+    /* Adiciona o título da coluna via CSS usando o atributo data-label */
+    table td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: #777;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        text-align: left;
+    }
+
+    .chart-container {
+        height: 300px;
+    }
+
+    /* Gráfico menor no mobile */
+}
+
+/* =========================================
+   MODAL
+   ========================================= */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px);
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 600px;
+    position: relative;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    animation: slideUp 0.3s ease;
+    max-height: 90vh;
+    /* Altura máxima da tela */
+    overflow-y: auto;
+    /* Rolagem interna se for muito grande */
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+}
+
+.close-modal:hover {
+    color: #333;
+}
+
+/* Tabela interna do modal */
+.table-itens {
+    width: 100%;
+    margin-top: 15px;
+    border-collapse: collapse;
+}
+
+.table-itens th {
+    background: #f8f9fa;
+    font-size: 0.9rem;
+}
+
+.table-itens td {
+    font-size: 0.9rem;
+}

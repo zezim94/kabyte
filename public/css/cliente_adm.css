@@ -1,0 +1,333 @@
+
+/* =========================================
+   HEADER E FERRAMENTAS
+   ========================================= */
+.header-tools {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.header-tools h2 {
+    color: #2c3e50;
+    margin: 0;
+    font-size: 1.6rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 700;
+}
+
+/* =========================================
+   BARRA DE AÇÕES (BUSCA + BOTÃO)
+   ========================================= */
+.actions-wrapper {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.search-box {
+    position: relative;
+    min-width: 280px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 12px 15px 12px 40px;
+    /* Espaço para ícone */
+    border: 1px solid #e1e4e8;
+    border-radius: 8px;
+    outline: none;
+    font-size: 0.95rem;
+    background-color: #fff;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.search-box input:focus {
+    border-color: #3498db;
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.15);
+}
+
+.search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #95a5a6;
+    font-size: 1rem;
+}
+
+.btn-novo {
+    background: #27ae60;
+    color: white;
+    padding: 12px 24px;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(39, 174, 96, 0.2);
+}
+
+.btn-novo:hover {
+    background: #219150;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(39, 174, 96, 0.3);
+}
+
+/* =========================================
+   TABELA MODERNA
+   ========================================= */
+.painel-tabela {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    /* Garante bordas arredondadas */
+    border: 1px solid #f0f0f0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: #34495e;
+    /* Cabeçalho Escuro */
+}
+
+th {
+    padding: 18px 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #fff;
+    /* Texto Branco */
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: none;
+}
+
+td {
+    padding: 16px 15px;
+    border-bottom: 1px solid #f1f1f1;
+    color: #555;
+    font-size: 0.95rem;
+    vertical-align: middle;
+}
+
+/* Linhas Zebradas (Striped) */
+tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+tbody tr:hover {
+    background-color: #f1f4f8;
+    /* Hover suave */
+}
+
+th,
+td {
+    text-align: left;
+}
+
+/* Badges e IDs */
+.id-badge {
+    background: #eef2f7;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    color: #555;
+    font-weight: 600;
+    font-family: monospace;
+}
+
+/* Botões de Ação Circulares */
+.action-btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    margin: 0 4px;
+    font-size: 1rem;
+}
+
+.btn-edit {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.btn-edit:hover {
+    background-color: #2196f3;
+    color: white;
+}
+
+.btn-delete {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+.btn-delete:hover {
+    background-color: #f44336;
+    color: white;
+}
+
+/* =========================================
+   MEDIA QUERIES (RESPONSIVIDADE - CARDS)
+   ========================================= */
+@media (max-width: 768px) {
+
+    /* Ajuste Header */
+    .header-tools {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .actions-wrapper {
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+    }
+
+    .search-box {
+        width: 100%;
+        min-width: auto;
+    }
+
+    .btn-novo {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Transformação da Tabela em Cards */
+    thead {
+        display: none;
+        /* Esconde cabeçalho */
+    }
+
+    table,
+    tbody,
+    tr,
+    td {
+        display: block;
+        width: 100%;
+    }
+
+    tbody tr {
+        margin-bottom: 20px;
+        background: #fff;
+        border-radius: 12px;
+        padding: 0;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        border: 1px solid #eee;
+        border-left: 5px solid #3498db;
+        /* Borda colorida para destaque */
+        position: relative;
+    }
+
+    td {
+        text-align: right;
+        padding: 12px 15px;
+        border-bottom: 1px dashed #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    td:last-child {
+        border-bottom: none;
+        justify-content: flex-end;
+        padding-top: 15px;
+        background-color: #fafafa;
+        /* Fundo diferente para ações */
+        border-bottom-left-radius: 12px;
+        border-bottom-right-radius: 12px;
+    }
+
+    /* Rótulos via Data Attribute */
+    td::before {
+        content: attr(data-label);
+        font-weight: 700;
+        color: #7f8c8d;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Ajuste visual do ID no mobile */
+    td[data-label="ID"] {
+        background-color: #f8f9fa;
+        border-top-right-radius: 12px;
+    }
+}
+
+/* =========================================
+   EXTRA SMALL DEVICES (até 320px)
+   ========================================= */
+@media (max-width: 320px) {
+
+    /* Header */
+    .header-tools h2 {
+        font-size: 1.2rem;
+        gap: 8px;
+    }
+
+    .search-box input {
+        font-size: 0.85rem;
+        padding: 10px 12px 10px 36px;
+    }
+
+    .btn-novo {
+        font-size: 0.85rem;
+        padding: 10px;
+    }
+
+    /* Cards */
+    tbody tr {
+        border-left-width: 4px;
+    }
+
+    td {
+        font-size: 0.8rem;
+        padding: 10px 12px;
+    }
+
+    td::before {
+        font-size: 0.7rem;
+    }
+
+    /* ID Badge */
+    .id-badge {
+        font-size: 0.75rem;
+        padding: 3px 8px;
+    }
+
+    /* Botões de ação */
+    .action-btn {
+        width: 30px;
+        height: 30px;
+        font-size: 0.85rem;
+        margin: 0 2px;
+    }
+
+    td[data-label="Ações"] {
+        justify-content: center;
+        gap: 6px;
+    }
+}

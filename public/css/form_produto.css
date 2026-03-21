@@ -1,0 +1,231 @@
+/* --- VARIAVEIS E GERAL --- */
+:root {
+    --primary-color: #3498db;
+    --success-color: #27ae60;
+    --text-color: #2c3e50;
+    --border-color: #ddd;
+    --bg-body: #f4f6f9;
+}
+
+.admin-container {
+    padding: 30px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* --- CABEÇALHO --- */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.header-title h2 { margin: 0; color: var(--text-color); font-size: 1.8rem; }
+.header-title p { margin: 5px 0 0; color: #7f8c8d; font-size: 0.95rem; }
+
+.btn-voltar {
+    text-decoration: none;
+    color: #7f8c8d;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.btn-voltar:hover { color: var(--text-color); }
+
+/* --- LAYOUT GRID (Desktop) --- */
+.form-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* 2 partes conteudo, 1 parte imagem */
+    gap: 25px;
+    align-items: start; /* Alinha no topo */
+}
+
+/* --- CARDS (Caixas brancas) --- */
+.card-box {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    padding: 25px;
+    border: 1px solid #e0e0e0;
+}
+
+.card-title {
+    margin: 0 0 20px 0;
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mt-20 { margin-top: 20px; }
+
+/* --- INPUTS E FORMULÁRIO --- */
+.form-group { margin-bottom: 20px; }
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    transition: all 0.3s;
+    box-sizing: border-box;
+}
+
+.form-input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+textarea.form-input { resize: vertical; }
+
+.destaque-preco {
+    border-color: #2ecc71;
+    background-color: #f0fcf4;
+    font-weight: bold;
+    color: #27ae60;
+}
+
+/* Grids Internos do Form */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.three-cols {
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+/* --- UPLOAD DE IMAGEM --- */
+.image-upload-wrapper {
+    text-align: center;
+}
+
+.upload-label {
+    display: block;
+    cursor: pointer;
+    width: 100%;
+}
+
+input[type="file"] { display: none; }
+
+.img-preview {
+    width: 100%;
+    height: 250px; /* Altura fixa para preview */
+    background-color: #f8f9fa;
+    border: 2px dashed #cbd5e0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: border-color 0.3s;
+    position: relative;
+}
+
+.img-preview:hover { border-color: var(--primary-color); background-color: #f0f7fb; }
+
+.img-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Mostra a imagem inteira */
+}
+
+.placeholder-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #a0aec0;
+}
+
+.placeholder-icon i { font-size: 3rem; margin-bottom: 10px; }
+.placeholder-icon span { font-size: 0.9rem; font-weight: 500; }
+
+.help-text {
+    font-size: 0.8rem;
+    color: #95a5a6;
+    margin-top: 10px;
+}
+
+.fade-in { animation: fadeIn 0.5s; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* --- BOTÕES DE AÇÃO --- */
+.actions-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn-salvar {
+    width: 100%;
+    background-color: var(--success-color);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-salvar:hover { background-color: #219150; }
+
+.btn-cancelar {
+    width: 100%;
+    background: transparent;
+    border: 1px solid #e74c3c;
+    color: #e74c3c;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-cancelar:hover { background: #e74c3c; color: white; }
+
+/* --- RESPONSIVIDADE (MOBILE) --- */
+@media (max-width: 900px) {
+    .form-layout {
+        grid-template-columns: 1fr; /* Uma coluna só */
+    }
+
+    /* Inverte a ordem: Queremos a imagem no topo ou embaixo? 
+       Geralmente em mobile, Dados primeiro, Imagem no final ou Imagem primeiro.
+       Vamos manter o fluxo normal (HTML), então dados vêm primeiro. */
+}
+
+@media (max-width: 600px) {
+    .admin-container { padding: 20px 15px; }
+
+    .form-row, .three-cols {
+        grid-template-columns: 1fr; /* Inputs um abaixo do outro */
+        gap: 0;
+    }
+    
+    .card-box { padding: 20px 15px; }
+}

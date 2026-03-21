@@ -1,0 +1,248 @@
+/* Variáveis de Cores (Baseado no padrão Admin) */
+:root {
+    --primary: #3498db;
+    --success: #2ecc71;
+    --warning: #f1c40f;
+    --danger: #e74c3c;
+    --dark: #2c3e50;
+    --light: #ecf0f1;
+    --text-color: #555;
+    --border-color: #ddd;
+}
+a{
+    text-decoration: none;
+}
+
+/* Container Principal */
+.categoria-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Cabeçalho da Página */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.page-header h2 {
+    margin: 0;
+    color: var(--dark);
+    font-size: 1.5rem;
+}
+
+.header-desc {
+    color: #777;
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+/* Botão Nova Categoria */
+.btn-novo {
+    background-color: var(--success);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-novo:hover {
+    background-color: #27ae60;
+}
+
+/* Card da Tabela */
+.card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.card-body {
+    padding: 20px;
+    overflow-x: auto;
+    /* Responsividade para mobile */
+}
+
+/* Tabela */
+.tabela-categorias {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+    /* Garante layout em telas pequenas */
+}
+
+.tabela-categorias thead tr {
+    background-color: #f8f9fa;
+    color: var(--dark);
+    text-align: left;
+}
+
+.tabela-categorias th,
+.tabela-categorias td {
+    padding: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tabela-categorias tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+.col-id {
+    width: 80px;
+    text-align: center;
+    color: #888;
+    font-weight: bold;
+}
+
+.col-acoes {
+    width: 120px;
+    text-align: right;
+}
+
+/* Botões de Ação */
+.btn-icon {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    margin-left: 10px;
+    transition: transform 0.2s;
+}
+
+.btn-icon:hover {
+    transform: scale(1.2);
+}
+
+.btn-edit {
+    color: var(--warning);
+}
+
+.btn-delete {
+    color: var(--danger);
+}
+
+/* Alertas */
+.alert {
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border-color: #bee5eb;
+}
+
+/* ============================
+   ESTILOS DO MODAL
+   ============================ */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: none;
+    /* Escondido por padrão */
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-content {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    transform: translateY(-20px);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.active .modal-content {
+    transform: translateY(0);
+}
+
+.modal-icon {
+    font-size: 3rem;
+    color: var(--danger);
+    margin-bottom: 15px;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    color: var(--dark);
+    margin-bottom: 10px;
+}
+
+.modal-text {
+    color: #666;
+    margin-bottom: 25px;
+}
+
+.highlight-name {
+    color: var(--dark);
+    font-weight: bold;
+    display: block;
+    margin-top: 5px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-modal {
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.btn-cancel {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.btn-cancel:hover {
+    background: #d0d0d0;
+}
+
+.btn-confirm {
+    background: var(--danger);
+    color: white;
+}
+
+.btn-confirm:hover {
+    background: #c0392b;
+}
