@@ -49,7 +49,7 @@
         opacity: 1;
     }
 
-    /* =========================================
+   /* =========================================
        SUBMENU DE CATEGORIAS (PILLS)
        ========================================= */
     .menu-categorias-wrapper {
@@ -68,15 +68,31 @@
         gap: 10px;
         align-items: center;
 
-        /* overflow-x: auto; */
-        /* Permite rolar no celular */
-        /* scrollbar-width: none; */
-        /* Esconde scrollbar no Firefox */
+        /* ATIVANDO A ROLAGEM HORIZONTAL */
+        overflow-x: auto;
+        white-space: nowrap; /* Garante que os botões não quebrem a linha */
+        
+        /* Comportamento de rolagem suave e bonita no celular */
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
     }
 
+    /* Estilizando a barra de rolagem horizontal (Opcional, mas fica mais bonito) */
     .menu-categorias::-webkit-scrollbar {
-        display: none;
-        /* Esconde scrollbar no Chrome/Safari */
+        height: 6px; /* Define a grossura da barra */
+    }
+
+    .menu-categorias::-webkit-scrollbar-track {
+        background: transparent; 
+    }
+
+    .menu-categorias::-webkit-scrollbar-thumb {
+        background-color: #ddd; 
+        border-radius: 10px;
+    }
+
+    .menu-categorias::-webkit-scrollbar-thumb:hover {
+        background-color: #ccc; 
     }
 
     .cat-pill {

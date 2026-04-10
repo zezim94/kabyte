@@ -412,22 +412,65 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
             }
         }
 
+        /* =========================================
+           AJUSTES PARA CELULARES (400px)
+           ========================================= */
         @media (max-width: 400px) {
+            .vitrine-header {
+                padding: 10px 5px;
+                /* Reduz margens laterais */
+                gap: 5px;
+            }
+
             .vitrine-logo img {
-                max-height: 40px;
+                max-height: 35px;
+            }
+
+            .vitrine-logo span {
+                font-size: 1rem !important;
+                /* Diminui a fonte do nome da loja */
             }
 
             .header-search-form:hover .header-search-input,
             .header-search-form:focus-within .header-search-input {
-                width: 110px;
+                width: 90px;
+                /* Reduz a expansão da barra */
+                padding: 8px 10px;
             }
 
             .header-right {
-                gap: 5px;
+                gap: 2px;
+                /* Junta mais os ícones da direita */
+            }
+
+            .btn-header-cart {
+                padding: 6px 8px;
+                /* Diminui o botão do carrinho no topo */
             }
 
             .cart-modal-buttons {
                 flex-direction: column;
+            }
+        }
+
+        /* =========================================
+           O SEGREDO PARA TELAS DE 320px (iPhone SE, Fold)
+           ========================================= */
+        @media (max-width: 340px) {
+
+            .header-search-form:hover .header-search-input,
+            .header-search-form:focus-within .header-search-input {
+                width: 70px;
+                /* Barra bem curtinha, mas usável */
+            }
+
+            .header-search-btn {
+                padding: 8px 6px;
+            }
+
+            .vitrine-logo span {
+                display: none !important;
+                /* Esconde o nome da loja, mostra SÓ a imagem/ícone para liberar espaço */
             }
         }
     </style>
