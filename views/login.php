@@ -192,7 +192,7 @@
     <div class="login-box">
 
         <div class="logo-container">
-            <img src="public/uploads/login.jpg" alt="Logo KaByte" class="logo-img">
+            <img src="public/uploads/login.jpeg" alt="Logo KaByte" class="logo-img">
             <h2>KABYTE</h2>
             <p>Acesso ao Sistema</p>
         </div>

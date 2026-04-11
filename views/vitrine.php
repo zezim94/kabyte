@@ -49,7 +49,7 @@
         opacity: 1;
     }
 
-   /* =========================================
+    /* =========================================
        SUBMENU DE CATEGORIAS (PILLS)
        ========================================= */
     .menu-categorias-wrapper {
@@ -70,8 +70,9 @@
 
         /* ATIVANDO A ROLAGEM HORIZONTAL */
         overflow-x: auto;
-        white-space: nowrap; /* Garante que os botões não quebrem a linha */
-        
+        white-space: nowrap;
+        /* Garante que os botões não quebrem a linha */
+
         /* Comportamento de rolagem suave e bonita no celular */
         -webkit-overflow-scrolling: touch;
         scroll-behavior: smooth;
@@ -79,20 +80,21 @@
 
     /* Estilizando a barra de rolagem horizontal (Opcional, mas fica mais bonito) */
     .menu-categorias::-webkit-scrollbar {
-        height: 6px; /* Define a grossura da barra */
+        height: 6px;
+        /* Define a grossura da barra */
     }
 
     .menu-categorias::-webkit-scrollbar-track {
-        background: transparent; 
+        background: transparent;
     }
 
     .menu-categorias::-webkit-scrollbar-thumb {
-        background-color: #ddd; 
+        background-color: #ddd;
         border-radius: 10px;
     }
 
     .menu-categorias::-webkit-scrollbar-thumb:hover {
-        background-color: #ccc; 
+        background-color: #ccc;
     }
 
     .cat-pill {
@@ -550,140 +552,140 @@ if (!empty($produtos)) {
 
     // --- 3. LÓGICA DO CARRINHO ---
     let carrinho = {};
-        let carrinhoMeta = {}; // NOVO: Guarda nome, foto e preco na memoria!
+    let carrinhoMeta = {}; // NOVO: Guarda nome, foto e preco na memoria!
 
-        document.addEventListener("DOMContentLoaded", () => {
-            const salvo = localStorage.getItem('meu_carrinho_pdv');
-            const salvoMeta = localStorage.getItem('carrinho_meta');
-            if (salvo) {
-                try {
-                    carrinho = JSON.parse(salvo);
-                    if (salvoMeta) carrinhoMeta = JSON.parse(salvoMeta);
+    document.addEventListener("DOMContentLoaded", () => {
+        const salvo = localStorage.getItem('meu_carrinho_pdv');
+        const salvoMeta = localStorage.getItem('carrinho_meta');
+        if (salvo) {
+            try {
+                carrinho = JSON.parse(salvo);
+                if (salvoMeta) carrinhoMeta = JSON.parse(salvoMeta);
 
-                    for (const [id, qtd] of Object.entries(carrinho)) {
-                        const elGrid = document.getElementById('qtd-' + id);
-                        if (elGrid) elGrid.innerText = qtd;
+                for (const [id, qtd] of Object.entries(carrinho)) {
+                    const elGrid = document.getElementById('qtd-' + id);
+                    if (elGrid) elGrid.innerText = qtd;
 
-                        const elCar = document.getElementById('qtd-car-' + id);
-                        if (elCar) elCar.innerText = qtd;
-                    }
-                    atualizarBarraInferior();
-                } catch (e) {
-                    console.error(e);
+                    const elCar = document.getElementById('qtd-car-' + id);
+                    if (elCar) elCar.innerText = qtd;
                 }
+                atualizarBarraInferior();
+            } catch (e) {
+                console.error(e);
             }
+        }
+    });
+
+    function alterarQtd(id, delta) {
+        if (!carrinho[id]) carrinho[id] = 0;
+
+        // NOVO: Se for adição, salva os metadados do produto para usar depois
+        if (!carrinhoMeta[id]) {
+            const card = document.querySelector(`.card-produto[data-id="${id}"]`);
+            if (card) {
+                const imgEl = card.querySelector('img');
+                carrinhoMeta[id] = {
+                    nome: card.getAttribute('data-nome'),
+                    preco: parseFloat(card.getAttribute('data-preco')),
+                    imagem: imgEl ? imgEl.src : ''
+                };
+            }
+        }
+
+        carrinho[id] += delta;
+        if (carrinho[id] < 0) carrinho[id] = 0;
+
+        const elGrid = document.getElementById('qtd-' + id);
+        if (elGrid) elGrid.innerText = carrinho[id];
+
+        const elCar = document.getElementById('qtd-car-' + id);
+        if (elCar) elCar.innerText = carrinho[id];
+
+        // Limpa o item se chegar a zero
+        if (carrinho[id] === 0) {
+            delete carrinho[id];
+            delete carrinhoMeta[id];
+        }
+
+        localStorage.setItem('meu_carrinho_pdv', JSON.stringify(carrinho));
+        localStorage.setItem('carrinho_meta', JSON.stringify(carrinhoMeta)); // Salva metadados
+        atualizarBarraInferior();
+    }
+
+    // NOVO: Agora calcula usando a memória, independente se está na vitrine ou detalhes
+    function atualizarBarraInferior() {
+        let totalItens = 0;
+        let totalValor = 0.0;
+
+        for (const [id, qtd] of Object.entries(carrinho)) {
+            if (carrinhoMeta[id]) {
+                totalItens += qtd;
+                totalValor += (qtd * carrinhoMeta[id].preco);
+            }
+        }
+
+        document.getElementById('totalItens').innerText = totalItens;
+        document.getElementById('totalValor').innerText = totalValor.toLocaleString('pt-BR', {
+            minimumFractionDigits: 2
         });
 
-        function alterarQtd(id, delta) {
-            if (!carrinho[id]) carrinho[id] = 0;
+        const headerCount = document.getElementById('headerCartCount');
+        if (headerCount) headerCount.innerText = totalItens > 0 ? totalItens : '';
 
-            // NOVO: Se for adição, salva os metadados do produto para usar depois
-            if (!carrinhoMeta[id]) {
-                const card = document.querySelector(`.card-produto[data-id="${id}"]`);
-                if (card) {
-                    const imgEl = card.querySelector('img');
-                    carrinhoMeta[id] = {
-                        nome: card.getAttribute('data-nome'),
-                        preco: parseFloat(card.getAttribute('data-preco')),
-                        imagem: imgEl ? imgEl.src : ''
-                    };
-                }
-            }
+        const bar = document.getElementById('cartBar');
+        if (totalItens > 0) bar.classList.add('visible');
+        else bar.classList.remove('visible');
+    }
 
-            carrinho[id] += delta;
-            if (carrinho[id] < 0) carrinho[id] = 0;
-
-            const elGrid = document.getElementById('qtd-' + id);
-            if (elGrid) elGrid.innerText = carrinho[id];
-
-            const elCar = document.getElementById('qtd-car-' + id);
-            if (elCar) elCar.innerText = carrinho[id];
-
-            // Limpa o item se chegar a zero
-            if (carrinho[id] === 0) {
-                delete carrinho[id];
-                delete carrinhoMeta[id];
-            }
-
-            localStorage.setItem('meu_carrinho_pdv', JSON.stringify(carrinho));
-            localStorage.setItem('carrinho_meta', JSON.stringify(carrinhoMeta)); // Salva metadados
-            atualizarBarraInferior();
+    async function irParaCheckout() {
+        const btn = document.querySelector('.btn-checkout-modal');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Aguarde...';
         }
 
-        // NOVO: Agora calcula usando a memória, independente se está na vitrine ou detalhes
-        function atualizarBarraInferior() {
-            let totalItens = 0;
-            let totalValor = 0.0;
+        const payload = {
+            itens: carrinho
+        };
 
-            for (const [id, qtd] of Object.entries(carrinho)) {
-                if (carrinhoMeta[id]) {
-                    totalItens += qtd;
-                    totalValor += (qtd * carrinhoMeta[id].preco);
-                }
-            }
-
-            document.getElementById('totalItens').innerText = totalItens;
-            document.getElementById('totalValor').innerText = totalValor.toLocaleString('pt-BR', {
-                minimumFractionDigits: 2
+        try {
+            const res = await fetch('<?= BASE_URL ?>carrinho/salvar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
             });
+            const dados = await res.json();
 
-            const headerCount = document.getElementById('headerCartCount');
-            if (headerCount) headerCount.innerText = totalItens > 0 ? totalItens : '';
-
-            const bar = document.getElementById('cartBar');
-            if (totalItens > 0) bar.classList.add('visible');
-            else bar.classList.remove('visible');
-        }
-
-        async function irParaCheckout() {
-            const btn = document.querySelector('.btn-checkout-modal'); 
-            if (btn) {
-                btn.disabled = true;
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Aguarde...';
-            }
-
-            const payload = {
-                itens: carrinho
-            };
-
-            try {
-                const res = await fetch('<?= BASE_URL ?>carrinho/salvar', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                });
-                const dados = await res.json();
-
-                if (dados.sucesso) {
-                    window.location.href = '<?= BASE_URL ?>cliente/checkout_carrinho';
-                } else {
-                    alert('Erro: ' + dados.msg);
-                    if (btn) {
-                        btn.disabled = false;
-                        btn.innerHTML = '<i class="fas fa-check"></i> Ir para Pagamento';
-                    }
-                }
-            } catch (e) {
-                alert('Erro de conexão. Verifique sua internet.');
+            if (dados.sucesso) {
+                window.location.href = '<?= BASE_URL ?>cliente/checkout_carrinho';
+            } else {
+                alert('Erro: ' + dados.msg);
                 if (btn) {
                     btn.disabled = false;
                     btn.innerHTML = '<i class="fas fa-check"></i> Ir para Pagamento';
                 }
             }
-        }
-
-        // LÓGICA DA GALERIA DE IMAGENS (Exclusiva da detalhes.php, mas pode deixar nos dois)
-        function trocarImagem(novaUrl, elementoClicado) {
-            const imgGrande = document.getElementById('imgPrincipal');
-            if (imgGrande) {
-                imgGrande.src = novaUrl;
+        } catch (e) {
+            alert('Erro de conexão. Verifique sua internet.');
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check"></i> Ir para Pagamento';
             }
-            const thumbnails = document.querySelectorAll('.thumb-item');
-            thumbnails.forEach(thumb => thumb.classList.remove('active'));
-            if(elementoClicado) elementoClicado.classList.add('active');
         }
+    }
+
+    // LÓGICA DA GALERIA DE IMAGENS (Exclusiva da detalhes.php, mas pode deixar nos dois)
+    function trocarImagem(novaUrl, elementoClicado) {
+        const imgGrande = document.getElementById('imgPrincipal');
+        if (imgGrande) {
+            imgGrande.src = novaUrl;
+        }
+        const thumbnails = document.querySelectorAll('.thumb-item');
+        thumbnails.forEach(thumb => thumb.classList.remove('active'));
+        if (elementoClicado) elementoClicado.classList.add('active');
+    }
 </script>
 
 <?php require __DIR__ . '/layout/footer_public.php'; ?>

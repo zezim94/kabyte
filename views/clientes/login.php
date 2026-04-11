@@ -21,7 +21,7 @@
 
             <div class="login-header" style="text-align: center;">
                 <div class="icon-circle">
-                    <img src="<?= BASE_URL ?>public/uploads/login.jpg" alt="Login KaByte">
+                    <img src="<?= BASE_URL ?>public/uploads/login.jpeg" alt="Login KaByte">
                 </div>
                 <h2>Bem-vindo de volta!</h2>
                 <p>Acesse sua área exclusiva para acompanhar pedidos</p>
