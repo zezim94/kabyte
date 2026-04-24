@@ -514,4 +514,94 @@ class ApiController
             'enderecos' => $enderecos
         ]);
     }
+    
+   public function chatIa()
+    {
+        header('Content-Type: application/json');
+
+        $dados = json_decode(file_get_contents('php://input'), true);
+        $mensagemUsuario = $dados['mensagem'] ?? '';
+
+        if (empty($mensagemUsuario)) {
+            echo json_encode(['sucesso' => false, 'msg' => 'Mensagem vazia.']);
+            return;
+        }
+
+        try {
+            $pdo = Database::connect();
+
+            // 1. BUSCA INCLUINDO A DESCRIÇÃO DO PRODUTO (p.descricao)
+            $stmt = $pdo->query("SELECT p.nome, p.preco, p.preco_promocao, p.promocao, p.descricao, p.imagem, c.nome as categoria 
+                                 FROM produtos p 
+                                 LEFT JOIN categorias c ON p.categoria_id = c.id 
+                                 WHERE p.estoque > 0 
+                                 ORDER BY c.nome ASC");
+            $produtosLoja = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // 2. FORMATA A LISTA (Agora a IA vai ler as especificações técnicas)
+            $listaTexto = "";
+            foreach ($produtosLoja as $p) {
+                $preco = ($p['promocao'] == 1) ? $p['preco_promocao'] : $p['preco'];
+                $descricaoLimpa = preg_replace('/\s+/', ' ', strip_tags($p['descricao'] ?? ''));
+
+                // Monta o caminho da imagem (Se não tiver, deixa vazio)
+                $urlImg = !empty($p['imagem']) ? BASE_URL . "public/uploads/" . $p['imagem'] : "";
+
+                $listaTexto .= "- Produto: {$p['nome']} | Imagem: {$urlImg} | Categoria: {$p['categoria']} | Valor: R$ " . number_format($preco, 2, ',', '.') . " | Detalhes: {$descricaoLimpa}\n";
+            }
+
+            // 3. SELEÇÃO DA CHAVE DA API
+            $apiKeys = [
+                'AIzaSyC6WH7XPo28lBKwO-W51Pg-1qsugOfqPvo',
+                'AIzaSyDoa-lpA8YY5_DPf0JPWhv2_Uau3EuoybA',
+                'AIzaSyCvYKsZDUr9cX6_maoZUiiJObIjXhee54g',
+                'AIzaSyDEH39Nkf3FV6jSLq6Ehai-CED6HOunwm4'
+            ];
+            $chaveEscolhida = $apiKeys[array_rand($apiKeys)];
+            $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=" . $chaveEscolhida;
+
+            // 4. INSTRUÇÕES AVANÇADAS (Forçando a exibição da imagem com regras estritas)
+            $instrucoes = "Você é o especialista de vendas da KaByte, uma loja de periféricos e hardware.
+            Sua missão é ajudar o cliente a encontrar itens na nossa lista de estoque abaixo.
+
+            REGRAS CRÍTICAS DE FORMATAÇÃO E RESPOSTA:
+            1. Analise os 'Detalhes' de cada produto. Exemplo: se pedirem para 'natação', sugira itens 'à prova d'água'.
+            2. SEMPRE que recomendar ou citar um produto, você DEVE mostrar a foto dele logo acima do nome, usando EXATAMENTE o formato de imagem do Markdown: ![foto](URL_AQUI). A URL está no campo 'Imagem' da lista. Se não tiver URL, não coloque a imagem.
+            3. Use **negrito** para nomes e preços. Exemplo: ![foto](https://...) **Teclado Gamer** - **R$ 150,00**.
+            4. Seja simpático, prestativo e use emojis (🖱️, 🖥️, ⌨️, ⌚).
+            5. Se o item não estiver na lista abaixo, diga: 'No momento não temos esse item específico em estoque, mas fique de olho no site!'.
+
+            ESTOQUE REAL DA KABYTE AGORA (Com um resumo das especificações):
+            $listaTexto";
+
+            $body = [
+                "contents" => [
+                    ["role" => "user", "parts" => [["text" => $instrucoes . "\n\nPergunta do cliente: " . $mensagemUsuario]]]
+                ]
+            ];
+
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+            $respostaApi = curl_exec($ch);
+            curl_close($ch);
+
+            $resultado = json_decode($respostaApi, true);
+
+            if (isset($resultado['candidates'][0]['content']['parts'][0]['text'])) {
+                $textoResposta = $resultado['candidates'][0]['content']['parts'][0]['text'];
+                echo json_encode(['sucesso' => true, 'resposta' => $textoResposta]);
+            } else {
+                $erroGoogle = $resultado['error']['message'] ?? 'A IA não conseguiu processar os dados.';
+                echo json_encode(['sucesso' => false, 'msg' => $erroGoogle]);
+            }
+
+        } catch (Exception $e) {
+            echo json_encode(['sucesso' => false, 'msg' => $e->getMessage()]);
+        }
+    }
 }

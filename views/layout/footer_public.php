@@ -115,6 +115,177 @@
     }
 </style>
 
+<style>
+    .chatbot-btn {
+        position: fixed;
+        bottom: 25px;
+        right: 25px;
+        background-color: #3498db; /* Azul tecnologia */
+        color: white;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.8rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        cursor: pointer;
+        z-index: 1050;
+        transition: transform 0.3s;
+    }
+    .chatbot-btn:hover { transform: scale(1.1); }
+
+    .chatbot-window {
+        position: fixed;
+        bottom: 100px;
+        right: 25px;
+        width: 350px;
+        max-width: 90vw;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        display: flex;
+        flex-direction: column;
+        z-index: 1050;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(20px);
+        transition: all 0.3s ease;
+        height: 450px;
+    }
+    .chatbot-window.active {
+        opacity: 1;
+        pointer-events: all;
+        transform: translateY(0);
+    }
+
+    .chatbot-header {
+        background: #1e293b;
+        color: white;
+        padding: 15px;
+        border-radius: 12px 12px 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .chatbot-header h4 { margin: 0; font-size: 1.1rem; }
+    .chatbot-close { background: none; border: none; color: white; cursor: pointer; font-size: 1.2rem; }
+
+    .chatbot-body {
+        flex: 1;
+        padding: 15px;
+        overflow-y: auto;
+        background: #f4f7f6;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .chat-msg { max-width: 85%; padding: 10px 15px; border-radius: 15px; font-size: 0.95rem; line-height: 1.4; }
+    .chat-msg.ia { background: white; border: 1px solid #eee; align-self: flex-start; border-bottom-left-radius: 2px; color: #333;}
+    .chat-msg.user { background: #3498db; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+
+    .chatbot-footer {
+        padding: 10px;
+        background: white;
+        border-top: 1px solid #eee;
+        border-radius: 0 0 12px 12px;
+        display: flex;
+        gap: 10px;
+    }
+    .chatbot-input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        outline: none;
+    }
+    .chatbot-send {
+        background: #3498db;
+        color: white;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+</style>
+
+<div class="chatbot-btn" onclick="toggleChatbot()">
+    <i class="fas fa-robot"></i>
+</div>
+
+<div class="chatbot-window" id="chatbotWindow">
+    <div class="chatbot-header">
+        <h4><i class="fas fa-robot"></i> Assistente KaByte</h4>
+        <button class="chatbot-close" onclick="toggleChatbot()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="chatbot-body" id="chatbotBody">
+        <div class="chat-msg ia">Olá! Sou o assistente de IA da KaByte. Está procurando algum hardware, mouse, ou teclado específico? 💻</div>
+    </div>
+    <div class="chatbot-footer">
+        <input type="text" id="chatbotInput" class="chatbot-input" placeholder="Digite sua pergunta..." onkeypress="handleEnter(event)">
+        <button class="chatbot-send" onclick="enviarMensagemIA()"><i class="fas fa-paper-plane"></i></button>
+    </div>
+</div>
+
+<script>
+    function toggleChatbot() {
+        document.getElementById('chatbotWindow').classList.toggle('active');
+    }
+
+    function handleEnter(e) {
+        if (e.key === 'Enter') enviarMensagemIA();
+    }
+
+    async function enviarMensagemIA() {
+        const input = document.getElementById('chatbotInput');
+        const msg = input.value.trim();
+        if (!msg) return;
+
+        const chatBody = document.getElementById('chatbotBody');
+
+        // 1. Adiciona a mensagem do usuário na tela
+        chatBody.innerHTML += `<div class="chat-msg user">${msg}</div>`;
+        input.value = '';
+        chatBody.scrollTop = chatBody.scrollHeight; // Rola pra baixo
+
+        // 2. Mostra que a IA está digitando
+        const idDigitando = 'msg-' + Date.now();
+        chatBody.innerHTML += `<div class="chat-msg ia" id="${idDigitando}"><i class="fas fa-ellipsis-h fa-fade"></i></div>`;
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+        try {
+            // 3. Envia para o PHP
+            const res = await fetch('<?= BASE_URL ?>api/chatbot', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mensagem: msg })
+            });
+            const dados = await res.json();
+
+            // 4. Atualiza o balãozinho com a resposta final
+            const balaoIA = document.getElementById(idDigitando);
+            if (dados.sucesso) {
+                let htmlFormatado = dados.resposta
+                    .replace(/\n/g, '<br>') // Aplica as quebras de linha
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Transforma **texto** em negrito
+                    // Expressão Regular (Magia) para transformar a imagem Markdown em um Card HTML bonito:
+                    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<div style="text-align: center; margin: 12px 0; background: #fff; padding: 10px; border-radius: 8px; border: 1px solid #e0e0e0;"><img src="$2" alt="$1" style="max-width: 100%; max-height: 120px; object-fit: contain;"></div>');
+                
+                balaoIA.innerHTML = htmlFormatado;
+            } else {
+                balaoIA.innerHTML = '<i>Oops, deu um erro aqui: ' + dados.msg + '</i>';
+            }
+        } catch (e) {
+            document.getElementById(idDigitando).innerHTML = '<i>Falha na conexão com a internet.</i>';
+        }
+        
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+</script>
+
 <footer class="site-footer">
     <div class="footer-content">
 

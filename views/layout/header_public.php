@@ -525,9 +525,16 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
                 padding: 8px 10px;
             }
 
+            .header-search-form {
+                background-color: rgba(255, 255, 255, 0.15);
+            }
+
+            /* TRAVA O TAMANHO MESMO QUANDO CLICADO (OVERRIDE DO DESKTOP) */
+            .header-search-input,
             .header-search-form:hover .header-search-input,
             .header-search-form:focus-within .header-search-input {
                 width: 140px;
+                padding: 8px 15px;
             }
 
             .header-nav {
@@ -549,6 +556,8 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
                 font-size: 1rem !important;
             }
 
+            /* DEIXA A BARRA ABERTA E AJUSTADA PARA CELULAR */
+            .header-search-input,
             .header-search-form:hover .header-search-input,
             .header-search-form:focus-within .header-search-input {
                 width: 110px;
@@ -566,20 +575,16 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
             /* --- O SEGREDO DO CARRINHO NO CELULAR --- */
             .cart-modal-item {
                 flex-wrap: wrap;
-                /* Joga os botões para a linha de baixo se a tela for estreita */
                 padding: 12px;
             }
 
             .cart-modal-item-info {
                 min-width: 150px;
-                /* Protege o texto de ser esmagado */
             }
 
             .cart-modal-item-actions {
                 width: 100%;
-                /* Força os botões a ocuparem uma linha inteira embaixo */
                 justify-content: space-between;
-                /* Joga o +/- para a esquerda e a lixeira para a direita */
                 background: transparent;
                 border: none;
                 padding: 5px 0 0 0;
@@ -602,6 +607,8 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
            ========================================= */
         @media (max-width: 340px) {
 
+            /* DEIXA A BARRA ABERTA MESMO EM TELAS MINÚSCULAS */
+            .header-search-input,
             .header-search-form:hover .header-search-input,
             .header-search-form:focus-within .header-search-input {
                 width: 70px;
@@ -611,10 +618,8 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
                 display: none !important;
             }
 
-            /* Compacta ainda mais o carrinho em 320px */
             .cart-modal-item-actions {
                 justify-content: flex-start;
-                /* Agrupa todos os botões juntos */
                 gap: 15px;
             }
 
@@ -622,6 +627,7 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
                 font-size: 1.1rem;
             }
         }
+    </style>
     </style>
 </head>
 

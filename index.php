@@ -108,7 +108,12 @@ if ($rota == 'autenticar') {
 // ==================================================
 // 2. ÁREA DO CLIENTE
 // ==================================================
-
+// Rota para o Chatbot com IA
+if ($rota == 'api/chatbot') {
+    require 'controllers/ApiController.php';
+    (new ApiController())->chatIa();
+    exit;
+}
 if ($rota == 'cliente/login') {
     require 'controllers/ClienteAreaController.php';
     (new ClienteAreaController())->login();
