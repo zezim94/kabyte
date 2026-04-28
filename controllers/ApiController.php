@@ -209,13 +209,12 @@ class ApiController
             $itens = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             echo json_encode(['sucesso' => true, 'venda' => $venda, 'itens' => $itens]);
-
         } catch (Exception $e) {
             echo json_encode(['sucesso' => false, 'msg' => 'Erro SQL: ' . $e->getMessage()]);
         }
     }
 
-  public function dadosRelatorio()
+    public function dadosRelatorio()
     {
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
@@ -330,7 +329,6 @@ class ApiController
                     'timeline' => $porDia
                 ]
             ]);
-
         } catch (Exception $e) {
             echo json_encode(['sucesso' => false, 'msg' => $e->getMessage()]);
         }
@@ -399,7 +397,6 @@ class ApiController
             $stmt->execute([$id]);
 
             echo json_encode(['sucesso' => true]);
-
         } catch (Exception $e) {
             echo json_encode(['sucesso' => false, 'msg' => 'Erro ao atualizar: ' . $e->getMessage()]);
         }
@@ -514,8 +511,8 @@ class ApiController
             'enderecos' => $enderecos
         ]);
     }
-    
-   public function chatIa()
+
+    public function chatIa()
     {
         header('Content-Type: application/json');
 
@@ -551,12 +548,14 @@ class ApiController
             }
 
             // 3. SELEÇÃO DA CHAVE DA API
-            $apiKeys = [
-                'AIzaSyC6WH7XPo28lBKwO-W51Pg-1qsugOfqPvo',
-                'AIzaSyDoa-lpA8YY5_DPf0JPWhv2_Uau3EuoybA',
-                'AIzaSyCvYKsZDUr9cX6_maoZUiiJObIjXhee54g',
-                'AIzaSyDEH39Nkf3FV6jSLq6Ehai-CED6HOunwm4'
-            ];
+            $apiKeys = array_values(array_filter([
+                $_ENV['GEMINI_API_KEY_1'] ?? null,
+                $_ENV['GEMINI_API_KEY_2'] ?? null,
+                $_ENV['GEMINI_API_KEY_3'] ?? null,
+                $_ENV['GEMINI_API_KEY_4'] ?? null,
+            ]));
+
+            $apiKey = $apiKeys[array_rand($apiKeys)];
             $chaveEscolhida = $apiKeys[array_rand($apiKeys)];
             $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=" . $chaveEscolhida;
 
@@ -588,8 +587,6 @@ class ApiController
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
             $respostaApi = curl_exec($ch);
-            curl_close($ch);
-
             $resultado = json_decode($respostaApi, true);
 
             if (isset($resultado['candidates'][0]['content']['parts'][0]['text'])) {
@@ -599,7 +596,6 @@ class ApiController
                 $erroGoogle = $resultado['error']['message'] ?? 'A IA não conseguiu processar os dados.';
                 echo json_encode(['sucesso' => false, 'msg' => $erroGoogle]);
             }
-
         } catch (Exception $e) {
             echo json_encode(['sucesso' => false, 'msg' => $e->getMessage()]);
         }
