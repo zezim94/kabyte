@@ -542,39 +542,67 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
             }
         }
 
-        @media (max-width: 450px) {
+       /* =========================================
+           AJUSTES PARA CELULARES (Telas até 430px)
+           Barra de Pesquisa Quebrando a Linha
+           ========================================= */
+        @media (max-width: 430px) {
             .vitrine-header {
-                padding: 10px 5px;
-                gap: 5px;
+                flex-wrap: wrap; /* Permite quebrar os elementos para a linha de baixo */
+                padding: 15px 15px; /* Aumenta a altura do cabeçalho */
             }
 
-            .vitrine-logo img {
-                max-height: 35px;
-            }
-
-            .vitrine-logo span {
-                font-size: 1rem !important;
-            }
-
-            /* DEIXA A BARRA ABERTA E AJUSTADA PARA CELULAR */
-            .header-search-input,
-            .header-search-form:hover .header-search-input,
-            .header-search-form:focus-within .header-search-input {
-                width: 110px;
-                padding: 8px 10px;
+            .header-left {
+                order: 1; /* Mantém a logo no topo esquerdo */
             }
 
             .header-right {
-                gap: 2px;
+                order: 2; /* Mantém o menu e carrinho no topo direito */
+                gap: 5px; /* Junta um pouco os ícones da direita */
             }
 
+            .header-center {
+                order: 3; /* Força a barra de pesquisa a ser o 3º elemento (descer) */
+                flex-basis: 100%; /* Força a ocupar 100% da largura da tela */
+                margin-top: 15px; /* Afasta da linha de cima */
+            }
+
+            /* Estiliza a barra para ficar sempre visível embaixo */
+            .header-search-form {
+                width: 100%;
+                background-color: rgba(255, 255, 255, 0.15); /* Fundo sempre visível */
+                border-radius: 8px; /* Formato mais quadrado e moderno */
+                justify-content: space-between;
+            }
+
+            /* Força o input a ocupar o tamanho total da barra nova */
+            .header-search-input,
+            .header-search-form:hover .header-search-input,
+            .header-search-form:focus-within .header-search-input {
+                width: 100%;
+                padding: 10px 15px;
+            }
+
+            .vitrine-logo img {
+                max-height: 40px; /* Logo em bom tamanho */
+            }
+
+            .vitrine-logo span {
+                font-size: 1.1rem !important;
+                display: inline-block !important; /* Agora o texto nunca mais some! */
+            }
+
+            .btn-header-cart {
+                padding: 8px 10px;
+            }
+
+            /* --- Ajustes do Carrinho no Celular --- */
             .cart-modal-buttons {
                 flex-direction: column;
             }
 
-            /* --- O SEGREDO DO CARRINHO NO CELULAR --- */
             .cart-modal-item {
-                flex-wrap: wrap;
+                flex-wrap: wrap; /* Empurra os botões do produto para baixo se faltar espaço */
                 padding: 12px;
             }
 
@@ -591,40 +619,14 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
             }
 
             .cart-modal-btn-qty {
-                width: 32px;
-                height: 32px;
+                width: 35px;
+                height: 35px;
             }
 
             .btn-trash {
                 width: 35px;
                 height: 35px;
                 margin-left: 0;
-            }
-        }
-
-        /* =========================================
-           AJUSTE EXTREMO PARA TELAS DE 320px (iPhone SE, Fold)
-           ========================================= */
-        @media (max-width: 340px) {
-
-            /* DEIXA A BARRA ABERTA MESMO EM TELAS MINÚSCULAS */
-            .header-search-input,
-            .header-search-form:hover .header-search-input,
-            .header-search-form:focus-within .header-search-input {
-                width: 70px;
-            }
-
-            .vitrine-logo span {
-                display: none !important;
-            }
-
-            .cart-modal-item-actions {
-                justify-content: flex-start;
-                gap: 15px;
-            }
-
-            .cart-modal-total {
-                font-size: 1.1rem;
             }
         }
     </style>
