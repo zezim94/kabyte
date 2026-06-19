@@ -34,20 +34,20 @@ class Cliente
         ]);
     }
 
-    // Atualiza os dados do cliente pelo Painel Admin
+    // Atualiza os dados do cliente pelo Painel Admin / Área do Cliente
     public static function atualizar($id, $dados)
     {
         $pdo = Database::connect();
 
         try {
-            // 1. Lógica da Senha (só altera se o usuário digitou algo novo)
+            // 1. Lógica da Senha (só altera se o utilizador digitou algo novo)
             $sqlSenha = "";
             if (!empty($dados['senha'])) {
                 $senhaHash = password_hash($dados['senha'], PASSWORD_DEFAULT);
                 $sqlSenha = ", senha = '$senhaHash'";
             }
 
-            // 2. Monta a Query (Removemos as colunas de endereço daqui)
+            // 2. Monta a Query 
             $sql = "UPDATE clientes SET 
                     nome = ?, cpf = ?, telefone = ?, email = ?
                     $sqlSenha
@@ -64,8 +64,27 @@ class Cliente
 
             return ['sucesso' => true, 'msg' => 'Dados atualizados com sucesso!'];
 
+        } catch (PDOException $e) {
+            // Captura o erro específico de "Chave Duplicada" (Integrity constraint violation)
+            if ($e->getCode() == 23000 || $e->getCode() == 1062) {
+                $mensagemBD = $e->getMessage();
+
+                // Descobre qual foi a coluna que deu erro para dar a resposta exata
+                if (strpos($mensagemBD, 'cpf') !== false) {
+                    return ['sucesso' => false, 'msg' => 'Atenção: Este CPF já está cadastrado em outra conta.'];
+                }
+                if (strpos($mensagemBD, 'email') !== false) {
+                    return ['sucesso' => false, 'msg' => 'Atenção: Este e-mail já está em uso por outro cliente.'];
+                }
+
+                return ['sucesso' => false, 'msg' => 'Já existe um registo com estes dados únicos no sistema.'];
+            }
+
+            // Para outros erros genéricos de banco de dados (sem exibir o SQL)
+            return ['sucesso' => false, 'msg' => 'Ocorreu um erro interno ao guardar. Tente novamente.'];
+
         } catch (Exception $e) {
-            return ['sucesso' => false, 'msg' => 'Erro ao atualizar: ' . $e->getMessage()];
+            return ['sucesso' => false, 'msg' => 'Erro desconhecido. Tente novamente mais tarde.'];
         }
     }
 
@@ -114,6 +133,29 @@ class Cliente
         }
     }
 
+    public static function tornarEnderecoPadrao($endereco_id, $cliente_id)
+    {
+        $pdo = Database::connect();
+
+        try {
+            $pdo->beginTransaction();
+
+            // 1. Remove a flag 'is_padrao = 1' de todos os endereços do cliente
+            $stmt1 = $pdo->prepare("UPDATE enderecos SET is_padrao = 0 WHERE cliente_id = ?");
+            $stmt1->execute([$cliente_id]);
+
+            // 2. Coloca a flag 'is_padrao = 1' apenas no endereço escolhido
+            $stmt2 = $pdo->prepare("UPDATE enderecos SET is_padrao = 1 WHERE id = ? AND cliente_id = ?");
+            $stmt2->execute([$endereco_id, $cliente_id]);
+
+            $pdo->commit();
+            return true;
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            return false;
+        }
+    }
+
     // Usado na tela de Esqueci minha senha
     public static function atualizarSenha($id, $novaSenhaHash)
     {
@@ -123,18 +165,29 @@ class Cliente
         return $stmt->execute([$novaSenhaHash, $id]);
     }
 
+    // Verifica se o CPF já está cadastrado
+    public static function buscarPorCpf($cpf)
+    {
+        $pdo = Database::connect();
+        $stmt = $pdo->prepare("SELECT id FROM clientes WHERE cpf = ?");
+        $stmt->execute([$cpf]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     // Registra um cliente novo pelo formulário do site (Vitrine)
     public static function registrarNovoCliente($dados)
     {
         $pdo = Database::connect();
 
-        $sql = "INSERT INTO clientes (nome, email, telefone, senha, data_cadastro) VALUES (?, ?, ?, ?, NOW())";
+        // Adicionada a coluna cpf na query
+        $sql = "INSERT INTO clientes (nome, email, telefone, cpf, senha, data_cadastro) VALUES (?, ?, ?, ?, ?, NOW())";
         $stmt = $pdo->prepare($sql);
 
         $sucesso = $stmt->execute([
             $dados['nome'],
             $dados['email'],
             $dados['telefone'],
+            $dados['cpf'], // <-- ADICIONADO AQUI
             $dados['senha']
         ]);
 

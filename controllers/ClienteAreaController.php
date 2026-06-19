@@ -299,7 +299,6 @@ class ClienteAreaController
                 // Erro ao salvar no banco (mas cobrou no MP? Ideal seria estornar, mas aqui só avisamos)
                 echo json_encode(['sucesso' => false, 'msg' => 'Erro ao salvar pedido: ' . $resultadoBD['msg']]);
             }
-
         } catch (Exception $e) {
             echo json_encode(['sucesso' => false, 'msg' => 'Erro no servidor: ' . $e->getMessage()]);
         }
@@ -343,63 +342,110 @@ class ClienteAreaController
 
     public function salvarDados()
     {
-        if (session_status() == PHP_SESSION_NONE)
+        if (session_status() == PHP_SESSION_NONE) {
             session_start();
+        }
+
+        // Verifica se está logado
         if (!isset($_SESSION['cliente_id'])) {
             header('Location: ' . BASE_URL . 'cliente/login');
             exit;
         }
 
         require_once __DIR__ . '/../models/Cliente.php';
-        $pdo = Database::connect();
 
-        // 1. Pega APENAS os dados pessoais
+        // 1. Pega APENAS os dados da aba "Meus Dados"
         $dadosPessoais = [
-            'nome' => $_POST['nome'] ?? '',
-            'cpf' => $_POST['cpf'] ?? '',
-            'telefone' => $_POST['telefone'] ?? '',
-            'email' => $_POST['email'] ?? '',
-            'senha' => $_POST['nova_senha'] ?? ''
+            'nome'     => trim($_POST['nome'] ?? ''),
+            'cpf'      => trim($_POST['cpf'] ?? ''),
+            'telefone' => trim($_POST['telefone'] ?? ''),
+            'email'    => trim($_POST['email'] ?? '')
         ];
 
-        // Atualiza a tabela Clientes
+        // 2. Envia para o Model atualizar no banco de dados
         $resultado = Cliente::atualizar($_SESSION['cliente_id'], $dadosPessoais);
 
         if ($resultado['sucesso']) {
-            $_SESSION['cliente_nome'] = $dadosPessoais['nome']; // Atualiza sessão
-
-            // 2. Pega os dados de Endereço
-            $cep = $_POST['cep'] ?? '';
-            $rua = $_POST['rua'] ?? '';
-            $numero = $_POST['numero'] ?? '';
-            $bairro = $_POST['bairro'] ?? '';
-            $cidade = $_POST['cidade'] ?? '';
-            $estado = $_POST['estado'] ?? '';
-
-            // Só salva se o cliente preencheu pelo menos a rua e o cep
-            if (!empty($cep) && !empty($rua)) {
-
-                // Verifica se o cliente já tem um endereço principal (is_padrao = 1)
-                $stmt = $pdo->prepare("SELECT id FROM enderecos WHERE cliente_id = ? AND is_padrao = 1");
-                $stmt->execute([$_SESSION['cliente_id']]);
-                $enderecoExiste = $stmt->fetch();
-
-                if ($enderecoExiste) {
-                    // Atualiza o endereço existente
-                    $sqlEnd = "UPDATE enderecos SET cep=?, rua=?, numero=?, bairro=?, cidade=?, estado=? WHERE id=?";
-                    $pdo->prepare($sqlEnd)->execute([$cep, $rua, $numero, $bairro, $cidade, $estado, $enderecoExiste['id']]);
-                } else {
-                    // Insere um novo endereço e marca como padrão (1)
-                    $sqlEnd = "INSERT INTO enderecos (cliente_id, cep, rua, numero, bairro, cidade, estado, is_padrao) VALUES (?, ?, ?, ?, ?, ?, ?, 1)";
-                    $pdo->prepare($sqlEnd)->execute([$_SESSION['cliente_id'], $cep, $rua, $numero, $bairro, $cidade, $estado]);
-                }
-            }
+            // Atualiza o nome na sessão para que o topo do site mude na mesma hora
+            $_SESSION['cliente_nome'] = $dadosPessoais['nome'];
         }
 
-        header('Location: ' . BASE_URL . 'cliente/meusDados?msg=' . urlencode($resultado['msg']) . '&sucesso=' . ($resultado['sucesso'] ? 1 : 0));
+       // REDIRECIONAMENTO CORRIGIDO:
+        header('Location: ' . BASE_URL . 'index.php?rota=cliente/dados&msg=' . urlencode($resultado['msg']) . '&sucesso=' . ($resultado['sucesso'] ? 1 : 0));
         exit;
     }
 
+    public function atualizar_senha()
+    {
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // Verifica se está logado
+        if (!isset($_SESSION['cliente_id'])) {
+            header('Location: ' . BASE_URL . 'cliente/login');
+            exit;
+        }
+
+        $nova_senha = $_POST['nova_senha'] ?? '';
+        $confirma_senha = $_POST['confirma_senha'] ?? '';
+
+        // 1. Validações Básicas
+        if (empty($nova_senha) || empty($confirma_senha)) {
+            header('Location: ' . BASE_URL . 'cliente/dados?msg=' . urlencode('Preencha os campos de senha.') . '&sucesso=0');
+            exit;
+        }
+
+        if (strlen($nova_senha) < 6) {
+            header('Location: ' . BASE_URL . 'cliente/dados?msg=' . urlencode('A nova senha deve ter no mínimo 6 caracteres.') . '&sucesso=0');
+            exit;
+        }
+
+        if ($nova_senha !== $confirma_senha) {
+            header('Location: ' . BASE_URL . 'cliente/dados?msg=' . urlencode('As senhas não coincidem.') . '&sucesso=0');
+            exit;
+        }
+
+        require_once __DIR__ . '/../models/Cliente.php';
+
+        // 2. Criptografa a nova senha
+        $senhaHash = password_hash($nova_senha, PASSWORD_DEFAULT);
+
+        // 3. Atualiza no banco
+        if (Cliente::atualizarSenha($_SESSION['cliente_id'], $senhaHash)) {
+            // Desloga o cliente por segurança (como avisado na tela)
+            unset($_SESSION['cliente_id'], $_SESSION['cliente_nome'], $_SESSION['cliente_email'], $_SESSION['cliente_foto']);
+
+            // Redireciona para o login com mensagem de sucesso
+            header('Location: ' . BASE_URL . 'cliente/login?msg=' . urlencode('Senha atualizada com sucesso! Faça login novamente.') . '&sucesso=1');
+            exit;
+        } else {
+            header('Location: ' . BASE_URL . 'cliente/dados?msg=' . urlencode('Erro ao atualizar a senha no banco de dados.') . '&sucesso=0');
+            exit;
+        }
+    }
+
+    public function tornar_padrao()
+    {
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+        $this->verificarLogin();
+
+        $enderecoId = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+        $clienteId = $_SESSION['cliente_id'];
+
+        if ($enderecoId) {
+            require_once __DIR__ . '/../models/Cliente.php';
+            if (Cliente::tornarEnderecoPadrao($enderecoId, $clienteId)) {
+                header('Location: ' . BASE_URL . 'cliente/dados?msg=' . urlencode('Endereço principal atualizado com sucesso!') . '&sucesso=1');
+                exit;
+            }
+        }
+
+        header('Location: ' . BASE_URL . 'cliente/dados?msg=' . urlencode('Erro ao atualizar o endereço principal.') . '&sucesso=0');
+        exit;
+    }
     public function salvarSessaoCarrinho()
     {
         if (session_status() == PHP_SESSION_NONE)
@@ -648,17 +694,14 @@ class ClienteAreaController
                     }
 
                     echo json_encode($retorno);
-
                 } catch (Exception $eDb) {
                     $pdo->rollBack();
                     throw new Exception("Erro ao salvar pedido: " . $eDb->getMessage());
                 }
-
             } else {
                 $msg = $resultado['status_detail'] ?? 'Pagamento recusado';
                 echo json_encode(['sucesso' => false, 'msg' => "Erro: $msg ($statusMP)"]);
             }
-
         } catch (Exception $e) {
             echo json_encode(['sucesso' => false, 'msg' => 'Erro interno: ' . $e->getMessage()]);
         }

@@ -629,5 +629,4 @@ require __DIR__ . '/layout/header.php';
         showToast("Endereço definido!", "success");
     }
 
-
 </script>
