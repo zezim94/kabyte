@@ -178,6 +178,20 @@ $enderecos = $enderecos ?? [];
         color: white;
     }
 
+    .btn-padrao {
+        background: #e8f4f8;
+        color: var(--primary);
+        border: 1px solid #bce0f3;
+        padding: 5px 10px;
+        font-size: 0.85rem;
+        border-radius: 6px;
+    }
+
+    .btn-padrao:hover {
+        background: var(--primary);
+        color: white;
+    }
+
     /* --- LISTA DE ENDEREÇOS (CARDS) --- */
     .address-grid {
         display: grid;
@@ -219,6 +233,7 @@ $enderecos = $enderecos ?? [];
         right: 15px;
         display: flex;
         gap: 5px;
+        align-items: center;
     }
 
     /* Formulário Novo Endereço (Toggle) */
@@ -245,45 +260,133 @@ $enderecos = $enderecos ?? [];
             padding: 20px;
         }
     }
+
+    /* Estilos do Modal de Erro */
+    .modal-erro-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(3px);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .modal-erro-overlay.active {
+        display: flex;
+        opacity: 1;
+    }
+
+    .modal-erro-box {
+        background: #fff;
+        width: 90%;
+        max-width: 350px;
+        border-radius: 12px;
+        padding: 30px 20px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        transform: translateY(-20px);
+        animation: desceModal 0.3s forwards;
+    }
+
+    @keyframes desceModal {
+        to {
+            transform: translateY(0);
+        }
+    }
+
+    .modal-erro-icon {
+        font-size: 3rem;
+        color: #e74c3c;
+        margin-bottom: 15px;
+    }
+
+    .modal-erro-box h3 {
+        margin: 0 0 10px 0;
+        color: #2c3e50;
+        font-size: 1.4rem;
+    }
+
+    .modal-erro-box p {
+        color: #555;
+        margin: 0 0 20px 0;
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+
+    .modal-erro-box button {
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.2s;
+        width: 100%;
+    }
+
+    .modal-erro-box button:hover {
+        background: #2980b9;
+    }
 </style>
 
 <?php if (isset($_GET['msg'])): ?>
-    <div style="max-width:900px; margin: 20px auto; padding: 15px; border-radius: 8px; text-align:center;
-        <?= ($_GET['sucesso'] == 1) ? 'background:#d4edda; color:#155724;' : 'background:#f8d7da; color:#721c24;' ?>">
-        <?= htmlspecialchars($_GET['msg']) ?>
-    </div>
+    <?php if (isset($_GET['sucesso']) && $_GET['sucesso'] == '0'): ?>
+        <div id="modalAviso" class="modal-erro-overlay active">
+            <div class="modal-erro-box">
+                <div class="modal-erro-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                <h3>Atenção</h3>
+                <p><?= htmlspecialchars($_GET['msg']) ?></p>
+                <button onclick="fecharModalAviso()">Entendi</button>
+            </div>
+        </div>
+    <?php else: ?>
+        <div id="faixaSucesso"
+            style="max-width:900px; margin: 20px auto; padding: 15px; border-radius: 8px; text-align:center; background:#d4edda; color:#155724; position:relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+            <?= htmlspecialchars($_GET['msg']) ?>
+            <button onclick="document.getElementById('faixaSucesso').style.display='none'"
+                style="position:absolute; right:15px; top:13px; background:none; border:none; font-size:1.2rem; cursor:pointer; color:#155724;">&times;</button>
+        </div>
+    <?php endif; ?>
 <?php endif; ?>
 
 <div class="profile-container">
 
     <div class="tabs-header">
-        <button class="tab-btn active" onclick="abrirTab(event, 'pessoal')">
+        <button id="btn_pessoal" class="tab-btn active" onclick="abrirTab(event, 'pessoal')">
             <i class="fas fa-user-circle"></i> Meus Dados
         </button>
-        <button class="tab-btn" onclick="abrirTab(event, 'enderecos')">
+        <button id="btn_enderecos" class="tab-btn" onclick="abrirTab(event, 'enderecos')">
             <i class="fas fa-map-marker-alt"></i> Endereços
         </button>
-        <button class="tab-btn" onclick="abrirTab(event, 'seguranca')">
+        <button id="btn_seguranca" class="tab-btn" onclick="abrirTab(event, 'seguranca')">
             <i class="fas fa-shield-alt"></i> Segurança
         </button>
     </div>
 
     <div id="pessoal" class="tab-content active">
-        <form action="<?= BASE_URL ?>cliente/atualizar_perfil" method="POST">
+        <form action="<?= BASE_URL ?>cliente/salvarDados" method="POST">
             <h3 class="form-section-title">Informações Básicas</h3>
 
             <div class="form-group">
                 <label>Nome Completo</label>
-                <input type="text" name="nome" class="form-control" value="<?= htmlspecialchars($cliente['nome']) ?>"
-                    required>
+                <input type="text" name="nome" class="form-control"
+                    value="<?= htmlspecialchars($cliente['nome'] ?? '') ?>" required>
             </div>
 
             <div class="row-dupla">
                 <div class="form-group">
                     <label>CPF</label>
                     <input type="text" name="cpf" class="form-control"
-                        value="<?= htmlspecialchars($cliente['cpf'] ?? '') ?>" readonly
-                        style="background:#eee; cursor:not-allowed;" title="O CPF não pode ser alterado">
+                        value="<?= htmlspecialchars($cliente['cpf'] ?? '') ?>">
                 </div>
                 <div class="form-group">
                     <label>Telefone / WhatsApp</label>
@@ -329,6 +432,11 @@ $enderecos = $enderecos ?? [];
                             <?php if ($end['is_padrao'] == 1): ?>
                                 <span class="badge"
                                     style="background:var(--primary); color:white; padding:4px 8px; border-radius:4px; font-size:0.75rem;">Principal</span>
+                            <?php else: ?>
+                                <a href="<?= BASE_URL ?>cliente/tornar_padrao?id=<?= $end['id'] ?>" class="btn btn-padrao"
+                                    title="Tornar Principal">
+                                    <i class="fas fa-star"></i> Usar Principal
+                                </a>
                             <?php endif; ?>
 
                             <a href="<?= BASE_URL ?>cliente/excluir_endereco?id=<?= $end['id'] ?>" class="btn-danger"
@@ -444,7 +552,7 @@ $enderecos = $enderecos ?? [];
 </div>
 
 <script>
-    // --- LÓGICA DE ABAS ---
+    // --- LÓGICA DE ABAS COM MEMÓRIA (EVITA SUMIR A ABA AO RECARREGAR) ---
     function abrirTab(evt, tabName) {
         const contents = document.getElementsByClassName("tab-content");
         for (let i = 0; i < contents.length; i++) {
@@ -457,7 +565,32 @@ $enderecos = $enderecos ?? [];
         }
 
         document.getElementById(tabName).classList.add("active");
-        evt.currentTarget.classList.add("active");
+
+        if (evt) {
+            evt.currentTarget.classList.add("active");
+        } else {
+            document.getElementById('btn_' + tabName).classList.add("active");
+        }
+
+        // Guarda a aba atual na memória temporária do navegador
+        sessionStorage.setItem('abaAtivaCliente', tabName);
+    }
+
+    // Executa assim que a página termina de carregar
+    document.addEventListener("DOMContentLoaded", function () {
+        let abaSalva = sessionStorage.getItem('abaAtivaCliente');
+        if (abaSalva) {
+            abrirTab(null, abaSalva);
+        }
+    });
+
+    // --- FECHAR MODAL ---
+    function fecharModalAviso() {
+        const modal = document.getElementById('modalAviso');
+        if (modal) {
+            modal.style.opacity = '0';
+            setTimeout(() => { modal.style.display = 'none'; }, 300);
+        }
     }
 
     // --- TOGGLE FORM ENDEREÇO ---
@@ -477,7 +610,6 @@ $enderecos = $enderecos ?? [];
         if (cep !== "") {
             const validacep = /^[0-9]{8}$/;
             if (validacep.test(cep)) {
-                // Feedback visual de carregamento
                 document.getElementById('rua').value = "...";
                 document.getElementById('bairro').value = "...";
                 document.getElementById('cidade').value = "...";
@@ -497,8 +629,8 @@ $enderecos = $enderecos ?? [];
             document.getElementById('rua').value = conteudo.logradouro;
             document.getElementById('bairro').value = conteudo.bairro;
             document.getElementById('cidade').value = conteudo.localidade;
-            document.getElementById('estado').value = conteudo.uf; // Novo campo preenchido
-            document.querySelector('[name="numero"]').focus(); // Joga o cursor para o numero
+            document.getElementById('estado').value = conteudo.uf;
+            document.querySelector('[name="numero"]').focus();
         } else {
             alert("CEP não encontrado.");
             document.getElementById('rua').value = "";

@@ -120,7 +120,8 @@
         position: fixed;
         bottom: 25px;
         right: 25px;
-        background-color: #3498db; /* Azul tecnologia */
+        background-color: #3498db;
+        /* Azul tecnologia */
         color: white;
         width: 60px;
         height: 60px;
@@ -129,12 +130,15 @@
         justify-content: center;
         align-items: center;
         font-size: 1.8rem;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         cursor: pointer;
         z-index: 1050;
         transition: transform 0.3s;
     }
-    .chatbot-btn:hover { transform: scale(1.1); }
+
+    .chatbot-btn:hover {
+        transform: scale(1.1);
+    }
 
     .chatbot-window {
         position: fixed;
@@ -144,7 +148,7 @@
         max-width: 90vw;
         background: #fff;
         border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         display: flex;
         flex-direction: column;
         z-index: 1050;
@@ -154,6 +158,7 @@
         transition: all 0.3s ease;
         height: 450px;
     }
+
     .chatbot-window.active {
         opacity: 1;
         pointer-events: all;
@@ -169,8 +174,19 @@
         justify-content: space-between;
         align-items: center;
     }
-    .chatbot-header h4 { margin: 0; font-size: 1.1rem; }
-    .chatbot-close { background: none; border: none; color: white; cursor: pointer; font-size: 1.2rem; }
+
+    .chatbot-header h4 {
+        margin: 0;
+        font-size: 1.1rem;
+    }
+
+    .chatbot-close {
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 1.2rem;
+    }
 
     .chatbot-body {
         flex: 1;
@@ -182,9 +198,28 @@
         gap: 10px;
     }
 
-    .chat-msg { max-width: 85%; padding: 10px 15px; border-radius: 15px; font-size: 0.95rem; line-height: 1.4; }
-    .chat-msg.ia { background: white; border: 1px solid #eee; align-self: flex-start; border-bottom-left-radius: 2px; color: #333;}
-    .chat-msg.user { background: #3498db; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+    .chat-msg {
+        max-width: 85%;
+        padding: 10px 15px;
+        border-radius: 15px;
+        font-size: 0.95rem;
+        line-height: 1.4;
+    }
+
+    .chat-msg.ia {
+        background: white;
+        border: 1px solid #eee;
+        align-self: flex-start;
+        border-bottom-left-radius: 2px;
+        color: #333;
+    }
+
+    .chat-msg.user {
+        background: #3498db;
+        color: white;
+        align-self: flex-end;
+        border-bottom-right-radius: 2px;
+    }
 
     .chatbot-footer {
         padding: 10px;
@@ -194,6 +229,7 @@
         display: flex;
         gap: 10px;
     }
+
     .chatbot-input {
         flex: 1;
         padding: 10px;
@@ -201,6 +237,7 @@
         border-radius: 20px;
         outline: none;
     }
+
     .chatbot-send {
         background: #3498db;
         color: white;
@@ -222,10 +259,12 @@
         <button class="chatbot-close" onclick="toggleChatbot()"><i class="fas fa-times"></i></button>
     </div>
     <div class="chatbot-body" id="chatbotBody">
-        <div class="chat-msg ia">Olá! Sou o assistente de IA da KaByte. Está procurando algum hardware, mouse, ou teclado específico? 💻</div>
+        <div class="chat-msg ia">Olá! Sou o assistente de IA da KaByte. Está procurando algum hardware, mouse, ou
+            teclado específico? 💻</div>
     </div>
     <div class="chatbot-footer">
-        <input type="text" id="chatbotInput" class="chatbot-input" placeholder="Digite sua pergunta..." onkeypress="handleEnter(event)">
+        <input type="text" id="chatbotInput" class="chatbot-input" placeholder="Digite sua pergunta..."
+            onkeypress="handleEnter(event)">
         <button class="chatbot-send" onclick="enviarMensagemIA()"><i class="fas fa-paper-plane"></i></button>
     </div>
 </div>
@@ -265,23 +304,31 @@
             });
             const dados = await res.json();
 
-            // 4. Atualiza o balãozinho com a resposta final
+            // 4. Atualiza o balãozinho com a resposta final e aplica formatações
             const balaoIA = document.getElementById(idDigitando);
             if (dados.sucesso) {
-                let htmlFormatado = dados.resposta
-                    .replace(/\n/g, '<br>') // Aplica as quebras de linha
-                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Transforma **texto** em negrito
-                    // Expressão Regular (Magia) para transformar a imagem Markdown em um Card HTML bonito:
-                    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<div style="text-align: center; margin: 12px 0; background: #fff; padding: 10px; border-radius: 8px; border: 1px solid #e0e0e0;"><img src="$2" alt="$1" style="max-width: 100%; max-height: 120px; object-fit: contain;"></div>');
-                
-                balaoIA.innerHTML = htmlFormatado;
+                let textoFormatado = dados.resposta;
+
+                // Converte imagens Markdown ![texto](url) em tags HTML bonitas
+                textoFormatado = textoFormatado.replace(/!\[.*?\]\((.*?)\)/g, '<img src="$1" style="max-width: 100px; height: auto; border-radius: 8px; display: block; margin: 10px 0; border: 1px solid #ddd; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">');
+
+                // NOVO: Converte links Markdown [Texto](url) em hiperlinks HTML reais abertos em nova aba
+                textoFormatado = textoFormatado.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" style="color: #3498db; text-decoration: underline; font-weight: bold;">$1</a>');
+
+                // Converte **Negrito** em tags HTML <strong>
+                textoFormatado = textoFormatado.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+                // Converte Quebras de Linha \n em tags <br>
+                textoFormatado = textoFormatado.replace(/\n/g, '<br>');
+
+                balaoIA.innerHTML = textoFormatado;
             } else {
                 balaoIA.innerHTML = '<i>Oops, deu um erro aqui: ' + dados.msg + '</i>';
             }
         } catch (e) {
             document.getElementById(idDigitando).innerHTML = '<i>Falha na conexão com a internet.</i>';
         }
-        
+
         chatBody.scrollTop = chatBody.scrollHeight;
     }
 </script>

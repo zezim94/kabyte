@@ -34,7 +34,8 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
 
         body {
             background-color:
-                <?= $config['cor_fundo'] ?? '#f4f7f6' ?>;
+                <?= $config['cor_fundo'] ?? '#f4f7f6' ?>
+            ;
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -46,7 +47,8 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
            ========================================= */
         .vitrine-header {
             background-color:
-                <?= $config['cor_header'] ?? '#2c3e50' ?>;
+                <?= $config['cor_header'] ?? '#2c3e50' ?>
+            ;
             position: relative;
             display: flex;
             justify-content: space-between;
@@ -67,6 +69,14 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
             max-width: 100%;
             display: flex;
             align-items: center;
+        }
+
+        /* Ajuste para o link da logo não ficar azul e sublinhado */
+        .vitrine-logo a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: inherit;
         }
 
         .vitrine-logo img {
@@ -169,7 +179,6 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
             height: 100%;
             background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(3px);
-            /* Desfoque de fundo elegante */
             z-index: 2000;
             display: none;
             justify-content: center;
@@ -185,7 +194,6 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
 
         .cart-modal-box {
             background: #f8f9fa;
-            /* Fundo cinza bem clarinho */
             width: 90%;
             max-width: 450px;
             border-radius: 16px;
@@ -204,7 +212,9 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
 
         .cart-modal-header {
             padding: 18px 20px;
-            background: <?= $config['cor_header'] ?? '#2c3e50' ?>;
+            background:
+                <?= $config['cor_header'] ?? '#2c3e50' ?>
+            ;
             color: white;
             display: flex;
             justify-content: space-between;
@@ -243,7 +253,6 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
             gap: 12px;
         }
 
-        /* Card individual do produto dentro do carrinho */
         .cart-modal-item {
             display: flex;
             align-items: center;
@@ -419,7 +428,6 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
             z-index: 3000;
-            /* Fica ACIMA do modal do carrinho */
             display: none;
             justify-content: center;
             align-items: center;
@@ -529,7 +537,6 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
                 background-color: rgba(255, 255, 255, 0.15);
             }
 
-            /* TRAVA O TAMANHO MESMO QUANDO CLICADO (OVERRIDE DO DESKTOP) */
             .header-search-input,
             .header-search-form:hover .header-search-input,
             .header-search-form:focus-within .header-search-input {
@@ -538,44 +545,44 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
             }
 
             .header-nav {
-                background-color: <?= $config['cor_header'] ?? '#2c3e50' ?>;
+                background-color:
+                    <?= $config['cor_header'] ?? '#2c3e50' ?>
+                ;
             }
         }
 
-       /* =========================================
+        /* =========================================
            AJUSTES PARA CELULARES (Telas até 430px)
            Barra de Pesquisa Quebrando a Linha
            ========================================= */
         @media (max-width: 430px) {
             .vitrine-header {
-                flex-wrap: wrap; /* Permite quebrar os elementos para a linha de baixo */
-                padding: 15px 15px; /* Aumenta a altura do cabeçalho */
+                flex-wrap: wrap;
+                padding: 15px 15px;
             }
 
             .header-left {
-                order: 1; /* Mantém a logo no topo esquerdo */
+                order: 1;
             }
 
             .header-right {
-                order: 2; /* Mantém o menu e carrinho no topo direito */
-                gap: 5px; /* Junta um pouco os ícones da direita */
+                order: 2;
+                gap: 5px;
             }
 
             .header-center {
-                order: 3; /* Força a barra de pesquisa a ser o 3º elemento (descer) */
-                flex-basis: 100%; /* Força a ocupar 100% da largura da tela */
-                margin-top: 15px; /* Afasta da linha de cima */
+                order: 3;
+                flex-basis: 100%;
+                margin-top: 15px;
             }
 
-            /* Estiliza a barra para ficar sempre visível embaixo */
             .header-search-form {
                 width: 100%;
-                background-color: rgba(255, 255, 255, 0.15); /* Fundo sempre visível */
-                border-radius: 8px; /* Formato mais quadrado e moderno */
+                background-color: rgba(255, 255, 255, 0.15);
+                border-radius: 8px;
                 justify-content: space-between;
             }
 
-            /* Força o input a ocupar o tamanho total da barra nova */
             .header-search-input,
             .header-search-form:hover .header-search-input,
             .header-search-form:focus-within .header-search-input {
@@ -584,25 +591,24 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
             }
 
             .vitrine-logo img {
-                max-height: 40px; /* Logo em bom tamanho */
+                max-height: 40px;
             }
 
             .vitrine-logo span {
                 font-size: 1.1rem !important;
-                display: inline-block !important; /* Agora o texto nunca mais some! */
+                display: inline-block !important;
             }
 
             .btn-header-cart {
                 padding: 8px 10px;
             }
 
-            /* --- Ajustes do Carrinho no Celular --- */
             .cart-modal-buttons {
                 flex-direction: column;
             }
 
             .cart-modal-item {
-                flex-wrap: wrap; /* Empurra os botões do produto para baixo se faltar espaço */
+                flex-wrap: wrap;
                 padding: 12px;
             }
 
@@ -630,7 +636,6 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
             }
         }
     </style>
-    </style>
 </head>
 
 <body>
@@ -641,18 +646,20 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
 
         <div class="header-left">
             <div class="vitrine-logo">
-                <?php
-                $caminhoBanco = $config['logo_loja'] ?? '';
-                $caminhoLimpo = explode('?', $caminhoBanco)[0];
-                $caminhoFisico = __DIR__ . '/../../' . $caminhoLimpo;
-                ?>
+                <a href="<?= BASE_URL ?>vitrine">
+                    <?php
+                    $caminhoBanco = $config['logo_loja'] ?? '';
+                    $caminhoLimpo = explode('?', $caminhoBanco)[0];
+                    $caminhoFisico = __DIR__ . '/../../' . $caminhoLimpo;
+                    ?>
 
-                <?php if (!empty($caminhoLimpo) && file_exists($caminhoFisico)): ?>
-                    <img src="<?= BASE_URL . $caminhoBanco ?>" alt="<?= htmlspecialchars($config['nome_loja']) ?>">
-                <?php else: ?>
-                    <i class="fas fa-bicycle"></i> <span
-                        style="margin-left:8px; font-size:1.2rem; color:white;"><?= htmlspecialchars($config['nome_loja']) ?></span>
-                <?php endif; ?>
+                    <?php if (!empty($caminhoLimpo) && file_exists($caminhoFisico)): ?>
+                        <img src="<?= BASE_URL . $caminhoBanco ?>" alt="<?= htmlspecialchars($config['nome_loja']) ?>">
+                    <?php else: ?>
+                        <i class="fas fa-bicycle" style="color:white;"></i> <span
+                            style="margin-left:8px; font-size:1.2rem; color:white;"><?= htmlspecialchars($config['nome_loja']) ?></span>
+                    <?php endif; ?>
+                </a>
             </div>
         </div>
 
@@ -696,7 +703,8 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
 
                 <?php if (isset($_SESSION['cliente_id'])): ?>
                     <a href="<?= BASE_URL ?>cliente/dados" class="btn-nav"><i class="fas fa-id-card"></i> Dados</a>
-                    <a href="<?= BASE_URL ?>cliente/sair" class="btn-nav btn-logout"><i class="fas fa-sign-out-alt"></i> Sair</a>
+                    <a href="<?= BASE_URL ?>cliente/sair" class="btn-nav btn-logout"><i class="fas fa-sign-out-alt"></i>
+                        Sair</a>
                 <?php endif; ?>
             </nav>
         </div>
@@ -713,10 +721,13 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
             </div>
 
             <div class="cart-modal-footer">
-                <div class="cart-modal-total"><span>Total:</span> <span>R$ <span id="cartModalTotal">0,00</span></span></div>
+                <div class="cart-modal-total"><span>Total:</span> <span>R$ <span id="cartModalTotal">0,00</span></span>
+                </div>
                 <div class="cart-modal-buttons">
-                    <button class="btn-clear-cart" onclick="verificarLimparCarrinho()"><i class="fas fa-trash-alt"></i> Esvaziar</button>
-                    <button class="btn-checkout-modal" onclick="irParaCheckout()">Avançar <i class="fas fa-arrow-right"></i></button>
+                    <button class="btn-clear-cart" onclick="verificarLimparCarrinho()"><i class="fas fa-trash-alt"></i>
+                        Esvaziar</button>
+                    <button class="btn-checkout-modal" onclick="irParaCheckout()">Avançar <i
+                            class="fas fa-arrow-right"></i></button>
                 </div>
             </div>
         </div>
@@ -729,7 +740,8 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
             <p id="confirmMessage">Deseja realmente excluir?</p>
             <div class="confirm-buttons">
                 <button class="confirm-btn-cancel" onclick="fecharConfirmModal()">Cancelar</button>
-                <button class="confirm-btn-danger" id="btnConfirmAction" onclick="executarAcaoConfirmada()">Sim, excluir</button>
+                <button class="confirm-btn-danger" id="btnConfirmAction" onclick="executarAcaoConfirmada()">Sim,
+                    excluir</button>
             </div>
         </div>
     </div>
@@ -814,7 +826,7 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
                                     <h4>${meta.nome}</h4>
                                     <div class="cart-modal-item-price">
                                         ${qtd}x R$ ${meta.preco.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} 
-                                        <strong>R$ ${subtotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong>
+                                        <br><strong>R$ ${subtotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong>
                                     </div>
                                 </div>
 
@@ -863,9 +875,8 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
             }
         }
 
-        // NOVO: Chama o Modal Customizado para 1 item
         function verificarRemoverItem(id) {
-            abrirConfirmModal('Remover Produto', 'Deseja retirar este item do seu pedido?', function() {
+            abrirConfirmModal('Remover Produto', 'Deseja retirar este item do seu pedido?', function () {
                 removerItemCarrinho(id);
             });
         }
@@ -890,9 +901,8 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
             }
         }
 
-        // NOVO: Chama o Modal Customizado para limpar tudo
         function verificarLimparCarrinho() {
-            abrirConfirmModal('Esvaziar Carrinho', 'Tem certeza que deseja remover todos os itens?', function() {
+            abrirConfirmModal('Esvaziar Carrinho', 'Tem certeza que deseja remover todos os itens?', function () {
                 limparCarrinhoModal();
             });
         }
@@ -909,7 +919,7 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
                 document.querySelectorAll('.detalhe-qty-display').forEach(el => el.innerText = '0');
 
                 if (typeof atualizarBarraInferior === 'function') atualizarBarraInferior();
-                fecharModalCarrinho(); // Fecha o carrinho depois de limpar tudo
+                fecharModalCarrinho();
             }
         }
     </script>

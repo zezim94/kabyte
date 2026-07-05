@@ -160,9 +160,21 @@ if ($rota == 'cliente/dados') {
     exit;
 }
 
-if ($rota == 'cliente/salvar_dados') {
+if ($rota == 'cliente/salvarDados') {
     require 'controllers/ClienteAreaController.php';
     (new ClienteAreaController())->salvarDados();
+    exit;
+}
+
+if ($rota == 'cliente/tornar_padrao') {
+    require 'controllers/ClienteAreaController.php';
+    (new ClienteAreaController())->tornar_padrao();
+    exit;
+}
+
+if ($rota == 'cliente/atualizar_senha') {
+    require 'controllers/ClienteAreaController.php';
+    (new ClienteAreaController())->atualizar_senha();
     exit;
 }
 

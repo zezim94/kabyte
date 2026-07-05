@@ -1,4 +1,8 @@
-<?php require __DIR__ . '/../layout/header_public.php'; ?>
+<?php 
+require __DIR__ . '/../layout/header_public.php'; 
+require_once __DIR__ . '/../../models/Chave.php';
+$mpPublicKey = Chave::get('mp_public_key');
+?>
 <script src="https://sdk.mercadopago.com/js/v2"></script>
 
 <style>
@@ -238,7 +242,10 @@
     });
 
     // --- 2. MERCADO PAGO ---
-    const mp = new MercadoPago("<?= MP_PUBLIC_KEY ?>", { locale: 'pt-BR' });
+   const mp = new MercadoPago("<?= $mpPublicKey ?>", {
+        locale: "pt-BR",
+        advancedFraudPrevention: false
+    });
     const bricksBuilder = mp.bricks();
 
     const renderPaymentBrick = async (bricksBuilder) => {

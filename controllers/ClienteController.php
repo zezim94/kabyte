@@ -167,9 +167,13 @@ class ClienteController
             $nome = trim($_POST['nome'] ?? '');
             $email = filter_var($_POST['email'] ?? '', FILTER_SANITIZE_EMAIL);
             $telefone = trim($_POST['telefone'] ?? '');
+
+            // Remove pontuações (pontos e traços) para salvar o CPF limpo e comparar melhor
+            $cpf = preg_replace('/[^0-9]/', '', $_POST['cpf'] ?? '');
+
             $senha = $_POST['senha'] ?? '';
 
-            // 1. Verifica se o e-mail já está cadastrado
+            // 1. Validação de E-mail
             $clienteExistente = Cliente::buscarPorEmail($email);
             if ($clienteExistente) {
                 $erro = "Este e-mail já está cadastrado. Por favor, faça login.";
@@ -177,32 +181,39 @@ class ClienteController
                 return;
             }
 
-            // 2. Criptografa a senha por segurança
+            // 2. Validação de CPF (A NOVA REGRA AQUI)
+            if (!empty($cpf)) {
+                $cpfExistente = Cliente::buscarPorCpf($cpf);
+                if ($cpfExistente) {
+                    $erro = "Este CPF já está cadastrado em nossa base de dados.";
+                    require __DIR__ . '/../views/cliente_cadastro.php';
+                    return;
+                }
+            }
+
+            // 3. Criptografa a senha por segurança
             $senhaCriptografada = password_hash($senha, PASSWORD_DEFAULT);
 
-            // 3. Monta o array de dados para salvar
+            // 4. Monta o array de dados para salvar
             $dados = [
                 'nome' => $nome,
                 'email' => $email,
                 'telefone' => $telefone,
+                'cpf' => $cpf,
                 'senha' => $senhaCriptografada
             ];
 
-            // 4. Salva no banco de dados usando a nova função (que devolve o ID correto)
+            // 5. Salva no banco de dados
             $idNovoCliente = Cliente::registrarNovoCliente($dados);
 
             if ($idNovoCliente) {
-                // Cadastro feito com sucesso! Faz o login usando o ID correto.
-
-                // Se a sessão já estiver aberta no projeto, tire o session_start()
                 if (session_status() === PHP_SESSION_NONE) {
                     session_start();
                 }
 
-                $_SESSION['cliente_id'] = $idNovoCliente; // Agora recebe o ID real (ex: 15)
+                $_SESSION['cliente_id'] = $idNovoCliente;
                 $_SESSION['cliente_nome'] = $nome;
 
-                // Redireciona para a vitrine
                 header('Location: ' . BASE_URL . 'vitrine');
                 exit;
             } else {

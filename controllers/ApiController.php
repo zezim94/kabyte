@@ -98,11 +98,11 @@ class ApiController
 
         if (empty($termo)) {
             // Traz os 50 primeiros se não digitar nada
-            $stmt = $pdo->query("SELECT * FROM produtos ORDER BY nome ASC LIMIT 50");
+            $stmt = $pdo->query("SELECT * FROM produtos ORDER BY nome ASC");
             $produtos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         } else {
             // Filtra pelo nome
-            $stmt = $pdo->prepare("SELECT * FROM produtos WHERE nome LIKE ? LIMIT 20");
+            $stmt = $pdo->prepare("SELECT * FROM produtos WHERE nome LIKE ?");
             $stmt->execute(["%$termo%"]);
             $produtos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
@@ -515,6 +515,7 @@ class ApiController
     public function chatIa()
     {
         header('Content-Type: application/json');
+        require_once __DIR__ . '/../models/Chave.php';
 
         $dados = json_decode(file_get_contents('php://input'), true);
         $mensagemUsuario = $dados['mensagem'] ?? '';
@@ -527,15 +528,15 @@ class ApiController
         try {
             $pdo = Database::connect();
 
-            // 1. BUSCA INCLUINDO A DESCRIÇÃO DO PRODUTO (p.descricao)
-            $stmt = $pdo->query("SELECT p.nome, p.preco, p.preco_promocao, p.promocao, p.descricao, p.imagem, c.nome as categoria 
+            // 1. BUSCA INCLUINDO O ID DO PRODUTO (p.id)
+            $stmt = $pdo->query("SELECT p.id, p.nome, p.preco, p.preco_promocao, p.promocao, p.descricao, p.imagem, c.nome as categoria 
                                  FROM produtos p 
                                  LEFT JOIN categorias c ON p.categoria_id = c.id 
                                  WHERE p.estoque > 0 
                                  ORDER BY c.nome ASC");
             $produtosLoja = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            // 2. FORMATA A LISTA (Agora a IA vai ler as especificações técnicas)
+            // 2. FORMATA A LISTA (Agora incluindo o Link de Detalhes)
             $listaTexto = "";
             foreach ($produtosLoja as $p) {
                 $preco = ($p['promocao'] == 1) ? $p['preco_promocao'] : $p['preco'];
@@ -544,33 +545,40 @@ class ApiController
                 // Monta o caminho da imagem (Se não tiver, deixa vazio)
                 $urlImg = !empty($p['imagem']) ? BASE_URL . "public/uploads/" . $p['imagem'] : "";
 
-                $listaTexto .= "- Produto: {$p['nome']} | Imagem: {$urlImg} | Categoria: {$p['categoria']} | Valor: R$ " . number_format($preco, 2, ',', '.') . " | Detalhes: {$descricaoLimpa}\n";
+                // Monta a URL de detalhes exata do produto baseada no padrão do seu index.php
+                $urlDetalhes = BASE_URL . "index.php?rota=produto/detalhes&id=" . $p['id'];
+
+                $listaTexto .= "- Produto: {$p['nome']} | LinkDetalhes: {$urlDetalhes} | Imagem: {$urlImg} | Categoria: {$p['categoria']} | Valor: R$ " . number_format($preco, 2, ',', '.') . " | Detalhes: {$descricaoLimpa}\n";
             }
 
             // 3. SELEÇÃO DA CHAVE DA API
-            $apiKeys = array_values(array_filter([
-                $_ENV['GEMINI_API_KEY_1'] ?? null,
-                $_ENV['GEMINI_API_KEY_2'] ?? null,
-                $_ENV['GEMINI_API_KEY_3'] ?? null,
-                $_ENV['GEMINI_API_KEY_4'] ?? null,
-            ]));
+            $apiKeys = Chave::getChavesGemini();
 
-            $apiKey = $apiKeys[array_rand($apiKeys)];
+            // Se o array de chaves ambiente estiver vazio, use uma string padrão ou trate o erro
+           if (empty($apiKeys)) {
+                echo json_encode(['sucesso' => false, 'msg' => 'Nenhuma chave de IA configurada no banco de dados.']);
+                return;
+            }
+
             $chaveEscolhida = $apiKeys[array_rand($apiKeys)];
             $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=" . $chaveEscolhida;
 
-            // 4. INSTRUÇÕES AVANÇADAS (Forçando a exibição da imagem com regras estritas)
+            // 4. INSTRUÇÕES AVANÇADAS REFINADAS (Forçando links dinâmicos)
             $instrucoes = "Você é o especialista de vendas da KaByte, uma loja de periféricos e hardware.
             Sua missão é ajudar o cliente a encontrar itens na nossa lista de estoque abaixo.
 
             REGRAS CRÍTICAS DE FORMATAÇÃO E RESPOSTA:
-            1. Analise os 'Detalhes' de cada produto. Exemplo: se pedirem para 'natação', sugira itens 'à prova d'água'.
-            2. SEMPRE que recomendar ou citar um produto, você DEVE mostrar a foto dele logo acima do nome, usando EXATAMENTE o formato de imagem do Markdown: ![foto](URL_AQUI). A URL está no campo 'Imagem' da lista. Se não tiver URL, não coloque a imagem.
-            3. Use **negrito** para nomes e preços. Exemplo: ![foto](https://...) **Teclado Gamer** - **R$ 150,00**.
-            4. Seja simpático, prestativo e use emojis (🖱️, 🖥️, ⌨️, ⌚).
-            5. Se o item não estiver na lista abaixo, diga: 'No momento não temos esse item específico em estoque, mas fique de olho no site!'.
+            1. Analise os 'Detalhes' de cada produto para entender a necessidade do cliente.
+            2. SEMPRE que recomendar ou citar um produto, você DEVE mostrar a foto dele logo acima do nome, usando o formato de imagem do Markdown: ![foto](URL_DA_IMAGEM).
+            3. O nome do produto deve ser obrigatoriamente um link clicável que aponte para a URL do campo 'LinkDetalhes' usando a formatação Markdown [Nome do Produto](URL_DO_LINK).
+            4. Use **negrito** para destacar o link do produto e o preço. 
+               Exemplo completo de exibição:
+               ![foto](http://localhost/.../imagem.jpg)
+               **[Mouse Gamer Razer](http://localhost/.../index.php?rota=produto/detalhes&id=5)** - **R$ 250,00**
+            5. Seja simpático, prestativo e use emojis (🖱️, 🖥️, ⌨️, 🎧).
+            6. Se o item não estiver na lista abaixo, diga: 'No momento não temos esse item específico em estoque, mas fique de olho no site que sempre chegam novidades!'.
 
-            ESTOQUE REAL DA KABYTE AGORA (Com um resumo das especificações):
+            ESTOQUE REAL DA KABYTE AGORA:
             $listaTexto";
 
             $body = [
@@ -587,6 +595,8 @@ class ApiController
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
             $respostaApi = curl_exec($ch);
+            curl_close($ch);
+            
             $resultado = json_decode($respostaApi, true);
 
             if (isset($resultado['candidates'][0]['content']['parts'][0]['text'])) {
