@@ -41,4 +41,20 @@ class Chave
         }
         return $chaves_gemini;
     }
+
+    // Busca todas as chaves completas para exibir no painel Admin
+    public static function buscarTodasAdmin()
+    {
+        $pdo = Database::connect();
+        $stmt = $pdo->query("SELECT * FROM chaves ORDER BY id ASC");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Atualiza o valor de uma chave específica pelo ID
+    public static function atualizar($id, $valor)
+    {
+        $pdo = Database::connect();
+        $stmt = $pdo->prepare("UPDATE chaves SET valor = ? WHERE id = ?");
+        return $stmt->execute([$valor, $id]);
+    }
 }

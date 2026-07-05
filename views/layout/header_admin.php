@@ -58,9 +58,15 @@ $nome = $_SESSION['nome'] ?? 'Admin';
             <a href="<?= BASE_URL ?>configuracao" class="menu-item">
                 <i class="fas fa-cog"></i> Configurar
             </a>
+
+            <a href="<?= BASE_URL ?>index.php?rota=admin/chaves" class="menu-item">
+                <i class="fas fa-key"></i> Chaves
+            </a>
+
             <a href="<?= BASE_URL ?>home" class="menu-item btn-pdv">
                 <i class="fas fa-cash-register"></i> Caixa
             </a>
+            
 
             <div class="user-area-mobile">
                 <span>Olá, <?= explode(' ', $nome)[0] ?></span>

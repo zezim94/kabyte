@@ -192,12 +192,18 @@
     <div class="login-box">
 
         <div class="logo-container">
-            <img src="public/uploads/login.jpeg" alt="Logo KaByte" class="logo-img">
+            <img src="<?= BASE_URL ?>public/uploads/login.jpeg" alt="Logo KaByte" class="logo-img">
             <h2>KABYTE</h2>
             <p>Acesso ao Sistema</p>
         </div>
 
-        <form method="POST" action="index.php?rota=autenticar">
+        <?php if (isset($erro)): ?>
+            <div style="background: #f8d7da; color: #721c24; padding: 10px; border-radius: 6px; margin-bottom: 15px; text-align: center; font-size: 0.9rem; border: 1px solid #f5c6cb;">
+                <i class="fas fa-exclamation-circle"></i> <?= htmlspecialchars($erro) ?>
+            </div>
+        <?php endif; ?>
+
+        <form method="POST" action="<?= BASE_URL ?>index.php?rota=autenticar">
 
             <div class="input-group">
                 <i class="fas fa-user"></i>
@@ -213,9 +219,8 @@
             <button type="submit" class="btn-entrar">Entrar</button>
         </form>
 
-        <div class="separator">ou entre com</div>
-
-        <?php if (isset($authUrl)): ?>
+        <?php if (isset($authUrl) && $authUrl !== '#'): ?>
+            <div class="separator">ou entre com</div>
             <a href="<?= $authUrl ?>" class="btn-google">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google Logo">
                 Login com Google

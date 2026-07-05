@@ -13,16 +13,29 @@ class ClienteAreaController
             header('Location: ' . BASE_URL . 'clientes/painel');
             exit;
         }
+
+        // 1. Requer o Model (caso ainda não esteja no topo do ficheiro)
+        require_once __DIR__ . '/../models/Chave.php';
+
+        // 2. Puxa a chave diretamente do banco de dados
+        $googleClientId = Chave::get('google_client_id');
+
         $callbackUrl = BASE_URL . 'index.php?rota=cliente/google_callback';
 
         $params = [
-            'client_id' => GOOGLE_CLIENT_ID,
+            'client_id' => $googleClientId, // <--- AGORA USA A CHAVE DO BANCO
             'redirect_uri' => $callbackUrl, // <--- FORÇA O CALLBACK DO CLIENTE
             'response_type' => 'code',
             'scope' => 'email profile',
             'access_type' => 'online'
         ];
-        $authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' . http_build_query($params);
+
+        // Se a chave não estiver configurada no banco, podemos evitar montar uma URL quebrada
+        if (empty($googleClientId)) {
+            $authUrl = '#'; // Ou você pode criar uma mensagem de erro na view
+        } else {
+            $authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' . http_build_query($params);
+        }
 
         require __DIR__ . '/../views/clientes/login.php';
     }
@@ -120,18 +133,24 @@ class ClienteAreaController
     }
 
     // --- HELPERS cURL (Para funcionar sem Composer) ---
-
     private function pegarTokenGoogle($code)
     {
+        // 1. Requer o Model para garantir o acesso ao banco
+        require_once __DIR__ . '/../models/Chave.php';
+
+        // 2. Puxa as credenciais da tabela 'chaves'
+        $googleClientId = Chave::get('google_client_id');
+        $googleClientSecret = Chave::get('google_client_secret');
+
         // A URL DE CALLBACK TEM QUE SER IDÊNTICA A QUE GEROU O LINK
         $callbackUrl = BASE_URL . 'index.php?rota=cliente/google_callback';
 
         $url = 'https://oauth2.googleapis.com/token';
         $postData = [
             'code' => $code,
-            'client_id' => GOOGLE_CLIENT_ID,
-            'client_secret' => GOOGLE_CLIENT_SECRET,
-            'redirect_uri' => $callbackUrl, // <--- IMPORTANTE: MUDAR AQUI TAMBÉM
+            'client_id' => $googleClientId, // <--- USA A CHAVE DO BANCO
+            'client_secret' => $googleClientSecret, // <--- USA O SECRET DO BANCO
+            'redirect_uri' => $callbackUrl,
             'grant_type' => 'authorization_code'
         ];
 
@@ -370,7 +389,7 @@ class ClienteAreaController
             $_SESSION['cliente_nome'] = $dadosPessoais['nome'];
         }
 
-       // REDIRECIONAMENTO CORRIGIDO:
+        // REDIRECIONAMENTO CORRIGIDO:
         header('Location: ' . BASE_URL . 'index.php?rota=cliente/dados&msg=' . urlencode($resultado['msg']) . '&sucesso=' . ($resultado['sucesso'] ? 1 : 0));
         exit;
     }
@@ -708,13 +727,14 @@ class ClienteAreaController
         exit;
     }
 
-    public function telaPedidoConfirmado()
+  public function telaPedidoConfirmado()
     {
         $this->verificarLogin();
 
         $vendaId = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
         if (!$vendaId) {
-            header('Location: ' . BASE_URL . 'cliente/painel');
+            // Atualizado para o formato de rotas padrão
+            header('Location: ' . BASE_URL . 'index.php?rota=cliente/painel'); 
             exit;
         }
 
@@ -725,8 +745,9 @@ class ClienteAreaController
         $stmt->execute([$vendaId, $_SESSION['cliente_id']]);
         $venda = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if (!$venda)
+        if (!$venda) {
             die("Venda não encontrada.");
+        }
 
         // 2. Busca o Pagamento associado
         $stmtPag = $pdo->prepare("SELECT * FROM pagamentos WHERE venda_id = ? ORDER BY id DESC LIMIT 1");
@@ -738,31 +759,37 @@ class ClienteAreaController
 
         if ($pagamentoDB && $pagamentoDB['status'] !== 'approved') {
 
-            // --- CÓDIGO MANUAL SEM SDK ---
-            $mpId = $pagamentoDB['mp_id'];
-            $url = "https://api.mercadopago.com/v1/payments/$mpId";
+            // Requer o Model e busca o Token dinâmico do Banco de Dados
+            require_once __DIR__ . '/../models/Chave.php';
+            $token = Chave::get('mp_access_token');
 
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                'Authorization: Bearer ' . MP_ACCESS_TOKEN, // Seu token do config.php
-                'Content-Type: application/json'
-            ]);
+            if (!empty($token)) {
+                // --- CÓDIGO MANUAL SEM SDK ---
+                $mpId = $pagamentoDB['mp_id'];
+                $url = "https://api.mercadopago.com/v1/payments/$mpId";
 
-            // Descomente abaixo se der erro de SSL no Localhost
-            // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, $url);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                    'Authorization: Bearer ' . $token, // <-- AQUI ENTRA A CHAVE DINÂMICA
+                    'Content-Type: application/json'
+                ]);
 
-            $response = curl_exec($ch);
+                // Descomente abaixo se der erro de SSL no Localhost
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
-            if (!curl_errno($ch)) {
-                // Decodifica como OBJETO (sem o true no segundo parametro)
-                // Isso é importante porque sua View acessa como $dadosMP->propriedade
-                $dadosMP = json_decode($response);
+                $response = curl_exec($ch);
+
+                if (!curl_errno($ch)) {
+                    // Decodifica como OBJETO (sem o true no segundo parametro)
+                    // Isso é importante porque a View acessa como $dadosMP->propriedade
+                    $dadosMP = json_decode($response);
+                }
+
+                curl_close($ch);
+                // -----------------------------
             }
-
-            curl_close($ch);
-            // -----------------------------
         }
 
         require __DIR__ . '/../views/clientes/pedido_confirmado.php';

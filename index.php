@@ -289,6 +289,19 @@ if (!isset($_SESSION['usuario_id'])) {
 // --- ROTAS PROTEGIDAS ---
 switch ($rota) {
 
+// Rotas de Gestão de Chaves (Painel Admin)
+    case 'admin/chaves':
+        require_once 'controllers/ChaveController.php';
+        $controller = new ChaveController();
+        $controller->index();
+        break;
+
+    case 'admin/chaves/salvar':
+        require_once 'controllers/ChaveController.php';
+        $controller = new ChaveController();
+        $controller->salvar();
+        break;
+
     case 'vitrine':
         require 'controllers/ProdutoController.php';
         (new ProdutoController())->vitrine();

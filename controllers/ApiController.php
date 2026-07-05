@@ -555,25 +555,17 @@ class ApiController
             $apiKeys = Chave::getChavesGemini();
 
             // Se o array de chaves ambiente estiver vazio, use uma string padrão ou trate o erro
-           if (empty($apiKeys)) {
+            if (empty($apiKeys)) {
                 echo json_encode(['sucesso' => false, 'msg' => 'Nenhuma chave de IA configurada no banco de dados.']);
                 return;
             }
 
-<<<<<<< HEAD
-=======
+
             // Se o array de chaves ambiente estiver vazio, use uma string padrão ou trate o erro
             if (empty($apiKeys)) {
-                // Caso queira manter o fallback das chaves estáticas que testamos antes:
-                $apiKeys = [
-                    'AIzaSyC6WH7XPo28lBKwO-W51Pg-1qsugOfqPvo',
-                    'AIzaSyDoa-lpA8YY5_DPf0JPWhv2_Uau3EuoybA',
-                    'AIzaSyCvYKsZDUr9cX6_maoZUiiJObIjXhee54g',
-                    'AIzaSyDEH39Nkf3FV6jSLq6Ehai-CED6HOunwm4'
-                ];
+                echo json_encode(['sucesso' => false, 'msg' => 'Nenhuma chave de IA configurada no banco de dados.']);
+                return;
             }
-
->>>>>>> dcadad5945728e292d18bdc11b42d310c9849ab0
             $chaveEscolhida = $apiKeys[array_rand($apiKeys)];
             $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=" . $chaveEscolhida;
 
@@ -610,7 +602,7 @@ class ApiController
 
             $respostaApi = curl_exec($ch);
             curl_close($ch);
-            
+
             $resultado = json_decode($respostaApi, true);
 
             if (isset($resultado['candidates'][0]['content']['parts'][0]['text'])) {

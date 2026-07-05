@@ -1,20 +1,34 @@
 <?php
 require_once __DIR__ . '/../models/Usuario.php';
 require_once __DIR__ . '/../models/Auth.php';
+require_once __DIR__ . '/../models/Chave.php'; // <-- INCLUSÃO DO MODEL DE CHAVES
 
 class LoginController
 {
 
     public function index()
     {
+        // 1. Puxa a chave do banco de dados
+        $googleClientId = Chave::get('google_client_id');
+        
+        // 2. Define a URL de retorno dinamicamente
+        $callbackUrl = BASE_URL . 'index.php?rota=login/google_callback';
+
         $params = [
-            'client_id' => GOOGLE_CLIENT_ID,
-            'redirect_uri' => GOOGLE_REDIRECT_URL,
+            'client_id' => $googleClientId,
+            'redirect_uri' => $callbackUrl,
             'response_type' => 'code',
             'scope' => 'email profile',
             'access_type' => 'online'
         ];
-        $authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' . http_build_query($params);
+        
+        // Se a chave estiver vazia no banco, evita gerar um link quebrado
+        if (empty($googleClientId)) {
+            $authUrl = '#'; 
+        } else {
+            $authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' . http_build_query($params);
+        }
+        
         require __DIR__ . '/../views/login.php';
     }
 
@@ -91,12 +105,19 @@ class LoginController
 
     private function pegarTokenGoogle($code)
     {
+        // Puxa credenciais do banco
+        $googleClientId = Chave::get('google_client_id');
+        $googleClientSecret = Chave::get('google_client_secret');
+        
+        // Tem que ser EXATAMENTE igual ao $callbackUrl do método index()
+        $callbackUrl = BASE_URL . 'index.php?rota=login/google_callback';
+
         $url = 'https://oauth2.googleapis.com/token';
         $postData = [
             'code' => $code,
-            'client_id' => GOOGLE_CLIENT_ID,
-            'client_secret' => GOOGLE_CLIENT_SECRET,
-            'redirect_uri' => GOOGLE_REDIRECT_URL,
+            'client_id' => $googleClientId,
+            'client_secret' => $googleClientSecret,
+            'redirect_uri' => $callbackUrl,
             'grant_type' => 'authorization_code'
         ];
 
