@@ -1,7 +1,4 @@
 <style>
-    /* ==============================
-       ESTILOS DO RODAPÉ (Footer)
-       ============================== */
     .site-footer {
         background-color: #2c3e50;
         /* Cor escura profissional */

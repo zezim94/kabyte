@@ -6,7 +6,6 @@ $enderecos = $enderecos ?? [];
 ?>
 
 <style>
-    /* --- VARIAVEIS E GERAL --- */
     :root {
         --primary: #3498db;
         --secondary: #2c3e50;

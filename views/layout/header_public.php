@@ -23,9 +23,6 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
     <meta name="google-site-verification" content="cewLTqSJ-DR4m_I07HHno2zznAe6nHe1H74SZIBWouQ" />
 
     <style>
-        /* =========================================
-           RESETS E TRAVAS GERAIS
-           ========================================= */
         *,
         *::before,
         *::after {
