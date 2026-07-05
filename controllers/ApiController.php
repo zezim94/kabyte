@@ -560,6 +560,20 @@ class ApiController
                 return;
             }
 
+<<<<<<< HEAD
+=======
+            // Se o array de chaves ambiente estiver vazio, use uma string padrão ou trate o erro
+            if (empty($apiKeys)) {
+                // Caso queira manter o fallback das chaves estáticas que testamos antes:
+                $apiKeys = [
+                    'AIzaSyC6WH7XPo28lBKwO-W51Pg-1qsugOfqPvo',
+                    'AIzaSyDoa-lpA8YY5_DPf0JPWhv2_Uau3EuoybA',
+                    'AIzaSyCvYKsZDUr9cX6_maoZUiiJObIjXhee54g',
+                    'AIzaSyDEH39Nkf3FV6jSLq6Ehai-CED6HOunwm4'
+                ];
+            }
+
+>>>>>>> dcadad5945728e292d18bdc11b42d310c9849ab0
             $chaveEscolhida = $apiKeys[array_rand($apiKeys)];
             $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=" . $chaveEscolhida;
 

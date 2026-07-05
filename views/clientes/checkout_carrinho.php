@@ -1,7 +1,14 @@
 <?php 
 require __DIR__ . '/../layout/header_public.php'; 
+<<<<<<< HEAD
 require_once __DIR__ . '/../../models/Chave.php';
 $mpPublicKey = Chave::get('mp_public_key');
+=======
+require_once __DIR__ . '/../../models/Cliente.php';
+
+// Busca o endereço principal do cliente logado na nova tabela de endereços
+$enderecoPadrao = Cliente::buscarEnderecoPadrao($_SESSION['cliente_id']);
+>>>>>>> dcadad5945728e292d18bdc11b42d310c9849ab0
 ?>
 <script src="https://sdk.mercadopago.com/js/v2"></script>
 
@@ -117,17 +124,21 @@ $mpPublicKey = Chave::get('mp_public_key');
                 <label
                     style="display:block; margin-bottom:10px; cursor:pointer; background: #f9f9f9; padding: 10px; border-radius: 5px;">
                     <input type="radio" name="tipo_end" value="salvo" checked onclick="toggleFormEndereco(false)">
-                    <b>Usar endereço do cadastro:</b><br>
+                    <b>Usar meu endereço principal:</b><br>
                     <small style="color:#555; margin-left: 20px; display: block; margin-top: 5px;">
                         <?php
-                        // Verifica se tem endereço, senão mostra aviso
-                        if (!empty($cliente['rua'])) {
-                            echo htmlspecialchars($cliente['rua']) . ', ' .
-                                htmlspecialchars($cliente['numero']) . ' - ' .
-                                htmlspecialchars($cliente['bairro']) . ' (' .
-                                htmlspecialchars($cliente['cidade']) . ')';
+                        // Mostra o endereço da tabela 'enderecos'
+                        if ($enderecoPadrao) {
+                            echo htmlspecialchars($enderecoPadrao['rua']) . ', ' .
+                                 htmlspecialchars($enderecoPadrao['numero']) . ' - ' .
+                                 htmlspecialchars($enderecoPadrao['bairro']) . ' (' .
+                                 htmlspecialchars($enderecoPadrao['cidade']) . ')';
+                            
+                            if (!empty($enderecoPadrao['complemento'])) {
+                                echo ' - Comp: ' . htmlspecialchars($enderecoPadrao['complemento']);
+                            }
                         } else {
-                            echo '<span style="color:red">Nenhum endereço cadastrado. Preencha abaixo.</span>';
+                            echo '<span style="color:red">Você não tem um endereço salvo. Marque a opção abaixo para digitar um agora.</span>';
                         }
                         ?>
                     </small>
@@ -205,8 +216,8 @@ $mpPublicKey = Chave::get('mp_public_key');
     let tipoEntrega = 'retirada';
     let usarEnderecoNovo = false;
 
-    // Se o cliente não tiver endereço salvo, forçamos "Novo Endereço"
-    const temEnderecoSalvo = <?= !empty($cliente['rua']) ? 'true' : 'false' ?>;
+    // Se o cliente não tiver endereço salvo na tabela 'enderecos', forçamos "Novo Endereço"
+    const temEnderecoSalvo = <?= $enderecoPadrao ? 'true' : 'false' ?>;
 
     function selecionarEntrega(tipo) {
         tipoEntrega = tipo;
@@ -287,11 +298,11 @@ $mpPublicKey = Chave::get('mp_public_key');
                                 enderecoFinal = `${rua}, ${num} - ${bairro}, ${cidade}`;
                             } else {
                                 if (!temEnderecoSalvo) {
-                                    alert("Você não tem endereço salvo. Selecione 'Entregar em outro endereço'.");
+                                    alert("Você não tem endereço principal salvo. Selecione 'Entregar em outro endereço'.");
                                     reject(); return;
                                 }
-                                // PHP injeta o endereço aqui com segurança
-                                enderecoFinal = "<?= !empty($cliente['rua']) ? $cliente['rua'] . ', ' . $cliente['numero'] . ' - ' . $cliente['bairro'] : '' ?>";
+                                // Injeta o endereço do banco com segurança
+                                enderecoFinal = "<?= $enderecoPadrao ? htmlspecialchars($enderecoPadrao['rua']) . ', ' . htmlspecialchars($enderecoPadrao['numero']) . ' - ' . htmlspecialchars($enderecoPadrao['bairro']) . ' (' . htmlspecialchars($enderecoPadrao['cidade']) . ')' : '' ?>";
                             }
 
                             // Validação Data
@@ -326,6 +337,7 @@ $mpPublicKey = Chave::get('mp_public_key');
                             .then(res => {
                                 if (res.sucesso) {
                                     localStorage.removeItem('meu_carrinho_pdv');
+                                    localStorage.removeItem('carrinho_meta');
                                     window.location.href = "<?= BASE_URL ?>cliente/pedido_confirmado?id=" + res.venda_id;
                                     resolve();
                                 } else {
