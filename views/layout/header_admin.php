@@ -1,91 +1,131 @@
 <?php
-// Lógica PHP para recuperar o nome da sessão
-if (session_status() == PHP_SESSION_NONE) {
+if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-$nome = $_SESSION['nome'] ?? 'Admin';
+$nomeCompleto = $_SESSION['nome'] ?? 'Admin';
+$primeiroNome = explode(' ', trim($nomeCompleto))[0];
+
+// Identifica a rota atual para destacar o link ativo
+$rotaAtual = $_GET['rota'] ?? '';
+$uri = $_SERVER['REQUEST_URI'];
 ?>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="icon"
-    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚲</text></svg>">
+<!DOCTYPE html>
+<html lang="pt-BR">
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚲</text></svg>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>public/css/adm_header.css">
+    <script>
+        const BASE_URL = "<?= BASE_URL ?>";
+    </script>
+</head>
 
-<!-- adm -->
-<link rel="stylesheet" href="<?= BASE_URL ?>public/css/adm_header.css">
+<body>
 
-<script>
-    const BASE_URL = "<?= BASE_URL ?>";
-</script>
+    <header class="admin-header" role="banner">
+        <div class="header-container">
 
-<nav class="admin-header">
-    <div class="header-container">
-        <div class="logo-area">
-            <i class="fas fa-cogs"></i>
-            <span>Gestão <strong>Kabyte</strong></span>
-        </div>
+            <!-- Botão mobile -->
+            <button class="menu-toggle" id="mobile-menu" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav-list">
+                <i class="fas fa-bars" aria-hidden="true"></i>
+            </button>
 
-        <div class="menu-toggle" id="mobile-menu">
-            <i class="fas fa-bars"></i>
-        </div>
+            <!-- Navegação principal -->
+            <nav class="menu-area" id="nav-list" role="navigation" aria-label="Menu principal">
+                <?php
+                $links = [
+                    ['rota' => 'admin', 'url' => BASE_URL . 'admin', 'icone' => 'fa-tachometer-alt', 'texto' => 'Dashboard'],
+                    ['rota' => 'api/entregas', 'url' => BASE_URL . 'api/entregas', 'icone' => 'fa-motorcycle', 'texto' => 'Entregas'],
+                    ['rota' => 'admin/usuarios', 'url' => BASE_URL . 'admin/usuarios', 'icone' => 'fa-users', 'texto' => 'Usuários'],
+                    ['rota' => 'cliente', 'url' => BASE_URL . 'cliente', 'icone' => 'fa-address-book', 'texto' => 'Clientes'],
+                    ['rota' => 'venda', 'url' => BASE_URL . 'venda', 'icone' => 'fa-receipt', 'texto' => 'Vendas'],
+                    ['rota' => 'relatorio', 'url' => BASE_URL . 'relatorio', 'icone' => 'fa-chart-line', 'texto' => 'Relatórios'],
+                    ['rota' => 'produto', 'url' => BASE_URL . 'produto', 'icone' => 'fa-boxes', 'texto' => 'Estoque'],
+                    ['rota' => 'categoria', 'url' => BASE_URL . 'categoria', 'icone' => 'fa-tags', 'texto' => 'Categorias'],
+                    ['rota' => 'admin/config', 'url' => BASE_URL . 'admin/config', 'icone' => 'fa-cog', 'texto' => 'Configurar'],
+                    ['rota' => 'chave', 'url' => BASE_URL . 'chave', 'icone' => 'fa-key', 'texto' => 'Chaves'],
+                ];
 
-        <div class="menu-area" id="nav-list">
-            <a href="<?= BASE_URL ?>admin" class="menu-item">
-                <i class="fas fa-tachometer-alt"></i> Dashboard
-            </a>
-            <a href="<?= BASE_URL ?>api/entregas" class="menu-item">
-                <i class="fas fa-motorcycle"></i> Entregas
-            </a>
-            <a href="<?= BASE_URL ?>admin/usuarios" class="menu-item">
-                <i class="fas fa-users"></i> Usuários
-            </a>
-            <a href="<?= BASE_URL ?>cliente" class="menu-item">
-                <i class="fas fa-users"></i> Clientes
-            </a>
-            <a href="<?= BASE_URL ?>venda" class="menu-item">
-                <i class="fas fa-receipt"></i> Vendas
-            </a>
-            <a href="<?= BASE_URL ?>relatorio" class="menu-item">
-                <i class="fas fa-chart-line"></i> Relatórios
-            </a>
-            <a href="<?= BASE_URL ?>produto" class="menu-item">
-                <i class="fas fa-boxes"></i> Estoque
-            </a>
-            <a href="<?= BASE_URL ?>categoria" class="menu-item">
-                <i class="fas fa-boxes"></i> Categorias
-            </a>
-            <a href="<?= BASE_URL ?>admin/config" class="menu-item">
-                <i class="fas fa-cog"></i> Configurar
-            </a>
+                foreach ($links as $link) {
+                    $ativo = (strpos($uri, $link['rota']) !== false) ? 'active' : '';
+                    echo "<a href=\"{$link['url']}\" class=\"menu-item $ativo\">";
+                    echo "<i class=\"fas {$link['icone']}\" aria-hidden=\"true\"></i> ";
+                    echo "<span>{$link['texto']}</span>";
+                    echo "</a>";
+                }
+                ?>
 
-            <a href="<?= BASE_URL ?>chave" class="menu-item">
-                <i class="fas fa-key"></i> Chaves
-            </a>
+                <a href="<?= BASE_URL ?>home" class="menu-item btn-pdv">
+                    <i class="fas fa-cash-register" aria-hidden="true"></i> Caixa
+                </a>
 
-            <a href="<?= BASE_URL ?>home" class="menu-item btn-pdv">
-                <i class="fas fa-cash-register"></i> Caixa
-            </a>
+                <!-- Área do usuário (versão mobile) -->
+                <div class="user-area-mobile">
+                    <span class="user-greeting">Olá, <?= htmlspecialchars($primeiroNome, ENT_QUOTES, 'UTF-8') ?></span>
+                    <a href="<?= BASE_URL ?>index.php?rota=login/logout" class="btn-logout" title="Sair">
+                        Sair <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                    </a>
+                </div>
+            </nav>
 
-
-            <div class="user-area-mobile">
-                <span>Olá, <?= explode(' ', $nome)[0] ?></span>
-                <!-- LINK CORRIGIDO -->
-                <a href="<?= BASE_URL ?>index.php?rota=login/logout" class="btn-logout" title="Sair">Sair <i class="fas fa-sign-out-alt"></i></a>
+            <!-- Área do usuário (desktop) -->
+            <div class="user-area-desktop">
+                <span class="user-greeting">Olá, <strong><?= htmlspecialchars($primeiroNome, ENT_QUOTES, 'UTF-8') ?></strong></span>
+                <a href="<?= BASE_URL ?>index.php?rota=login/logout" class="btn-logout" title="Sair" aria-label="Sair do sistema">
+                    <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                </a>
             </div>
         </div>
+    </header>
 
-        <div class="user-area-desktop">
-            <span>Olá, <strong><?= explode(' ', $nome)[0] ?></strong></span>
-            <!-- LINK CORRIGIDO -->
-            <a href="<?= BASE_URL ?>index.php?rota=login/logout" class="btn-logout" title="Sair"><i class="fas fa-sign-out-alt"></i></a>
-        </div>
-    </div>
-    </div>
-</nav>
+    <script>
+        (function() {
+            const toggleBtn = document.getElementById('mobile-menu');
+            const navList = document.getElementById('nav-list');
+            const body = document.body;
 
-<script>
-    document.getElementById('mobile-menu').addEventListener('click', function() {
-        document.getElementById('nav-list').classList.toggle('active');
-    });
-</script>
+            if (toggleBtn && navList) {
+                toggleBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const isOpen = navList.classList.toggle('active');
+                    toggleBtn.setAttribute('aria-expanded', isOpen);
+                    // Trava o scroll da página quando menu aberto
+                    body.style.overflow = isOpen ? 'hidden' : '';
+                });
+
+                // Fecha ao clicar fora do menu
+                document.addEventListener('click', function(event) {
+                    if (!navList.contains(event.target) && !toggleBtn.contains(event.target)) {
+                        if (navList.classList.contains('active')) {
+                            navList.classList.remove('active');
+                            toggleBtn.setAttribute('aria-expanded', 'false');
+                            body.style.overflow = '';
+                        }
+                    }
+                });
+
+                // Fecha ao pressionar ESC
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && navList.classList.contains('active')) {
+                        navList.classList.remove('active');
+                        toggleBtn.setAttribute('aria-expanded', 'false');
+                        toggleBtn.focus(); // retorna foco ao botão
+                        body.style.overflow = '';
+                    }
+                });
+
+                // Fecha ao redimensionar para desktop (evita estado preso)
+                window.addEventListener('resize', function() {
+                    if (window.innerWidth > 1024 && navList.classList.contains('active')) {
+                        navList.classList.remove('active');
+                        toggleBtn.setAttribute('aria-expanded', 'false');
+                        body.style.overflow = '';
+                    }
+                });
+            }
+        })();
+    </script>

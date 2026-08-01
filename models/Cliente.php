@@ -239,7 +239,7 @@ class Cliente
     public static function buscarPorCpf($cpf)
     {
         $pdo = Database::connect();
-        $stmt = $pdo->prepare("SELECT id FROM clientes WHERE cpf = ?");
+        $stmt = $pdo->prepare("SELECT id FROM clientes WHERE cpf = ? LIMIT 1");
         $stmt->execute([$cpf]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -247,25 +247,30 @@ class Cliente
     // Registra um cliente novo pelo formulário do site (Vitrine)
     public static function registrarNovoCliente($dados)
     {
-        $pdo = Database::connect();
+        try {
+            $pdo = Database::connect();
 
-        // Adicionada a coluna cpf na query
-        $sql = "INSERT INTO clientes (nome, email, telefone, cpf, senha, data_cadastro) VALUES (?, ?, ?, ?, ?, NOW())";
-        $stmt = $pdo->prepare($sql);
+            $sql = "INSERT INTO clientes (nome, email, telefone, cpf, senha, data_cadastro) VALUES (?, ?, ?, ?, ?, NOW())";
+            $stmt = $pdo->prepare($sql);
 
-        $sucesso = $stmt->execute([
-            $dados['nome'],
-            $dados['email'],
-            $dados['telefone'],
-            $dados['cpf'], // <-- ADICIONADO AQUI
-            $dados['senha']
-        ]);
+            $sucesso = $stmt->execute([
+                $dados['nome'],
+                $dados['email'],
+                $dados['telefone'],
+                $dados['cpf'],
+                $dados['senha']
+            ]);
 
-        if ($sucesso) {
-            return $pdo->lastInsertId(); // Devolve o ID real
+            if ($sucesso) {
+                return $pdo->lastInsertId();
+            } else {
+                // SEGREDO REVELADO: Aqui pegamos o erro silencioso do MySQL!
+                $erroMySQL = $stmt->errorInfo();
+                die("ERRO ESCONDIDO DO MYSQL: " . print_r($erroMySQL, true));
+            }
+        } catch (Throwable $e) {
+            die("Erro crítico (Exceção): " . $e->getMessage());
         }
-
-        return false;
     }
 
     /* =========================================================================

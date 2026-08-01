@@ -35,7 +35,7 @@
                     <label for="nome">Nome Completo</label>
                     <div class="input-group">
                         <i class="fa-solid fa-user input-icon left"></i>
-                        <input type="text" id="nome" name="nome" placeholder="Seu nome" required autofocus>
+                        <input type="text" id="nome" name="nome" placeholder="Seu nome" required autofocus value="<?= htmlspecialchars($_POST['nome'] ?? '') ?>">
                     </div>
                 </div>
 
@@ -43,7 +43,7 @@
                     <label for="email">E-mail</label>
                     <div class="input-group">
                         <i class="fa-solid fa-envelope input-icon left"></i>
-                        <input type="email" id="email" name="email" placeholder="seu@email.com" required>
+                        <input type="email" id="email" name="email" placeholder="seu@email.com" required value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
                     </div>
                 </div>
 
@@ -51,7 +51,16 @@
                     <label for="telefone">Telefone / WhatsApp</label>
                     <div class="input-group">
                         <i class="fa-solid fa-phone input-icon left"></i>
-                        <input type="text" id="telefone" name="telefone" placeholder="(11) 99999-9999" required>
+                        <input type="text" id="telefone" name="telefone" placeholder="(11) 99999-9999" required value="<?= htmlspecialchars($_POST['telefone'] ?? '') ?>">
+                    </div>
+                </div>
+
+                <!-- CAMPO DE CPF ADICIONADO AQUI -->
+                <div class="form-group">
+                    <label for="cpf">CPF</label>
+                    <div class="input-group">
+                        <i class="fa-solid fa-id-card input-icon left"></i>
+                        <input type="text" id="cpf" name="cpf" placeholder="Apenas números" required value="<?= htmlspecialchars($_POST['cpf'] ?? '') ?>">
                     </div>
                 </div>
 
@@ -60,7 +69,7 @@
                     <div class="input-group">
                         <i class="fa-solid fa-lock input-icon left"></i>
                         <input type="password" id="senha" name="senha" placeholder="Mínimo de 6 caracteres" required minlength="6">
-                        <i class="fa-solid fa-eye input-icon right" id="btnToggleSenha"></i>
+                        <i class="fa-solid fa-eye input-icon right" id="btnToggleSenha" style="cursor: pointer;"></i>
                     </div>
                 </div>
 
@@ -69,7 +78,7 @@
                 </button>
 
                 <div class="login-footer" style="margin-top: 20px;">
-                    <p style="color: #555;">Já tem uma conta? <a href="<?= BASE_URL ?>cliente/login" style="font-weight: bold; color: var(--cor-primaria);">Faça login</a></p>
+                    <p style="color: #555;">Já tem uma conta? <a href="<?= BASE_URL ?>clientearea/login" style="font-weight: bold; color: var(--cor-primaria);">Faça login</a></p>
                 </div>
             </form>
         </div>

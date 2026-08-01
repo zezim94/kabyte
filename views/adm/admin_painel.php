@@ -92,11 +92,8 @@ $maisVistos = Produto::listarMaisVistosGeral(5); // Traz o Top 5
             </div>
         <?php endif; ?>
 
-        <!-- GRID PARA DIVIDIR AS DUAS TABELAS LADO A LADO (Em telas grandes) -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; margin-top: 20px;">
-            
-            <!-- TABELA 1: ÚLTIMAS VENDAS -->
-            <div class="painel-tabela" style="margin-top: 0;">
+        <div class="tables-grid">
+            <div class="painel-tabela">
                 <div class="section-title">
                     <h2><i class="fas fa-history"></i> Últimas 10 Vendas</h2>
                 </div>
@@ -136,7 +133,7 @@ $maisVistos = Produto::listarMaisVistosGeral(5); // Traz o Top 5
             </div>
 
             <!-- TABELA 2: PRODUTOS MAIS VISTOS (NOVO) -->
-            <div class="painel-tabela" style="margin-top: 0;">
+            <div class="painel-tabela">
                 <div class="section-title">
                     <h2><i class="fas fa-fire" style="color:#e74c3c;"></i> Top 5 Mais Vistos</h2>
                 </div>
@@ -164,9 +161,7 @@ $maisVistos = Produto::listarMaisVistosGeral(5); // Traz o Top 5
                                             R$ <?= number_format($prod['preco'], 2, ',', '.') ?>
                                         </td>
                                         <td class="text-center">
-                                            <span class="status-badge" style="background:#3498db; color:#fff; border:none;">
-                                                <?= $prod['visu'] ?> views
-                                            </span>
+                                            <span class="views-badge"><?= $prod['visu'] ?> views</span>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -179,7 +174,7 @@ $maisVistos = Produto::listarMaisVistosGeral(5); // Traz o Top 5
                     </table>
                 </div>
             </div>
-            
+
         </div> <!-- FIM DO GRID -->
 
     </div>

@@ -69,10 +69,20 @@ class Usuario
     public static function getFaturamentoPorPagamento()
     {
         $pdo = Database::connect();
-        $sql = "SELECT forma_pagamento, SUM(total) as total, COUNT(*) as qtd 
-                FROM vendas 
-                WHERE DATE(data_venda) = CURDATE() 
-                GROUP BY forma_pagamento";
+        $sql = "SELECT 
+    CASE 
+        WHEN forma_pagamento = 'bolbradesco' THEN 'boleto' 
+        ELSE forma_pagamento 
+    END AS forma_pagamento, 
+    SUM(total) as total, 
+    COUNT(*) as qtd 
+FROM vendas 
+WHERE DATE(data_venda) = CURDATE() 
+GROUP BY 
+    CASE 
+        WHEN forma_pagamento = 'bolbradesco' THEN 'boleto' 
+        ELSE forma_pagamento 
+    END;";
         return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 

@@ -12,7 +12,9 @@ class ClienteController
 {
     public $livre = [
         'esqueci_senha',
-        'processar_recuperacao'
+        'processar_recuperacao',
+        'cadastro',
+        'processar_cadastro'
     ];
 
     public function index()
@@ -173,9 +175,8 @@ class ClienteController
             $email = filter_var($_POST['email'] ?? '', FILTER_SANITIZE_EMAIL);
             $telefone = trim($_POST['telefone'] ?? '');
 
-            // Remove pontuações (pontos e traços) para salvar o CPF limpo e comparar melhor
+            // Remove pontuações para salvar o CPF limpo
             $cpf = preg_replace('/[^0-9]/', '', $_POST['cpf'] ?? '');
-
             $senha = $_POST['senha'] ?? '';
 
             // 1. Validação de E-mail
@@ -186,7 +187,7 @@ class ClienteController
                 return;
             }
 
-            // 2. Validação de CPF (A NOVA REGRA AQUI)
+            // 2. Validação de CPF
             if (!empty($cpf)) {
                 $cpfExistente = Cliente::buscarPorCpf($cpf);
                 if ($cpfExistente) {
@@ -216,10 +217,12 @@ class ClienteController
                     session_start();
                 }
 
+                // Efetua o login automático criando a sessão
                 $_SESSION['cliente_id'] = $idNovoCliente;
                 $_SESSION['cliente_nome'] = $nome;
 
-                header('Location: ' . BASE_URL . 'vitrine');
+                // Redireciona direto para o painel do cliente
+                header('Location: ' . BASE_URL . 'clientearea/painel');
                 exit;
             } else {
                 $erro = "Ocorreu um erro ao criar sua conta. Tente novamente mais tarde.";

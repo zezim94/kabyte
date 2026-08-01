@@ -1,11 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Vendas - KaByte</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+</head>
+
 <?php require __DIR__ . '/../layout/header_admin.php'; ?>
 
 <style>
-    .admin-container {
-        padding: 20px;
+    :root {
+        --bg-body: #f1f5f9;
+        --card-bg: #ffffff;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --border-color: #e2e8f0;
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+        --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+        --radius: 12px;
+        --transition: 0.2s ease;
+
+        --green: #10b981;
+        --green-light: #d1fae5;
+        --blue: #3b82f6;
+        --blue-hover: #2563eb;
+        --red: #ef4444;
+        --red-light: #fee2e2;
+        --orange: #f59e0b;
+        --orange-light: #fef3c7;
+        --dark: #1e293b;
+        --dark-header: #34495e;
     }
 
-    /* Modal Styles */
+    body {
+        background-color: var(--bg-body);
+        margin: 0;
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        color: var(--text-primary);
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    /* Container principal */
+    .admin-container {
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 0 1.5rem;
+    }
+
+    /* Cabeçalho */
+    .page-header {
+        margin-bottom: 1.5rem;
+    }
+
+    .page-header h2 {
+        color: var(--text-primary);
+        font-size: 1.8rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* Filtro */
+    .filter-form {
+        background: var(--card-bg);
+        padding: 1.5rem;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        margin-bottom: 1.5rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+        align-items: end;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+    }
+
+    .filter-group label {
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    .filter-control {
+        padding: 0.6rem 0.8rem;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 0.95rem;
+        background: white;
+        transition: border-color var(--transition);
+    }
+
+    .filter-control:focus {
+        outline: none;
+        border-color: var(--blue);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .btn-filtrar {
+        background: var(--blue);
+        color: white;
+        border: none;
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        transition: background var(--transition);
+        height: auto;
+        /* removido height: 100% */
+        align-self: end;
+        /* alinhar na base do grid */
+    }
+
+    .btn-filtrar:hover {
+        background: var(--blue-hover);
+    }
+
+    /* Tabela */
+    .painel-tabela {
+        background: var(--card-bg);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+    }
+
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 750px;
+    }
+
+    .data-table thead {
+        background: var(--dark-header);
+        color: white;
+    }
+
+    .data-table th {
+        padding: 0.9rem 1.2rem;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .data-table td {
+        padding: 0.8rem 1.2rem;
+        border-bottom: 1px solid var(--border-color);
+        color: var(--text-primary);
+        vertical-align: middle;
+    }
+
+    .data-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .data-table tbody tr:hover {
+        background-color: #f8fafc;
+    }
+
+    .badge-id {
+        color: #64748b;
+        font-family: monospace;
+        font-weight: 600;
+    }
+
+    .cliente-nome {
+        color: var(--blue);
+        font-weight: 500;
+    }
+
+    .consumidor-final {
+        color: #94a3b8;
+        font-style: italic;
+    }
+
+    /* Badges de status */
+    .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    .status-pago {
+        background: var(--green-light);
+        color: #065f46;
+    }
+
+    .status-pendente {
+        background: var(--red-light);
+        color: #991b1b;
+    }
+
+    .status-parcial {
+        background: var(--orange-light);
+        color: #92400e;
+    }
+
+    .btn-detalhes {
+        border: 1px solid var(--blue);
+        color: var(--blue);
+        background: white;
+        padding: 0.35rem 0.8rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: 500;
+        transition: all var(--transition);
+    }
+
+    .btn-detalhes:hover {
+        background: var(--blue);
+        color: white;
+    }
+
+    /* Modal */
     .modal {
         display: none;
         position: fixed;
@@ -14,240 +250,263 @@
         top: 0;
         width: 100%;
         height: 100%;
-        overflow: auto;
         background-color: rgba(0, 0, 0, 0.6);
         align-items: center;
         justify-content: center;
+        padding: 1rem;
+        backdrop-filter: blur(3px);
     }
 
     .modal-content {
-        background-color: #fff;
-        margin: 2% auto;
-        padding: 0;
-        border-radius: 8px;
-        width: 90%;
+        background: white;
+        width: 100%;
         max-width: 800px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        position: relative;
-        animation: slideDown 0.3s ease-out;
+        max-height: 90vh;
+        border-radius: var(--radius);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        animation: modalPop 0.3s ease;
     }
 
-    @keyframes slideDown {
+
+    @keyframes modalPop {
         from {
-            top: -50px;
+            transform: scale(0.95);
             opacity: 0;
         }
 
         to {
-            top: 0;
+            transform: scale(1);
             opacity: 1;
         }
     }
 
     .modal-header {
-        background: #2c3e50;
+        background: var(--dark-header);
         color: white;
-        padding: 15px 20px;
-        border-top-left-radius: 8px;
-        border-top-right-radius: 8px;
+        padding: 1rem 1.5rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        flex-shrink: 0;
+    }
+
+    .modal-body-scroll {
+        overflow-y: auto;
+        padding: 1.5rem;
+        flex: 1;
+        /* ocupa o espaço restante */
+    }
+
+    .modal-header h3 {
+        margin: 0;
+        font-size: 1.25rem;
     }
 
     .close-modal {
-        color: white;
-        font-size: 28px;
+        font-size: 1.8rem;
         cursor: pointer;
-        font-weight: bold;
+        line-height: 1;
+        transition: color 0.2s;
     }
 
     .close-modal:hover {
         color: #ccc;
     }
 
-    .modal-body {
-        padding: 20px;
+    .info-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 20px;
+        gap: 1.25rem;
+        margin-bottom: 1.5rem;
     }
 
-    .modal-footer {
-        padding: 15px;
-        background: #f9f9f9;
-        border-bottom-left-radius: 8px;
-        border-bottom-right-radius: 8px;
+    @media (max-width: 600px) {
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
     }
 
     .info-box {
-        background: #f8f9fa;
-        padding: 15px;
-        border-radius: 6px;
-        border-left: 4px solid #3498db;
+        background: #f8fafc;
+        padding: 1rem 1.2rem;
+        border-radius: 8px;
+        border-left: 4px solid var(--blue);
     }
 
-    .info-title {
-        font-weight: bold;
-        color: #555;
-        margin-bottom: 5px;
-        display: block;
+    .info-box h4 {
+        margin: 0 0 0.8rem;
+        font-size: 0.95rem;
+        color: var(--text-primary);
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 0.4rem;
+    }
+
+    .info-row {
+        display: flex;
+        margin-bottom: 0.4rem;
+        font-size: 0.9rem;
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: var(--text-secondary);
+        min-width: 100px;
     }
 
     .info-value {
-        color: #333;
-        font-size: 1.1em;
+        color: var(--text-primary);
     }
 
-    /* Tabela de Itens no Modal */
+    /* Tabela de itens no modal */
     .table-itens {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 20px;
+        margin: 1rem 0;
+        font-size: 0.9rem;
     }
 
     .table-itens th {
-        background: #eee;
+        background: #f1f5f9;
         text-align: left;
-        padding: 10px;
-        border-bottom: 2px solid #ddd;
+        padding: 0.6rem 0.8rem;
+        font-weight: 600;
+        border-bottom: 1px solid var(--border-color);
     }
 
     .table-itens td {
-        padding: 10px;
-        border-bottom: 1px solid #eee;
+        padding: 0.6rem 0.8rem;
+        border-bottom: 1px solid #f1f5f9;
         vertical-align: middle;
     }
 
     .produto-img {
-        width: 50px;
-        height: 50px;
+        width: 45px;
+        height: 45px;
         object-fit: cover;
-        border-radius: 4px;
-        border: 1px solid #ddd;
+        border-radius: 6px;
+        border: 1px solid var(--border-color);
     }
 
-    .status-badge {
-        padding: 4px 8px;
-        border-radius: 4px;
-        font-size: 0.85em;
-        font-weight: bold;
-        text-transform: uppercase;
+    .total-venda {
+        text-align: right;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--green);
+        margin-top: 0.5rem;
     }
 
-    .status-pago {
-        background: #d4edda;
-        color: #155724;
+    .spinner {
+        padding: 3rem;
+        text-align: center;
+        color: var(--text-secondary);
     }
 
-    .status-pendente {
-        background: #f8d7da;
-        color: #721c24;
-    }
+    /* Responsivo geral */
+    @media (max-width: 768px) {
+        .admin-container {
+            padding: 0 1rem;
+        }
 
-    .status-parcial {
-        background: #fff3cd;
-        color: #856404;
+        .data-table {
+            min-width: 650px;
+        }
+
+        .btn-filtrar {
+            grid-column: 1 / -1;
+            /* ocupar toda a largura */
+        }
     }
 </style>
 
 <div class="admin-container">
-    <div style="margin-bottom: 20px;">
-        <h2 style="color: #2c3e50;"><i class="fas fa-file-invoice-dollar"></i> Histórico de Vendas</h2>
+    <div class="page-header">
+        <h2><i class="fas fa-file-invoice-dollar"></i> Histórico de Vendas</h2>
     </div>
 
-    <form method="GET" action=""
-        style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 20px;">
-        <div
-            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; align-items: end;">
-
-            <div>
-                <label style="font-weight:bold; font-size:0.9em;">De:</label>
-                <input type="date" name="data_inicio" class="form-control"
-                    value="<?= $_GET['data_inicio'] ?? date('Y-m-01') ?>"
-                    style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
-            </div>
-
-            <div>
-                <label style="font-weight:bold; font-size:0.9em;">Até:</label>
-                <input type="date" name="data_fim" class="form-control"
-                    value="<?= $_GET['data_fim'] ?? date('Y-m-t') ?>"
-                    style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
-            </div>
-
-            <div>
-                <label style="font-weight:bold; font-size:0.9em;">Cliente:</label>
-                <input type="text" name="cliente" class="form-control" placeholder="Nome..."
-                    value="<?= htmlspecialchars($_GET['cliente'] ?? '') ?>"
-                    style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
-            </div>
-
-            <div>
-                <label style="font-weight:bold; font-size:0.9em;">Status:</label>
-                <select name="status" class="form-control"
-                    style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
-                    <option value="">Todos</option>
-                    <option value="pago" <?= ($_GET['status'] ?? '') == 'pago' ? 'selected' : '' ?>>Pago</option>
-                    <option value="pendente" <?= ($_GET['status'] ?? '') == 'pendente' ? 'selected' : '' ?>>Pendente
-                    </option>
-                    <option value="parcial" <?= ($_GET['status'] ?? '') == 'parcial' ? 'selected' : '' ?>>Parcial</option>
-                </select>
-            </div>
-
-            <div>
-                <button type="submit"
-                    style="background:#3498db; color:white; border:none; padding:10px 20px; border-radius:4px; cursor:pointer; width:100%; font-weight:bold;">
-                    <i class="fas fa-search"></i> Filtrar
-                </button>
-            </div>
+    <!-- FORMULÁRIO DE FILTRO -->
+    <form method="GET" action="" class="filter-form">
+        <div class="filter-group">
+            <label>De</label>
+            <input type="date" name="data_inicio" class="filter-control"
+                value="<?= $_GET['data_inicio'] ?? date('Y-m-01') ?>">
         </div>
+
+        <div class="filter-group">
+            <label>Até</label>
+            <input type="date" name="data_fim" class="filter-control"
+                value="<?= $_GET['data_fim'] ?? date('Y-m-t') ?>">
+        </div>
+
+        <div class="filter-group">
+            <label>Cliente</label>
+            <input type="text" name="cliente" class="filter-control" placeholder="Nome..."
+                value="<?= htmlspecialchars($_GET['cliente'] ?? '') ?>">
+        </div>
+
+        <div class="filter-group">
+            <label>Status</label>
+            <select name="status" class="filter-control">
+                <option value="">Todos</option>
+                <option value="pago" <?= ($_GET['status'] ?? '') == 'pago' ? 'selected' : '' ?>>Pago</option>
+                <option value="pendente" <?= ($_GET['status'] ?? '') == 'pendente' ? 'selected' : '' ?>>Pendente</option>
+                <option value="parcial" <?= ($_GET['status'] ?? '') == 'parcial' ? 'selected' : '' ?>>Parcial</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn-filtrar">
+            <i class="fas fa-search"></i> Filtrar
+        </button>
     </form>
 
+    <!-- TABELA DE VENDAS -->
     <div class="painel-tabela">
-        <table style="width: 100%; border-collapse: collapse;">
-            <thead>
-                <tr style="background: #34495e; color: white; text-align: left;">
-                    <th style="padding: 12px;">#ID</th>
-                    <th style="padding: 12px;">Data/Hora</th>
-                    <th style="padding: 12px;">Cliente</th>
-                    <th style="padding: 12px;">Vendedor</th>
-                    <th style="padding: 12px;">Status</th>
-                    <th style="padding: 12px;">Total</th>
-                    <th style="padding: 12px; text-align: center;">Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($vendas as $v): ?>
-                    <tr style="border-bottom: 1px solid #eee;">
-                        <td style="padding: 12px; color: #888;">#<?= str_pad($v['id'], 4, '0', STR_PAD_LEFT) ?></td>
-                        <td style="padding: 12px;"><?= date('d/m/Y H:i', strtotime($v['data_venda'])) ?></td>
-                        <td style="padding: 12px;">
-                            <?php if ($v['cliente']): ?>
-                                <span style="color: #2980b9; font-weight: bold;"><i class="fas fa-user"></i>
-                                    <?= $v['cliente'] ?></span>
-                            <?php else: ?>
-                                <span style="color: #95a5a6; font-style: italic;">Consumidor Final</span>
-                            <?php endif; ?>
-                        </td>
-                        <td style="padding: 12px;"><?= $v['vendedor'] ?? 'Online' ?></td>
-                        <td style="padding: 12px;">
-                            <span class="status-badge status-<?= $v['status_pagamento'] ?>">
-                                <?= $v['status_pagamento'] ?>
-                            </span>
-                        </td>
-                        <td style="padding: 12px; font-weight: bold; color: #27ae60;">
-                            R$ <?= number_format($v['total'], 2, ',', '.') ?>
-                        </td>
-                        <td style="padding: 12px; text-align: center;">
-                            <button onclick="abrirModalAdmin(<?= $v['id'] ?>)"
-                                style="border: 1px solid #3498db; color: #3498db; background: white; padding: 5px 10px; cursor: pointer; border-radius: 4px; transition: 0.3s;">
-                                <i class="fas fa-eye"></i> Detalhes
-                            </button>
-                        </td>
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>#ID</th>
+                        <th>Data/Hora</th>
+                        <th>Cliente</th>
+                        <th>Vendedor</th>
+                        <th>Status</th>
+                        <th>Total</th>
+                        <th style="text-align: center;">Ações</th>
                     </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <?php foreach ($vendas as $v): ?>
+                        <tr>
+                            <td class="badge-id">#<?= str_pad($v['id'], 4, '0', STR_PAD_LEFT) ?></td>
+                            <td><?= date('d/m/Y H:i', strtotime($v['data_venda'])) ?></td>
+                            <td>
+                                <?php if ($v['cliente']): ?>
+                                    <span class="cliente-nome"><i class="fas fa-user"></i> <?= $v['cliente'] ?></span>
+                                <?php else: ?>
+                                    <span class="consumidor-final">Consumidor Final</span>
+                                <?php endif; ?>
+                            </td>
+                            <td><?= $v['vendedor'] ?? 'Online' ?></td>
+                            <td>
+                                <span class="status-badge status-<?= $v['status_pagamento'] ?>">
+                                    <?= $v['status_pagamento'] ?>
+                                </span>
+                            </td>
+                            <td style="font-weight: 600; color: var(--green);">
+                                R$ <?= number_format($v['total'], 2, ',', '.') ?>
+                            </td>
+                            <td style="text-align: center;">
+                                <button onclick="abrirModalAdmin(<?= $v['id'] ?>)" class="btn-detalhes">
+                                    <i class="fas fa-eye"></i> Detalhes
+                                </button>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -258,72 +517,33 @@
             <span class="close-modal" onclick="fecharModalAdmin()">&times;</span>
         </div>
 
-        <div id="modalLoading" style="padding:50px; text-align:center;">
-            <i class="fas fa-spinner fa-spin fa-2x"></i><br>Carregando informações...
+        <div id="modalLoading" class="spinner" style="padding: 3rem; text-align: center;">
+            <i class="fas fa-spinner fa-spin fa-2x"></i><br>Carregando...
         </div>
 
-        <div id="modalBodyContent" style="display:none;">
-            <div class="modal-body">
-                <div class="info-box">
-                    <h4 style="margin-top:0; color:#2c3e50; border-bottom:1px solid #ddd; padding-bottom:5px;">Dados da
-                        Venda</h4>
-                    <span class="info-title">Vendedor:</span> <span class="info-value" id="mdlVendedor"></span><br>
-                    <span class="info-title">Data:</span> <span class="info-value" id="mdlData"></span><br>
-                    <span class="info-title">Forma Pagto:</span> <span class="info-value" id="mdlForma"></span><br>
-                    <span class="info-title">Status:</span> <span id="mdlStatus"></span>
-                </div>
-
-                <div class="info-box" style="border-left-color: #e67e22;">
-                    <h4 style="margin-top:0; color:#2c3e50; border-bottom:1px solid #ddd; padding-bottom:5px;">Dados do
-                        Cliente</h4>
-                    <span class="info-title">Nome:</span> <span class="info-value" id="mdlCliNome"></span><br>
-                    <span class="info-title">E-mail:</span> <span class="info-value" id="mdlCliEmail"></span><br>
-                    <span class="info-title">Cliente Desde:</span> <span class="info-value" id="mdlCliData"></span>
-                </div>
-            </div>
-
-            <div style="padding: 0 20px 20px 20px;">
-                <h4 style="color:#2c3e50;">Itens do Pedido</h4>
-                <div id="mdlTabelaItens"></div>
-
-                <div style="text-align: right; margin-top: 15px; font-size: 1.3em;">
-                    Total: <strong style="color: #27ae60;" id="mdlTotal"></strong>
-                </div>
-            </div>
-
-            <div class="info-box" style="border-left-color: #9b59b6; margin-top: 15px; grid-column: span 2;">
-                <h4 style="margin-top:0; color:#2c3e50; border-bottom:1px solid #ddd; padding-bottom:5px;">
-                    <i class="fas fa-truck"></i> Informações de Entrega
-                </h4>
-                <span class="info-title">Tipo:</span> <span class="info-value" id="mdlTipoEntrega"></span><br>
-
-                <div id="mdlDetalhesEntrega" style="display:none;">
-                    <span class="info-title">Endereço:</span> <span class="info-value" id="mdlEndereco"></span><br>
-                    <span class="info-title">Data Agendada:</span> <span class="info-value" id="mdlDataEntrega"></span>
-                </div>
-            </div>
-        </div>
+        <!-- Container com rolagem -->
+        <div id="modalBodyContent" class="modal-body-scroll" style="display: none;"></div>
     </div>
 </div>
 
 <script>
     const modalAdmin = document.getElementById('modalVendaAdmin');
     const loading = document.getElementById('modalLoading');
-    const content = document.getElementById('modalBodyContent');
+    const bodyContent = document.getElementById('modalBodyContent');
+    const scrollContainer = bodyContent.querySelector('.modal-body-scroll');
 
     function fecharModalAdmin() {
         modalAdmin.style.display = 'none';
     }
 
-    // Fecha ao clicar fora
-    window.onclick = function (e) {
+    window.onclick = function(e) {
         if (e.target == modalAdmin) fecharModalAdmin();
     }
 
     async function abrirModalAdmin(id) {
-        modalAdmin.style.display = 'flex'; // Usando flex para centralizar
+        modalAdmin.style.display = 'flex';
         loading.style.display = 'block';
-        content.style.display = 'none';
+        bodyContent.style.display = 'none';
         document.getElementById('mdlId').innerText = id;
 
         try {
@@ -333,101 +553,74 @@
             if (dados.sucesso) {
                 preencherModal(dados.venda, dados.itens);
                 loading.style.display = 'none';
-                content.style.display = 'block';
+                bodyContent.style.display = 'flex';
             } else {
                 alert('Erro: ' + dados.msg);
                 fecharModalAdmin();
             }
         } catch (error) {
             console.error(error);
-            alert('Erro de conexão ao buscar detalhes.');
+            alert('Erro de conexão.');
             fecharModalAdmin();
         }
     }
 
     function preencherModal(venda, itens) {
-        // Preenche Venda
-        document.getElementById('mdlVendedor').innerText = venda.vendedor_nome || 'Sistema';
-        document.getElementById('mdlData').innerText = new Date(venda.data_venda).toLocaleString('pt-BR');
-        document.getElementById('mdlForma').innerText = venda.forma_pagamento;
-        document.getElementById('mdlTotal').innerText = 'R$ ' + parseFloat(venda.total).toFixed(2).replace('.', ',');
+        let tipoEntrega = venda.tipo_entrega === 'entrega' ? 'Entrega em Domicílio' : 'Retirada na Loja';
+        let corTipo = venda.tipo_entrega === 'entrega' ? 'var(--orange)' : 'var(--green)';
 
-        // Preenche Status com cor
-        const spanStatus = document.getElementById('mdlStatus');
-        spanStatus.className = 'status-badge status-' + venda.status_pagamento;
-        spanStatus.innerText = venda.status_pagamento.toUpperCase();
-
-        const tipoEntrega = venda.tipo_entrega === 'entrega' ? 'Entrega em Domicílio' : 'Retirada na Loja';
-        const spanTipo = document.getElementById('mdlTipoEntrega');
-        spanTipo.innerText = tipoEntrega;
-
-        // Estilização visual do tipo
-        if (venda.tipo_entrega === 'entrega') {
-            spanTipo.style.color = '#e67e22'; // Laranja
-            document.getElementById('mdlDetalhesEntrega').style.display = 'block';
-
-            document.getElementById('mdlEndereco').innerText = venda.endereco_entrega || 'Endereço não informado';
-
-            // Formata data de entrega se existir
-            let dataEntregaTexto = 'Não agendada';
-            if (venda.data_entrega) {
-                const dataObj = new Date(venda.data_entrega);
-                dataEntregaTexto = dataObj.toLocaleDateString('pt-BR') + ' às ' + dataObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-            }
-            document.getElementById('mdlDataEntrega').innerText = dataEntregaTexto;
-
-        } else {
-            spanTipo.style.color = '#27ae60'; // Verde
-            document.getElementById('mdlDetalhesEntrega').style.display = 'none';
-        }
-
-        // Preenche Cliente
-        if (venda.cliente_nome) {
-            document.getElementById('mdlCliNome').innerText = venda.cliente_nome;
-            document.getElementById('mdlCliEmail').innerText = venda.cliente_email;
-            document.getElementById('mdlCliData').innerText = new Date(venda.cliente_desde).toLocaleDateString('pt-BR');
-        } else {
-            document.getElementById('mdlCliNome').innerText = 'Consumidor Final';
-            document.getElementById('mdlCliEmail').innerText = '-';
-            document.getElementById('mdlCliData').innerText = '-';
-        }
-
-        // Gera Tabela de Itens
         let html = `
-            <table class="table-itens">
-                <thead>
-                    <tr>
-                        <th style="width: 70px;">Img</th>
-                        <th>Produto</th>
-                        <th>Qtd</th>
-                        <th>Preço Unit.</th>
-                        <th>Subtotal</th>
-                    </tr>
-                </thead>
-                <tbody>`;
+        <div class="info-grid">
+            <div class="info-box">
+                <h4>Dados da Venda</h4>
+                <div class="info-row"><span class="info-label">Vendedor:</span><span class="info-value">${venda.vendedor_nome || 'Sistema'}</span></div>
+                <div class="info-row"><span class="info-label">Data:</span><span class="info-value">${new Date(venda.data_venda).toLocaleString('pt-BR')}</span></div>
+                <div class="info-row"><span class="info-label">Pagamento:</span><span class="info-value">${venda.forma_pagamento}</span></div>
+                <div class="info-row"><span class="info-label">Status:</span><span class="status-badge status-${venda.status_pagamento}">${venda.status_pagamento.toUpperCase()}</span></div>
+            </div>
+            <div class="info-box">
+                <h4>Cliente</h4>
+                <div class="info-row"><span class="info-label">Nome:</span><span class="info-value">${venda.cliente_nome || 'Consumidor Final'}</span></div>
+                <div class="info-row"><span class="info-label">E-mail:</span><span class="info-value">${venda.cliente_email || '-'}</span></div>
+                <div class="info-row"><span class="info-label">Desde:</span><span class="info-value">${venda.cliente_desde ? new Date(venda.cliente_desde).toLocaleDateString('pt-BR') : '-'}</span></div>
+            </div>
+        </div>
+
+        <div class="info-box" style="margin-bottom: 1.5rem;">
+            <h4><i class="fas fa-truck"></i> Entrega</h4>
+            <div class="info-row"><span class="info-label">Tipo:</span><span class="info-value" style="color:${corTipo}; font-weight:600;">${tipoEntrega}</span></div>
+            ${venda.tipo_entrega === 'entrega' ? `
+                <div class="info-row"><span class="info-label">Endereço:</span><span class="info-value">${venda.endereco_entrega || 'Não informado'}</span></div>
+                <div class="info-row"><span class="info-label">Data Agendada:</span><span class="info-value">${venda.data_entrega ? new Date(venda.data_entrega).toLocaleString('pt-BR') : 'Não agendada'}</span></div>
+            ` : ''}
+        </div>
+
+        <h4 style="color: var(--text-primary);">Itens do Pedido</h4>
+        <table class="table-itens">
+            <thead>
+                <tr><th style="width:60px;">Img</th><th>Produto</th><th>Qtd</th><th>Preço Unit.</th><th>Subtotal</th></tr>
+            </thead>
+            <tbody>
+    `;
 
         itens.forEach(item => {
             let subtotal = item.quantidade * item.preco_unitario;
-
-            // Verifica se tem imagem, se não usa uma padrão cinza
-            let imgUrl = item.imagem ? '<?= BASE_URL ?>public/uploads/' + item.imagem : 'https://via.placeholder.com/50?text=S/F';
-
+            let imgUrl = item.imagem ? '<?= BASE_URL ?>public/uploads/' + item.imagem : 'https://via.placeholder.com/45?text=S/F';
             html += `
-                <tr>
-                    <td><img src="${imgUrl}" class="produto-img"></td>
-                    <td>${item.produto_nome}</td>
-                    <td>${item.quantidade}</td>
-                    <td>R$ ${parseFloat(item.preco_unitario).toFixed(2).replace('.', ',')}</td>
-                    <td><strong>R$ ${subtotal.toFixed(2).replace('.', ',')}</strong></td>
-                </tr>`;
+            <tr>
+                <td><img src="${imgUrl}" class="produto-img"></td>
+                <td>${item.produto_nome}</td>
+                <td>${item.quantidade}</td>
+                <td>R$ ${parseFloat(item.preco_unitario).toFixed(2).replace('.', ',')}</td>
+                <td><strong>R$ ${subtotal.toFixed(2).replace('.', ',')}</strong></td>
+            </tr>
+        `;
         });
 
         html += `</tbody></table>`;
-        document.getElementById('mdlTabelaItens').innerHTML = html;
+        html += `<div class="total-venda">Total: R$ ${parseFloat(venda.total).toFixed(2).replace('.', ',')}</div>`;
+
+        // Insere o conteúdo no container de rolagem
+        document.getElementById('modalBodyContent').innerHTML = html;
     }
 </script>
-
-</div>
-</body>
-
-</html>

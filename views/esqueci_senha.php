@@ -51,7 +51,7 @@
                 </button>
 
                 <div class="login-footer" style="margin-top: 25px;">
-                    <a href="<?= BASE_URL ?>cliente/login" style="color: #777; text-decoration:none;">
+                    <a href="<?= BASE_URL ?>index.php?rota=cliente_area/login" style="color: #777; text-decoration:none;">
                         &larr; Voltar para o Login
                     </a>
                 </div>

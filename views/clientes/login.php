@@ -74,7 +74,7 @@
                     <p style="margin-bottom: 15px; color: #555;">
                         Ainda não tem uma conta? <br>
                         <!-- LINK DE CADASTRO CORRIGIDO -->
-                        <a href="<?= BASE_URL ?>index.php?rota=cliente/cadastro"
+                        <a href="<?= BASE_URL ?>cliente/cadastro"
                             style="font-weight: bold; color: var(--cor-primaria); font-size: 1.05rem;">Cadastre-se
                             grátis</a>
                     </p>

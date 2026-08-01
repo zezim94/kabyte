@@ -1,208 +1,244 @@
 :root {
-    --header-bg: #2c3e50;
-    --header-text: #ecf0f1;
-    --accent-color: #3498db;
-    --hover-bg: #34495e;
-    --pdv-btn-bg: #27ae60;
-    --pdv-btn-hover: #2ecc71;
+  --header-bg: #1e293b;
+  --header-text: #f1f5f9;
+  --accent-color: #3b82f6;
+  --accent-hover: #2563eb;
+  --hover-bg: rgba(255, 255, 255, 0.08);
+  --pdv-btn-bg: #10b981;
+  --pdv-btn-hover: #059669;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --border-light: rgba(255, 255, 255, 0.08);
+  --transition-speed: 0.25s;
 }
 
-::-webkit-scrollbar {
-    height: 0;
-    width: 0;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-* {
-    box-sizing: border-box;
-    outline: none;
+html {
+  scroll-behavior: smooth;
 }
 
-html,
 body {
-    margin: 0;
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    height: 100vh;
+  font-family: "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  background-color: #f8fafc;
+  color: #0f172a;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
-/* Reset básico para o header */
+/* Header */
 .admin-header {
-    background-color: var(--header-bg);
-    color: var(--header-text);
-    width: 100%;
-    position: sticky;
-    /* Fixa o menu no topo */
-    top: 0;
-    z-index: 1000;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--header-bg);
+  color: var(--header-text);
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(8px);
 }
 
 .header-container {
-    max-width: 100%;
-    margin: 0 auto;
-    padding: 0 20px;
-    height: 70px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  height: 4.5rem; /* 72px */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-/* --- Logo --- */
+/* Logo */
 .logo-area {
-    font-size: 1.2rem;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1.25rem;
+  white-space: nowrap;
+  user-select: none;
 }
 
 .logo-area i {
-    color: var(--accent-color);
-    font-size: 1.4rem;
+  color: var(--accent-color);
+  font-size: 1.6rem;
+  transition: transform 0.3s;
 }
 
-/* --- Menu Desktop --- */
+.logo-area:hover i {
+  transform: rotate(-15deg) scale(1.1);
+}
+
+.logo-text strong {
+  color: var(--accent-color);
+  font-weight: 700;
+}
+
+/* Botão mobile */
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--header-text);
+  font-size: 1.8rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  transition: background-color var(--transition-speed);
+}
+
+.menu-toggle:hover {
+  background-color: var(--hover-bg);
+}
+
+/* Navegação desktop */
 .menu-area {
-    display: flex;
-    gap: 5px;
-    align-items: center;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 .menu-item {
-    color: var(--header-text);
-    text-decoration: none;
-    padding: 8px 12px;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    transition: background 0.3s;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  color: var(--header-text);
+  text-decoration: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+  transition: background-color var(--transition-speed), color var(--transition-speed);
 }
 
 .menu-item:hover {
-    background-color: var(--hover-bg);
+  background-color: var(--hover-bg);
+  color: white;
 }
 
-/* Botão PDV Específico */
+.menu-item.active {
+  background-color: var(--accent-color);
+  color: white;
+  font-weight: 600;
+}
+
 .menu-item.btn-pdv {
-    background-color: var(--pdv-btn-bg);
-    font-weight: bold;
-    margin-left: 10px;
+  background-color: var(--pdv-btn-bg);
+  color: white;
+  font-weight: 700;
+  padding: 0.55rem 1.2rem;
+  margin-left: 0.5rem;
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
 }
 
 .menu-item.btn-pdv:hover {
-    background-color: var(--pdv-btn-hover);
+  background-color: var(--pdv-btn-hover);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
 }
 
-/* --- User Area Desktop --- */
+/* Área do usuário (desktop) */
 .user-area-desktop {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  margin-left: auto;
+}
+
+.btn-logout {
+  color: #f87171;
+  font-size: 1.2rem;
+  transition: color var(--transition-speed), transform var(--transition-speed);
+}
+
+.btn-logout:hover {
+  color: #fca5a5;
+  transform: scale(1.1);
+}
+
+/* Área do usuário (mobile) - oculta por padrão */
+.user-area-mobile {
+  display: none;
+}
+
+/* ========================
+   RESPONSIVO (ATÉ 992px)
+   ======================== */
+@media (max-width: 992px) {
+  .menu-toggle {
+    display: block;
+  }
+
+  .user-area-desktop {
+    display: none;
+  }
+
+  /* Menu hamburguer */
+  .menu-area {
+    position: fixed;
+    top: 70px;                     /* altura do header (4.5rem ≈ 70px) */
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 70px);   /* altura exata restante */
+    background-color: var(--header-bg);
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1.5rem;
+    gap: 0.8rem;
+    overflow-y: auto;             /* ROLAGEM ATIVADA */
+    overflow-x: hidden;
+
+    /* Escondido padrão */
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+    z-index: 999;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+  }
+
+  .menu-area.active {
+    transform: translateX(0);
+  }
+
+  /* Itens do menu em mobile */
+  .menu-item {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    font-size: 1rem;
+    border-radius: 0.5rem;
+    white-space: normal;          /* permite quebra de texto se necessário */
+  }
+
+  .menu-item.btn-pdv {
+    margin-left: 0;
+    justify-content: center;
+    text-align: center;
+  }
+
+  /* Área do usuário no final do menu */
+  .user-area-mobile {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-light);
+    color: #cbd5e1;
+    font-size: 0.95rem;
+  }
+
+  .user-area-mobile .btn-logout {
+    color: #f87171;
+    font-weight: bold;
     display: flex;
     align-items: center;
-    gap: 15px;
-    font-size: 0.9rem;
-}
-
-.user-area-desktop .btn-logout {
-    color: #e74c3c;
-    font-size: 1.1rem;
-    transition: transform 0.2s;
-}
-
-.user-area-desktop .btn-logout:hover {
-    transform: scale(1.1);
-}
-
-/* --- Mobile Elements (Hidden on Desktop) --- */
-.menu-toggle {
-    display: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-}
-
-.user-area-mobile {
-    display: none;
-    /* Escondido no desktop */
-}
-
-/* --- RESPONSIVIDADE (Mobile/Tablet) --- */
-@media (max-width: 992px) {
-    .header-container {
-        padding: 0 15px;
-    }
-
-    /* Esconde a user area do desktop para economizar espaço */
-    .user-area-desktop {
-        display: none;
-    }
-
-    /* Mostra o botão sanduíche */
-    .menu-toggle {
-        display: block;
-    }
-
-    /* Transforma o menu horizontal em vertical */
-    .menu-area {
-        position: absolute;
-        top: 70px;
-        /* Altura do header */
-        left: 0;
-        width: 100%;
-        background-color: var(--header-bg);
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 20px;
-        gap: 15px;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-
-        /* Animação de esconder/mostrar */
-        max-height: 0;
-        overflow: hidden;
-        opacity: 0;
-        transition: max-height 0.4s ease, opacity 0.4s ease;
-        visibility: hidden;
-    }
-
-    /* Classe ativa adicionada via JS */
-    .menu-area.active {
-        max-height: 500px;
-        /* Altura suficiente para os itens */
-        opacity: 1;
-        visibility: visible;
-        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    }
-
-    .menu-item {
-        width: 100%;
-        padding: 12px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .menu-item.btn-pdv {
-        margin-left: 0;
-        text-align: center;
-        justify-content: center;
-        margin-top: 10px;
-    }
-
-    /* Mostra a área do usuário dentro do menu no mobile */
-    .user-area-mobile {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-        margin-top: 15px;
-        padding-top: 15px;
-        border-top: 1px solid rgba(255, 255, 255, 0.2);
-        color: #bdc3c7;
-    }
-
-    .user-area-mobile .btn-logout {
-        color: #e74c3c;
-        text-decoration: none;
-        font-weight: bold;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
+    gap: 0.3rem;
+  }
 }

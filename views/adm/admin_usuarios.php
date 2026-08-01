@@ -1,133 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Usuários - KaByte</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+</head>
+
 <?php require __DIR__ . '/../layout/header_admin.php'; ?>
 
 <style>
+    :root {
+        --bg-body: #f1f5f9;
+        --card-bg: #ffffff;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --border-color: #e2e8f0;
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+        --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+        --radius: 12px;
+        --transition: 0.2s ease;
+        --green: #10b981;
+        --green-hover: #059669;
+        --blue: #3b82f6;
+        --blue-hover: #2563eb;
+        --red: #ef4444;
+        --red-hover: #dc2626;
+        --orange: #f59e0b;
+        --gray: #94a3b8;
+    }
+
+    body {
+        background-color: var(--bg-body);
+        margin: 0;
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        color: var(--text-primary);
+    }
+
     .admin-container {
         max-width: 1200px;
-        margin: 30px auto;
-        padding: 0 20px;
-        font-family: 'Segoe UI', sans-serif;
+        margin: 2rem auto;
+        padding: 0 1.5rem;
     }
 
     .page-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 25px;
-        border-bottom: 1px solid #eee;
-        padding-bottom: 15px;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border-color);
     }
 
     .page-header h2 {
         margin: 0;
-        color: #2c3e50;
+        color: var(--text-primary);
+        font-size: 1.6rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
     .btn-novo {
-        background: #27ae60;
+        background: var(--green);
         color: white;
-        padding: 10px 20px;
+        padding: 0.6rem 1.4rem;
         border-radius: 8px;
         text-decoration: none;
-        font-weight: bold;
-        display: flex;
+        font-weight: 600;
+        display: inline-flex;
         align-items: center;
-        gap: 8px;
-        transition: background 0.3s;
+        gap: 0.5rem;
+        transition: background var(--transition), transform var(--transition);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        white-space: nowrap;
     }
 
     .btn-novo:hover {
-        background: #219150;
+        background: var(--green-hover);
+        transform: translateY(-1px);
     }
 
-    /* Tabela Estilizada */
+    /* Container da tabela com scroll responsivo */
     .table-container {
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        background: var(--card-bg);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
         overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border: 1px solid var(--border-color);
     }
 
     table {
         width: 100%;
         border-collapse: collapse;
-        text-align: left;
+        min-width: 700px;
+        /* garante scroll suave no mobile */
+        font-size: 0.95rem;
     }
 
     thead {
-        background-color: #f8f9fa;
-        color: #2c3e50;
-    }
-
-    th,
-    td {
-        padding: 15px 20px;
-        border-bottom: 1px solid #eee;
+        background-color: #f8fafc;
     }
 
     th {
         font-weight: 600;
         text-transform: uppercase;
-        font-size: 0.85rem;
-        letter-spacing: 0.5px;
+        font-size: 0.8rem;
+        letter-spacing: 0.05em;
+        color: var(--text-secondary);
+        padding: 1rem 1.2rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    td {
+        padding: 0.9rem 1.2rem;
+        border-bottom: 1px solid #f1f5f9;
+        color: var(--text-primary);
+    }
+
+    tbody tr:last-child td {
+        border-bottom: none;
     }
 
     tbody tr:hover {
-        background-color: #fcfcfc;
+        background-color: #f8fafc;
     }
 
-    /* Badges de Nível */
+    /* Badges de nível */
     .badge-nivel {
-        padding: 5px 12px;
+        padding: 0.25rem 0.8rem;
         border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: bold;
+        font-size: 0.75rem;
+        font-weight: 700;
         text-transform: uppercase;
+        letter-spacing: 0.03em;
     }
 
     .badge-admin {
-        background: #e8f4fd;
-        color: #3498db;
+        background: #dbeafe;
+        color: #1e40af;
     }
 
     .badge-vendedor {
-        background: #fef5e7;
-        color: #f39c12;
+        background: #fef3c7;
+        color: #92400e;
     }
 
     .badge-padrao {
-        background: #f4f6f6;
-        color: #7f8c8d;
+        background: #f1f5f9;
+        color: #475569;
     }
 
-    /* Botões de Ação */
+    /* Botões de ação */
     .action-btn {
-        padding: 6px 10px;
+        padding: 0.4rem 0.7rem;
         border-radius: 6px;
         text-decoration: none;
         color: white;
         font-size: 0.9rem;
-        margin-right: 5px;
+        margin-right: 4px;
         cursor: pointer;
         border: none;
+        transition: background var(--transition), transform var(--transition);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
     }
 
     .btn-edit {
-        background: #3498db;
-    }
-
-    .btn-delete {
-        background: #e74c3c;
+        background: var(--blue);
     }
 
     .btn-edit:hover {
-        background: #2980b9;
+        background: var(--blue-hover);
+        transform: scale(1.05);
+    }
+
+    .btn-delete {
+        background: var(--red);
     }
 
     .btn-delete:hover {
-        background: #c0392b;
+        background: var(--red-hover);
+        transform: scale(1.05);
     }
 
-    /* --- CUSTOM MODAL EXCLUSÃO --- */
+    /* Modal */
     .modal-overlay {
         position: fixed;
         top: 0;
@@ -137,26 +201,28 @@
         background: rgba(0, 0, 0, 0.5);
         z-index: 10000;
         display: none;
-        /* Escondido por padrão */
         justify-content: center;
         align-items: center;
-        backdrop-filter: blur(2px);
+        padding: 1rem;
+        backdrop-filter: blur(3px);
     }
 
     .modal-box {
         background: white;
-        width: 90%;
+        width: 100%;
         max-width: 400px;
-        padding: 25px;
-        border-radius: 15px;
+        max-height: 90vh;
+        overflow-y: auto;
+        padding: 2rem;
+        border-radius: var(--radius);
         text-align: center;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        animation: popIn 0.3s;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        animation: popIn 0.3s ease;
     }
 
     @keyframes popIn {
         from {
-            transform: scale(0.8);
+            transform: scale(0.9);
             opacity: 0;
         }
 
@@ -168,28 +234,58 @@
 
     .modal-actions {
         display: flex;
-        gap: 10px;
-        margin-top: 20px;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
         justify-content: center;
+        flex-wrap: wrap;
     }
 
     .btn-modal {
-        padding: 10px 25px;
+        padding: 0.6rem 1.5rem;
         border-radius: 8px;
         border: none;
-        font-weight: bold;
+        font-weight: 600;
         cursor: pointer;
         text-decoration: none;
         display: inline-block;
+        transition: background var(--transition);
     }
 
     .btn-cancel {
-        background: #eee;
-        color: #555;
+        background: #f1f5f9;
+        color: #475569;
     }
 
     .btn-cancel:hover {
-        background: #ddd;
+        background: #e2e8f0;
+    }
+
+    /* Responsivo */
+    @media (max-width: 768px) {
+        .admin-container {
+            padding: 0 1rem;
+        }
+
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .btn-novo {
+            width: 100%;
+            justify-content: center;
+        }
+
+        table {
+            min-width: 600px;
+            /* reduz um pouco o mínimo */
+        }
+
+        th,
+        td {
+            padding: 0.75rem 0.8rem;
+            font-size: 0.9rem;
+        }
     }
 </style>
 

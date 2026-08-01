@@ -1,3 +1,14 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Entregas - KaByte</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
 <?php require __DIR__ . '/../layout/header_admin.php'; ?>
 
 <style>
@@ -11,8 +22,20 @@
         --gray: #95a5a6;
     }
 
-    .container{
-        padding: 15px;
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        background: #f1f5f9;
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .container {
+        padding: 20px 15px;
+        max-width: 1400px;
+        margin: 0 auto;
     }
 
     /* --- LAYOUT GERAL --- */
@@ -25,6 +48,15 @@
         gap: 15px;
     }
 
+    .page-header h2 {
+        margin: 0;
+        color: var(--dark);
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
     .filter-container {
         background: white;
         padding: 20px;
@@ -32,16 +64,20 @@
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
         margin-bottom: 30px;
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 20px;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 15px;
         align-items: end;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
     }
 
     .form-group label {
         font-weight: 600;
         color: var(--dark);
-        margin-bottom: 8px;
-        display: block;
+        margin-bottom: 6px;
         font-size: 0.9rem;
     }
 
@@ -50,8 +86,9 @@
         padding: 10px 12px;
         border: 1px solid #ddd;
         border-radius: 8px;
-        font-size: 1rem;
+        font-size: 0.95rem;
         transition: border-color 0.3s;
+        background: white;
     }
 
     .form-control:focus {
@@ -62,7 +99,7 @@
     /* --- GRID DE CARDS --- */
     .delivery-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: 25px;
     }
 
@@ -83,7 +120,6 @@
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     }
 
-    /* Cores da Borda Superior */
     .border-pago {
         border-top-color: var(--success);
     }
@@ -108,6 +144,8 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
     }
 
     .card-header-flex {
@@ -134,6 +172,7 @@
         text-transform: uppercase;
         letter-spacing: 0.5px;
         color: white;
+        white-space: nowrap;
     }
 
     .bg-pago {
@@ -152,6 +191,7 @@
         font-size: 1.2rem;
         color: var(--dark);
         margin: 0 0 5px 0;
+        word-break: break-word;
     }
 
     .address-text {
@@ -160,20 +200,23 @@
         line-height: 1.4;
         display: flex;
         gap: 8px;
+        word-break: break-word;
     }
 
     .obs-box {
         background: #fff8e1;
         border-left: 3px solid #ffca28;
-        padding: 8px;
+        padding: 8px 10px;
         font-size: 0.85rem;
         margin-top: 10px;
         border-radius: 4px;
         color: #7f6000;
+        word-break: break-word;
     }
 
     .price-info {
         text-align: right;
+        flex-shrink: 0;
     }
 
     .price-total {
@@ -192,6 +235,7 @@
     .action-buttons {
         display: flex;
         gap: 8px;
+        flex-wrap: wrap;
     }
 
     .btn-circle {
@@ -240,6 +284,7 @@
         gap: 8px;
         margin-top: 15px;
         transition: background 0.3s;
+        font-size: 0.95rem;
     }
 
     .btn-confirm:hover {
@@ -256,10 +301,11 @@
         display: flex;
         flex-direction: column;
         gap: 10px;
+        max-width: 90%;
     }
 
     .toast {
-        min-width: 300px;
+        min-width: 250px;
         background: #333;
         color: white;
         padding: 12px 20px;
@@ -269,6 +315,7 @@
         align-items: center;
         gap: 10px;
         animation: slideUp 0.3s forwards;
+        font-size: 0.9rem;
     }
 
     .toast.success {
@@ -304,12 +351,15 @@
         justify-content: center;
         align-items: center;
         backdrop-filter: blur(2px);
+        padding: 20px;
     }
 
     .modal-box {
         background: white;
-        width: 90%;
+        width: 100%;
         max-width: 400px;
+        max-height: 90vh;
+        overflow-y: auto;
         padding: 25px;
         border-radius: 15px;
         text-align: center;
@@ -334,6 +384,7 @@
         gap: 10px;
         margin-top: 20px;
         justify-content: center;
+        flex-wrap: wrap;
     }
 
     .btn-modal {
@@ -342,6 +393,8 @@
         border: none;
         cursor: pointer;
         font-weight: bold;
+        font-size: 0.95rem;
+        white-space: nowrap;
     }
 
     .btn-cancel {
@@ -354,20 +407,89 @@
         color: white;
     }
 
-    /* Responsividade Mobile */
+    /* --- ESTADOS VAZIOS --- */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--gray);
+        background: white;
+        border-radius: 12px;
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        display: block;
+    }
+
+    /* =============================================
+       RESPONSIVIDADE
+    ============================================= */
     @media (max-width: 768px) {
-        .delivery-grid {
-            grid-template-columns: 1fr;
+        .container {
+            padding: 15px 10px;
         }
 
-        /* 1 coluna no mobile */
         .page-header {
             flex-direction: column;
             align-items: flex-start;
         }
+
+        .filter-container {
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .delivery-grid {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .card-body {
+            padding: 15px;
+        }
+
+        .card-footer {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 15px;
+        }
+
+        .action-buttons {
+            justify-content: center;
+        }
+
+        .price-info {
+            text-align: center;
+        }
     }
 
-    /* ESTILOS DE IMPRESSÃO (Romaneio) */
+    @media (max-width: 480px) {
+        .time-badge {
+            font-size: 1rem;
+        }
+
+        .client-name {
+            font-size: 1rem;
+        }
+
+        .btn-circle {
+            width: 34px;
+            height: 34px;
+            font-size: 0.9rem;
+        }
+
+        .btn-confirm {
+            padding: 10px;
+            font-size: 0.9rem;
+        }
+
+        .modal-box {
+            padding: 20px;
+        }
+    }
+
+    /* IMPRESSÃO */
     @media print {
         body * {
             visibility: hidden;
@@ -388,8 +510,10 @@
 
         .filter-container,
         .btn-confirm,
-        .actions-btn,
-        .page-header {
+        .action-buttons,
+        .page-header button,
+        #toast-container,
+        .modal-overlay {
             display: none !important;
         }
 
@@ -452,8 +576,8 @@
     </form>
 
     <?php if (empty($entregas)): ?>
-        <div style="text-align:center; padding: 60px; color: #95a5a6; background:white; border-radius:12px;">
-            <i class="fas fa-box-open" style="font-size:3rem; margin-bottom:15px;"></i>
+        <div class="empty-state">
+            <i class="fas fa-box-open"></i>
             <h3>Nenhuma entrega encontrada.</h3>
             <p>Verifique a data ou os filtros selecionados.</p>
         </div>
@@ -583,9 +707,9 @@
         formData.append('id', idVendaParaBaixar);
 
         fetch('<?= BASE_URL ?>api/confirmarEntrega', {
-            method: 'POST',
-            body: formData
-        })
+                method: 'POST',
+                body: formData
+            })
             .then(res => res.json())
             .then(data => {
                 if (data.sucesso) {
