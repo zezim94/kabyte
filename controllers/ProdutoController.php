@@ -5,6 +5,7 @@ require_once __DIR__ . '/../models/Categoria.php';
 
 class ProdutoController
 {
+    public $livre = ['vitrine', 'sobre', 'detalhes'];
 
     // Lista todos os produtos (Admin)
     public function index()
@@ -69,6 +70,26 @@ class ProdutoController
             $relacionados = Produto::listarRelacionados($produto['categoria_id'], $id);
         }
 
+        // === CONTADOR DE VISUALIZAÇÕES COM PROTEÇÃO CONTRA SPAM (F5) ===
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        if (!isset($_SESSION['produtos_visualizados'])) {
+            $_SESSION['produtos_visualizados'] = [];
+        }
+
+        if (!in_array($id, $_SESSION['produtos_visualizados'])) {
+            // Pega o ID do cliente se ele estiver logado na hora de ver o produto
+            $clienteLogadoId = $_SESSION['cliente_id'] ?? null;
+
+            // Dispara a função enviando o ID do Produto e o ID do Cliente
+            Produto::visu($id, $clienteLogadoId);
+
+            $_SESSION['produtos_visualizados'][] = $id;
+        }
+        // ==============================================================
+
         require __DIR__ . '/../views/detalhes_produto.php';
     }
 
@@ -90,20 +111,23 @@ class ProdutoController
 
     public function salvar()
     {
+        // Esta segurança extra pode ser mantida sem problemas!
         Auth::verificar(['admin', 'master']);
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = !empty($_POST['id']) ? $_POST['id'] : null;
             $codigo = $_POST['codigo_barras'] ?? '';
 
-            // VALIDAÇÃO DE DUPLICIDADE (mantido do seu código)
+            // VALIDAÇÃO DE DUPLICIDADE
             $produtoExistente = Produto::buscarPorCodigo($codigo);
             if ($produtoExistente) {
                 if (!$id) {
-                    $this->redirecionarComErro("Já existe um produto com o código $codigo.", 'produto/novo');
+                    // ROTA CORRIGIDA PARA O NOVO PADRÃO
+                    $this->redirecionarComErro("Já existe um produto com o código $codigo.", 'index.php?rota=produto/novo');
                 }
                 if ($id && $produtoExistente['id'] != $id) {
-                    $this->redirecionarComErro("O código $codigo já pertence a outro produto.", "produto/editar&id=$id");
+                    // ROTA CORRIGIDA PARA O NOVO PADRÃO
+                    $this->redirecionarComErro("O código $codigo já pertence a outro produto.", "index.php?rota=produto/editar&id=$id");
                 }
             }
 
@@ -128,7 +152,6 @@ class ProdutoController
 
             // SALVAR DADOS PRINCIPAIS NO BANCO
             if ($id) {
-                // Atualiza produto existente e exclui imagem principal velha se enviou uma nova
                 if ($nomeImagem) {
                     $produtoAntigo = Produto::buscarPorId($id);
                     if ($produtoAntigo && !empty($produtoAntigo['imagem'])) {
@@ -140,7 +163,6 @@ class ProdutoController
                 Produto::atualizar($id, $dados);
                 $idProdutoFinal = $id;
             } else {
-                // Cria novo produto e resgata o ID que foi gerado no banco
                 $idProdutoFinal = Produto::salvar($dados);
             }
 
@@ -154,8 +176,8 @@ class ProdutoController
                         if ($imgBanco) {
                             $caminho = __DIR__ . '/../public/uploads/' . $imgBanco['imagem'];
                             if (file_exists($caminho))
-                                unlink($caminho); // Apaga arquivo fisico
-                            Produto::excluirImagemExtra($imgId); // Apaga do banco
+                                unlink($caminho);
+                            Produto::excluirImagemExtra($imgId);
                         }
                     }
                 }
@@ -178,7 +200,9 @@ class ProdutoController
             }
 
             $msg = $id ? "Produto atualizado" : "Produto criado";
-            header("Location: " . BASE_URL . "produtos?msg=" . urlencode($msg));
+
+            // ROTA CORRIGIDA (Redireciona para o index do ProdutoController)
+            header("Location: " . BASE_URL . "index.php?rota=produto/index&msg=" . urlencode($msg));
             exit;
         }
     }
@@ -220,34 +244,25 @@ class ProdutoController
 
     public function vitrine()
     {
-        // NÃO TEM Auth::verificar() pois é pública
-
         // 1. Busca as categorias no banco para montar o submenu
         $categorias = Categoria::listar();
 
-        // 2. Verifica se tem busca por texto OU filtro de categoria na URL
         $termo = $_GET['busca'] ?? '';
-        $categoriaId = $_GET['categoria'] ?? '';
+        $apenasPromocoes = isset($_GET['promocao']) && $_GET['promocao'] == 1;
 
-        if (!empty($termo)) {
-            // Se o cliente digitou algo na lupa
-            $produtos = Produto::buscarPorTermo($termo);
-        } elseif (!empty($categoriaId)) {
-            // Se o cliente clicou em uma categoria no submenu
-            $produtos = Produto::buscarPorCategoria($categoriaId);
-        } else {
-            // Padrão: mostra todos os produtos
+        // Lógica de filtragem MVC
+        if ($apenasPromocoes) {
+            // Se clicou no botão "Promoções", usa a nova função do Model
+            $produtos = Produto::listarPromocoes();
+        } elseif (empty($termo)) {
+            // Se não digitou nada e não é promoção, traz todos
             $produtos = Produto::listar();
+        } else {
+            // Se digitou algo na barra de pesquisa, busca por texto
+            $produtos = Produto::buscarPorTermo($termo);
         }
 
-        // Carrega a tela enviando os $produtos e as $categorias
+        // Carrega a View da vitrine
         require __DIR__ . '/../views/vitrine.php';
-    }
-
-    // Página Sobre a Empresa (Pública)
-    public function sobre()
-    {
-        // Como é uma página estática simples, só precisamos puxar a view
-        require __DIR__ . '/../views/sobre.php';
     }
 }

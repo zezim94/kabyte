@@ -1,14 +1,11 @@
 RewriteEngine On
+
+# Impede que pastas sejam listadas caso não tenham um index
 Options -Indexes
 
-# --- A CORREÇÃO ESTÁ AQUI ---
-# Se o arquivo solicitado existe (!-f), NÃO redireciona
+# Se o que foi digitado na URL for um ficheiro ou diretório real (ex: CSS, JS, imagens), não faz nada
 RewriteCond %{REQUEST_FILENAME} !-f
-
-# Se a pasta solicitada existe (!-d), NÃO redireciona
 RewriteCond %{REQUEST_FILENAME} !-d
-# -----------------------------
 
-# Só redireciona se não for arquivo nem pasta real
+# Caso contrário, pega tudo o que vier após a BASE_URL e envia de forma invisível para o index.php?rota=
 RewriteRule ^(.*)$ index.php?rota=$1 [QSA,L]
-php_value display_errors On

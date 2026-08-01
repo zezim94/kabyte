@@ -10,6 +10,19 @@ class Cliente
         return $pdo->query("SELECT id, nome, cpf, telefone, email, data_cadastro FROM clientes ORDER BY nome ASC")->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public static function pesquisarPorTermo($termo)
+    {
+        $pdo = Database::connect();
+
+        $termoFormatado = "%{$termo}%";
+
+        $sql = "SELECT id, nome, cpf FROM clientes WHERE nome LIKE ? OR cpf LIKE ? LIMIT 10";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$termoFormatado, $termoFormatado]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     // Busca o cliente pelo ID. 
     // NOTA: Como o endereço agora fica em outra tabela, não precisamos puxar no JOIN aqui para não duplicar linhas caso ele tenha 2 endereços.
     public static function buscarPorId($id)
@@ -20,71 +33,128 @@ class Cliente
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // Salva o cliente pelo Painel Admin (Agora só salva dados pessoais)
-    public static function salvar($d)
+    public static function buscarPorLogin($login)
     {
         $pdo = Database::connect();
-        $sql = "INSERT INTO clientes (nome, cpf, telefone, email) VALUES (?,?,?,?)";
+
+        $sql = 'SELECT * FROM clientes WHERE (cpf = ? OR email = ? OR telefone = ?) LIMIT 1';
+
         $stmt = $pdo->prepare($sql);
-        return $stmt->execute([
-            $d['nome'],
-            $d['cpf'],
-            $d['telefone'],
-            $d['email']
-        ]);
+        $stmt->execute([$login, $login, $login]);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // Atualiza os dados do cliente pelo Painel Admin / Área do Cliente
+    public static function salvar($dados)
+    {
+        $pdo = Database::connect();
+
+        try {
+            // Inicia a transação (se uma falhar, cancela tudo)
+            $pdo->beginTransaction();
+
+            // 1. Salva os dados na tabela CLIENTES
+            $sqlCliente = "INSERT INTO clientes (nome, cpf, telefone, email) VALUES (?, ?, ?, ?)";
+            $stmt = $pdo->prepare($sqlCliente);
+            $stmt->execute([
+                $dados['nome'] ?? null,
+                $dados['cpf'] ?? null,
+                $dados['telefone'] ?? null,
+                $dados['email'] ?? null
+            ]);
+
+            // Pega o ID do cliente recém-criado
+            $clienteId = $pdo->lastInsertId();
+
+            // 2. Salva os dados na tabela ENDERECOS (se o CEP foi preenchido)
+            if (!empty($dados['cep'])) {
+                // COLUNA CORRIGIDA PARA is_padrao
+                $sqlEndereco = "INSERT INTO enderecos (cliente_id, rua, numero, bairro, cidade, estado, cep, complemento, is_padrao) 
+                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)";
+                $stmtEnd = $pdo->prepare($sqlEndereco);
+                $stmtEnd->execute([
+                    $clienteId,
+                    $dados['rua'] ?? null,
+                    $dados['numero'] ?? null,
+                    $dados['bairro'] ?? null,
+                    $dados['cidade'] ?? null,
+                    $dados['estado'] ?? null,
+                    $dados['cep'] ?? null,
+                    $dados['complemento'] ?? null
+                ]);
+            }
+
+            // Confirma as inserções no banco
+            $pdo->commit();
+            return true;
+        } catch (PDOException $e) {
+            $pdo->rollBack(); // Desfaz a criação do cliente se o endereço falhar
+            error_log("Erro ao salvar cliente: " . $e->getMessage());
+            return false;
+        }
+    }
+
     public static function atualizar($id, $dados)
     {
         $pdo = Database::connect();
 
         try {
-            // 1. Lógica da Senha (só altera se o utilizador digitou algo novo)
-            $sqlSenha = "";
-            if (!empty($dados['senha'])) {
-                $senhaHash = password_hash($dados['senha'], PASSWORD_DEFAULT);
-                $sqlSenha = ", senha = '$senhaHash'";
-            }
+            $pdo->beginTransaction();
 
-            // 2. Monta a Query 
-            $sql = "UPDATE clientes SET 
-                    nome = ?, cpf = ?, telefone = ?, email = ?
-                    $sqlSenha
-                    WHERE id = ?";
-
-            $stmt = $pdo->prepare($sql);
+            // 1. Atualiza os dados na tabela CLIENTES
+            $sqlCliente = "UPDATE clientes SET nome = ?, cpf = ?, telefone = ?, email = ? WHERE id = ?";
+            $stmt = $pdo->prepare($sqlCliente);
             $stmt->execute([
-                $dados['nome'],
-                $dados['cpf'],
-                $dados['telefone'],
-                $dados['email'],
+                $dados['nome'] ?? null,
+                $dados['cpf'] ?? null,
+                $dados['telefone'] ?? null,
+                $dados['email'] ?? null,
                 $id
             ]);
 
-            return ['sucesso' => true, 'msg' => 'Dados atualizados com sucesso!'];
+            // 2. Trata a tabela ENDERECOS
+            if (!empty($dados['cep'])) {
 
-        } catch (PDOException $e) {
-            // Captura o erro específico de "Chave Duplicada" (Integrity constraint violation)
-            if ($e->getCode() == 23000 || $e->getCode() == 1062) {
-                $mensagemBD = $e->getMessage();
-
-                // Descobre qual foi a coluna que deu erro para dar a resposta exata
-                if (strpos($mensagemBD, 'cpf') !== false) {
-                    return ['sucesso' => false, 'msg' => 'Atenção: Este CPF já está cadastrado em outra conta.'];
+                // Verifica se já tem um ID de endereço (veio do input hidden do formulário)
+                if (!empty($dados['endereco_id'])) {
+                    // Já existia endereço, então FAZ UPDATE
+                    $sqlEndereco = "UPDATE enderecos SET rua = ?, numero = ?, bairro = ?, cidade = ?, estado = ?, cep = ?, complemento = ? WHERE id = ?";
+                    $stmtEnd = $pdo->prepare($sqlEndereco);
+                    $stmtEnd->execute([
+                        $dados['rua'] ?? null,
+                        $dados['numero'] ?? null,
+                        $dados['bairro'] ?? null,
+                        $dados['cidade'] ?? null,
+                        $dados['estado'] ?? null,
+                        $dados['cep'] ?? null,
+                        $dados['complemento'] ?? null,
+                        $dados['endereco_id']
+                    ]);
+                } else {
+                    // Não tinha endereço antes, mas agora preencheu, então FAZ INSERT
+                    // COLUNA CORRIGIDA PARA is_padrao
+                    $sqlEndereco = "INSERT INTO enderecos (cliente_id, rua, numero, bairro, cidade, estado, cep, complemento, is_padrao) 
+                                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)";
+                    $stmtEnd = $pdo->prepare($sqlEndereco);
+                    $stmtEnd->execute([
+                        $id,
+                        $dados['rua'] ?? null,
+                        $dados['numero'] ?? null,
+                        $dados['bairro'] ?? null,
+                        $dados['cidade'] ?? null,
+                        $dados['estado'] ?? null,
+                        $dados['cep'] ?? null,
+                        $dados['complemento'] ?? null
+                    ]);
                 }
-                if (strpos($mensagemBD, 'email') !== false) {
-                    return ['sucesso' => false, 'msg' => 'Atenção: Este e-mail já está em uso por outro cliente.'];
-                }
-
-                return ['sucesso' => false, 'msg' => 'Já existe um registo com estes dados únicos no sistema.'];
             }
 
-            // Para outros erros genéricos de banco de dados (sem exibir o SQL)
-            return ['sucesso' => false, 'msg' => 'Ocorreu um erro interno ao guardar. Tente novamente.'];
-
-        } catch (Exception $e) {
-            return ['sucesso' => false, 'msg' => 'Erro desconhecido. Tente novamente mais tarde.'];
+            $pdo->commit();
+            return true;
+        } catch (PDOException $e) {
+            $pdo->rollBack();
+            error_log("Erro ao atualizar cliente: " . $e->getMessage());
+            return false;
         }
     }
 

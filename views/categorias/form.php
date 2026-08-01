@@ -21,7 +21,8 @@
                 </div>
             <?php endif; ?>
 
-            <form action="index.php?rota=categoria/salvar" method="POST">
+            <!-- AÇÃO CORRIGIDA PARA O NOVO PADRÃO -->
+            <form action="<?= BASE_URL ?>index.php?rota=categoria/salvar" method="POST">
                 
                 <input type="hidden" name="id" value="<?= $categoria['id'] ?>">
 
@@ -41,7 +42,8 @@
                 </div>
 
                 <div class="form-actions">
-                    <a href="index.php?rota=categorias" class="btn btn-secondary">
+                    <!-- LINK CORRIGIDO PARA O NOVO PADRÃO -->
+                    <a href="<?= BASE_URL ?>index.php?rota=categoria/index" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Cancelar
                     </a>
                     
@@ -54,4 +56,3 @@
         </div>
     </div>
 </div>
-

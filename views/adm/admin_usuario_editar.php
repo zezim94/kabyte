@@ -52,10 +52,10 @@
 
     <div class="page-header">
         <h2><i class="fas fa-user-edit"></i> Editar Usuário</h2>
-        <a href="<?= BASE_URL ?>api/usuarios" class="btn-voltar"><i class="fas fa-arrow-left"></i> Voltar</a>
+        <a href="<?= BASE_URL ?>admin/usuarios" class="btn-voltar"><i class="fas fa-arrow-left"></i> Voltar</a>
     </div>
 
-    <form action="<?= BASE_URL ?>api/salvar_edicao" method="POST" class="card-form">
+    <form action="<?= BASE_URL ?>admin/salvar_edicao" method="POST" class="card-form">
         
         <input type="hidden" name="id" value="<?= $usuario['id'] ?>">
 

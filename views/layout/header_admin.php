@@ -34,56 +34,58 @@ $nome = $_SESSION['nome'] ?? 'Admin';
             <a href="<?= BASE_URL ?>admin" class="menu-item">
                 <i class="fas fa-tachometer-alt"></i> Dashboard
             </a>
-            <a href="<?= BASE_URL ?>entregas" class="menu-item">
+            <a href="<?= BASE_URL ?>api/entregas" class="menu-item">
                 <i class="fas fa-motorcycle"></i> Entregas
             </a>
-            <a href="<?= BASE_URL ?>api/usuarios" class="menu-item">
+            <a href="<?= BASE_URL ?>admin/usuarios" class="menu-item">
                 <i class="fas fa-users"></i> Usuários
             </a>
-            <a href="<?= BASE_URL ?>clientes" class="menu-item">
+            <a href="<?= BASE_URL ?>cliente" class="menu-item">
                 <i class="fas fa-users"></i> Clientes
             </a>
-            <a href="<?= BASE_URL ?>vendas" class="menu-item">
+            <a href="<?= BASE_URL ?>venda" class="menu-item">
                 <i class="fas fa-receipt"></i> Vendas
             </a>
-            <a href="<?= BASE_URL ?>relatorios" class="menu-item">
+            <a href="<?= BASE_URL ?>relatorio" class="menu-item">
                 <i class="fas fa-chart-line"></i> Relatórios
             </a>
-            <a href="<?= BASE_URL ?>produtos" class="menu-item">
+            <a href="<?= BASE_URL ?>produto" class="menu-item">
                 <i class="fas fa-boxes"></i> Estoque
             </a>
-            <a href="<?= BASE_URL ?>categorias" class="menu-item">
+            <a href="<?= BASE_URL ?>categoria" class="menu-item">
                 <i class="fas fa-boxes"></i> Categorias
             </a>
-            <a href="<?= BASE_URL ?>configuracao" class="menu-item">
+            <a href="<?= BASE_URL ?>admin/config" class="menu-item">
                 <i class="fas fa-cog"></i> Configurar
             </a>
 
-            <a href="<?= BASE_URL ?>index.php?rota=admin/chaves" class="menu-item">
+            <a href="<?= BASE_URL ?>chave" class="menu-item">
                 <i class="fas fa-key"></i> Chaves
             </a>
 
             <a href="<?= BASE_URL ?>home" class="menu-item btn-pdv">
                 <i class="fas fa-cash-register"></i> Caixa
             </a>
-            
+
 
             <div class="user-area-mobile">
                 <span>Olá, <?= explode(' ', $nome)[0] ?></span>
-                <a href="<?= BASE_URL ?>logout" class="btn-logout" title="Sair">Sair <i
-                        class="fas fa-sign-out-alt"></i></a>
+                <!-- LINK CORRIGIDO -->
+                <a href="<?= BASE_URL ?>index.php?rota=login/logout" class="btn-logout" title="Sair">Sair <i class="fas fa-sign-out-alt"></i></a>
             </div>
         </div>
 
         <div class="user-area-desktop">
             <span>Olá, <strong><?= explode(' ', $nome)[0] ?></strong></span>
-            <a href="<?= BASE_URL ?>logout" class="btn-logout" title="Sair"><i class="fas fa-sign-out-alt"></i></a>
+            <!-- LINK CORRIGIDO -->
+            <a href="<?= BASE_URL ?>index.php?rota=login/logout" class="btn-logout" title="Sair"><i class="fas fa-sign-out-alt"></i></a>
         </div>
+    </div>
     </div>
 </nav>
 
 <script>
-    document.getElementById('mobile-menu').addEventListener('click', function () {
+    document.getElementById('mobile-menu').addEventListener('click', function() {
         document.getElementById('nav-list').classList.toggle('active');
     });
 </script>

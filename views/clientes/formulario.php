@@ -1,7 +1,10 @@
 <?php
 // Inicializa dados caso seja "Novo Cliente"
 $id = $cliente['id'] ?? null;
-$acao = $id ? "index.php?rota=cliente/salvar&id=$id" : "index.php?rota=cliente/salvar";
+
+// URL LIMPA: Removido o index.php?rota= e alterado de &id para ?id
+$acao = $id ? "cliente/salvar?id=$id" : "cliente/salvar";
+
 $titulo = $id ? "Editar Cliente" : "Novo Cliente";
 
 $cliente = $cliente ?? []; // Evita erros de undefined index
@@ -44,7 +47,7 @@ $endereco = $endereco ?? []; // NOVO: Inicializa o endereço (Endereço Padrão)
                 </div>
             </div>
 
-            <form method="POST" action="<?= $acao ?>" id="form-cliente">
+            <form method="POST" action="<?= BASE_URL . $acao ?>" id="form-cliente">
 
                 <input type="hidden" name="endereco_id" value="<?= htmlspecialchars($endereco['id'] ?? '') ?>">
 

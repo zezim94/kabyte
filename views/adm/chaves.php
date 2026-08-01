@@ -79,7 +79,7 @@
         </div>
     <?php endif; ?>
 
-    <form action="<?= BASE_URL ?>index.php?rota=admin/chaves/salvar" method="POST">
+    <form action="<?= BASE_URL ?>chave/salvar" method="POST">
         
         <?php foreach ($chaves as $chave): ?>
             <div class="chave-item">

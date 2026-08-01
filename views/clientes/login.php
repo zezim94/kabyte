@@ -34,7 +34,8 @@
                 </div>
             <?php endif; ?>
 
-            <form action="<?= BASE_URL ?>cliente/autenticar" method="POST">
+            <!-- AÇÃO DO FORMULÁRIO CORRIGIDA -->
+            <form action="<?= BASE_URL ?>index.php?rota=cliente_area/autenticar" method="POST">
 
                 <div class="form-group">
                     <label for="login">Login</label>
@@ -63,6 +64,7 @@
                         <span>ou continue com</span>
                     </div>
 
+                    <!-- Botão do Google já usa a $authUrl gerada no Controller, então não muda aqui -->
                     <a href="<?= $authUrl ?>" class="btn-google">
                         <i class="fab fa-google"></i> Google
                     </a>
@@ -71,14 +73,20 @@
                 <div class="login-footer" style="margin-top: 20px;">
                     <p style="margin-bottom: 15px; color: #555;">
                         Ainda não tem uma conta? <br>
-                        <a href="<?= BASE_URL ?>cliente/cadastro"
+                        <!-- LINK DE CADASTRO CORRIGIDO -->
+                        <a href="<?= BASE_URL ?>index.php?rota=cliente/cadastro"
                             style="font-weight: bold; color: var(--cor-primaria); font-size: 1.05rem;">Cadastre-se
                             grátis</a>
                     </p>
-                    <a href="<?= BASE_URL ?>cliente/esqueci_senha">Esqueci minha senha</a>
+                    
+                    <!-- LINK DE ESQUECI A SENHA CORRIGIDO -->
+                    <a href="<?= BASE_URL ?>index.php?rota=cliente/esqueci_senha">Esqueci minha senha</a>
                     <br><br>
-                    <a href="<?= BASE_URL ?>vitrine" style="color: #777; text-decoration:none;">&larr; Voltar para
-                        Loja</a>
+                    
+                    <!-- LINK DE VOLTAR À VITRINE CORRIGIDO -->
+                    <a href="<?= BASE_URL ?>index.php?rota=produto/vitrine" style="color: #777; text-decoration:none;">
+                        &larr; Voltar para Loja
+                    </a>
                 </div>
             </form>
         </div>

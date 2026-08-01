@@ -1,7 +1,21 @@
 <?php
-class HomeController {
-    public function index() {
+class HomeController
+{
+
+    
+    public $livre = [
+        'sobre',
+    ];
+    public function index()
+    {
         // Carrega a view (HTML)
         require __DIR__ . '/../views/home.php';
+    }
+
+    // Página Sobre a Empresa (Pública)
+    public function sobre()
+    {
+        // Como é uma página estática simples, só precisamos puxar a view
+        require __DIR__ . '/../views/sobre.php';
     }
 }

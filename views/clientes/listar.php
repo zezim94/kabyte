@@ -18,9 +18,6 @@ $clientes = $clientes ?? [];
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>public/css/adm_cliente_listar.css">
 
-    <script>
-        const BASE_URL = "<?= BASE_URL ?>";
-    </script>
 </head>
 
 <body class="bg-admin">
@@ -42,7 +39,7 @@ $clientes = $clientes ?? [];
                         placeholder="Buscar por nome, email ou telefone...">
                 </div>
 
-                <a href="<?= BASE_URL ?>cliente/novo" class="btn-novo">
+                <a href="<?= BASE_URL ?>cliente/criar" class="btn-novo">
                     <i class="fas fa-plus"></i>
                     <span>Novo Cliente</span>
                 </a>

@@ -48,10 +48,10 @@
 
     <div class="page-header">
         <h2><i class="fas fa-user-plus"></i> Cadastrar Novo Usuário</h2>
-        <a href="<?= BASE_URL ?>api/usuarios" class="btn-voltar"><i class="fas fa-arrow-left"></i> Voltar</a>
+        <a href="<?= BASE_URL ?>admin/usuarios" class="btn-voltar"><i class="fas fa-arrow-left"></i> Voltar</a>
     </div>
 
-    <form action="<?= BASE_URL ?>usuarios/salvar" method="POST" class="card-form">
+    <form action="<?= BASE_URL ?>admin/salvar" method="POST" class="card-form">
         
         <div class="form-group">
             <label>Nome Completo</label>

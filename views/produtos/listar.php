@@ -15,8 +15,6 @@ $categorias = $categorias ?? [];
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>public/css/produto_adm.css">
 
-    <script>const BASE_URL = "<?= BASE_URL ?>";</script>
-
     <style>
         /* Estilo extra para o filtro de categoria */
         .search-group {
@@ -131,7 +129,7 @@ $categorias = $categorias ?? [];
                     </div>
                 </div>
 
-                <a href="<?= BASE_URL ?>produto/novo" class="btn-novo">
+                <a href="<?= BASE_URL ?>produto/criar" class="btn-novo">
                     <i class="fas fa-plus"></i> <span>Novo Produto</span>
                 </a>
             </div>

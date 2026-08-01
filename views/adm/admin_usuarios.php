@@ -213,7 +213,7 @@
 
     <div class="page-header">
         <h2><i class="fas fa-users-cog"></i> Gerenciar Usuários do Sistema</h2>
-        <a href="<?= BASE_URL ?>usuarios/novo" class="btn-novo">
+        <a href="<?= BASE_URL ?>admin/novo" class="btn-novo">
             <i class="fas fa-plus"></i> Novo Usuário
         </a>
     </div>
@@ -257,7 +257,7 @@
                                 </span>
                             </td>
                             <td style="text-align: center;">
-                                <a href="<?= BASE_URL ?>usuarios/editar?id=<?= $u['id'] ?>" class="action-btn btn-edit"
+                                <a href="<?= BASE_URL ?>admin/editar?id=<?= $u['id'] ?>" class="action-btn btn-edit"
                                     title="Editar">
                                     <i class="fas fa-edit"></i>
                                 </a>

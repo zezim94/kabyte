@@ -1,12 +1,19 @@
 <?php
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\SMTP;
+
 require_once __DIR__ . '/../models/Cliente.php';
 require_once __DIR__ . '/../models/Auth.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 class ClienteController
 {
+    public $livre = [
+        'esqueci_senha',
+        'processar_recuperacao'
+    ];
 
     public function index()
     {
@@ -44,7 +51,6 @@ class ClienteController
 
         require __DIR__ . '/../views/clientes/formulario.php';
     }
-
     public function salvar()
     {
         Auth::verificar(['admin', 'master']);
@@ -55,7 +61,10 @@ class ClienteController
         } else {
             Cliente::salvar($dados);
         }
-        header('Location: index.php?rota=clientes');
+
+        // REDIRECIONAMENTO CORRIGIDO: URL Limpa com BASE_URL e exit
+        header('Location: ' . BASE_URL . 'cliente');
+        exit;
     }
 
     public function excluir()
@@ -64,7 +73,9 @@ class ClienteController
         $id = $_GET['id'] ?? null;
         if ($id)
             Cliente::excluir($id);
-        header('Location: index.php?rota=clientes');
+        // REDIRECIONAMENTO CORRIGIDO: URL Limpa com BASE_URL e exit
+        header('Location: ' . BASE_URL . 'cliente');
+        exit;
     }
 
     // 1. Abre a tela de Esqueci a Senha
@@ -79,7 +90,6 @@ class ClienteController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $email = filter_var($_POST['email'] ?? '', FILTER_SANITIZE_EMAIL);
 
-            require_once __DIR__ . '/../models/Cliente.php';
             $cliente = Cliente::buscarPorEmail($email);
 
             if ($cliente) {
@@ -89,8 +99,6 @@ class ClienteController
                 $senhaCriptografada = password_hash($novaSenha, PASSWORD_DEFAULT);
                 Cliente::atualizarSenha($cliente['id'], $senhaCriptografada);
 
-                // 2. Chama o autoload do Composer (ajuste o caminho se sua pasta vendor estiver em outro lugar)
-                require_once __DIR__ . '/../vendor/autoload.php';
 
                 // 3. Configura o PHPMailer
                 $mail = new PHPMailer(true);
@@ -101,13 +109,13 @@ class ClienteController
                     $mail->Host = 'smtp.gmail.com';
                     $mail->SMTPAuth = true;
                     $mail->Username = 'andelsonascimento@gmail.com'; // Coloque seu e-mail do Gmail aqui
-                    $mail->Password = 'lzum lnww nbdm srbu';    // Cole a Senha de App de 16 letras aqui (sem espaços)
+                    $mail->Password = 'uera thtq fsuh qbdq';    // Cole a Senha de App de 16 letras aqui (sem espaços)
                     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
                     $mail->Port = 587;
                     $mail->CharSet = 'UTF-8'; // Para não dar erro em acentos (ç, ã, etc)
 
                     // Remetente e Destinatário
-                    $mail->setFrom('SEU_EMAIL@gmail.com', 'KaByte Informática');
+                    $mail->setFrom('andelsonascimento@gmail.com', 'KaByte Informática');
                     $mail->addAddress($email, $cliente['nome']);
 
                     // Conteúdo do E-mail
@@ -138,13 +146,11 @@ class ClienteController
                     // Redireciona com sucesso
                     header('Location: ' . BASE_URL . 'cliente/esqueci_senha&sucesso=1');
                     exit;
-
                 } catch (Exception $e) {
                     // Se falhar a conexão com o Google (senha errada, sem internet, etc)
                     $erro = "Não foi possível enviar o e-mail no momento. Erro técnico: {$mail->ErrorInfo}";
                     require __DIR__ . '/../views/esqueci_senha.php';
                 }
-
             } else {
                 $erro = "Não encontramos nenhuma conta cadastrada com este e-mail.";
                 require __DIR__ . '/../views/esqueci_senha.php';
@@ -162,7 +168,6 @@ class ClienteController
     public function processar_cadastro()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            require_once __DIR__ . '/../models/Cliente.php';
 
             $nome = trim($_POST['nome'] ?? '');
             $email = filter_var($_POST['email'] ?? '', FILTER_SANITIZE_EMAIL);

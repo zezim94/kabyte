@@ -200,10 +200,10 @@
         <?php endif; ?>
     </div>
 
-    <div style="margin-top: 30px;">
-        <a href="<?= BASE_URL ?>cliente/painel" class="btn-action btn-primary">Meus Pedidos</a>
-        <a href="<?= BASE_URL ?>vitrine" class="btn-action btn-outline">Voltar à Loja</a>
-    </div>
+  <div style="margin-top: 30px;">
+    <a href="<?= BASE_URL ?>index.php?rota=cliente_area/painel" class="btn-action btn-primary">Meus Pedidos</a>
+    <a href="<?= BASE_URL ?>index.php?rota=produto/vitrine" class="btn-action btn-outline">Voltar à Loja</a>
+</div>
 
 </div>
 

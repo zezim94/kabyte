@@ -522,7 +522,7 @@
                                 class="btn-circle btn-maps" title="GPS">
                                 <i class="fas fa-map-marked-alt"></i>
                             </a>
-                            <a href="<?= BASE_URL ?>admin/imprimir_pedido?id=<?= $item['id'] ?>" target="_blank"
+                            <a href="<?= BASE_URL ?>venda/imprimir_pedido?id=<?= $item['id'] ?>" target="_blank"
                                 class="btn-circle btn-print" title="Imprimir">
                                 <i class="fas fa-receipt"></i>
                             </a>
@@ -582,7 +582,7 @@
         const formData = new FormData();
         formData.append('id', idVendaParaBaixar);
 
-        fetch('<?= BASE_URL ?>admin/confirmar_entrega', {
+        fetch('<?= BASE_URL ?>api/confirmarEntrega', {
             method: 'POST',
             body: formData
         })

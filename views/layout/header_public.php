@@ -31,8 +31,7 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
 
         body {
             background-color:
-                <?= $config['cor_fundo'] ?? '#f4f7f6' ?>
-            ;
+                <?= $config['cor_fundo'] ?? '#f4f7f6' ?>;
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -44,8 +43,7 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
            ========================================= */
         .vitrine-header {
             background-color:
-                <?= $config['cor_header'] ?? '#2c3e50' ?>
-            ;
+                <?= $config['cor_header'] ?? '#2c3e50' ?>;
             position: relative;
             display: flex;
             justify-content: space-between;
@@ -210,8 +208,7 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
         .cart-modal-header {
             padding: 18px 20px;
             background:
-                <?= $config['cor_header'] ?? '#2c3e50' ?>
-            ;
+                <?= $config['cor_header'] ?? '#2c3e50' ?>;
             color: white;
             display: flex;
             justify-content: space-between;
@@ -543,8 +540,7 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
 
             .header-nav {
                 background-color:
-                    <?= $config['cor_header'] ?? '#2c3e50' ?>
-                ;
+                    <?= $config['cor_header'] ?? '#2c3e50' ?>;
             }
         }
 
@@ -643,7 +639,8 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
 
         <div class="header-left">
             <div class="vitrine-logo">
-                <a href="<?= BASE_URL ?>vitrine">
+                <!-- 1. Link corrigido para o padrão da vitrine -->
+                <a href="<?= BASE_URL ?>produto/vitrine">
                     <?php
                     $caminhoBanco = $config['logo_loja'] ?? '';
                     $caminhoLimpo = explode('?', $caminhoBanco)[0];
@@ -661,8 +658,11 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
         </div>
 
         <div class="header-center">
-            <form action="index.php" method="GET" class="header-search-form">
-                <input type="hidden" name="rota" value="vitrine">
+            <!-- 2. Action apontando direto para a rota limpa -->
+            <form action="<?= BASE_URL ?>produto/vitrine" method="GET" class="header-search-form">
+
+                <!-- O input hidden 'rota' foi removido porque a rota já está no action! -->
+
                 <input type="text" name="busca" class="header-search-input" placeholder="O que procura?"
                     value="<?= htmlspecialchars($_GET['busca'] ?? '') ?>">
                 <button type="submit" class="header-search-btn" title="Buscar">
@@ -687,21 +687,35 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
 
             <nav class="header-nav">
                 <?php if (isset($_SESSION['cliente_id'])): ?>
-                    <a href="<?= BASE_URL ?>cliente/painel" class="user-link">
+                    <a href="<?= BASE_URL ?>index.php?rota=cliente_area/painel" class="user-link">
                         <i class="fas fa-user"></i>
                         <span>Olá, <?= htmlspecialchars(explode(' ', $_SESSION['cliente_nome'])[0]) ?></span>
                     </a>
                 <?php else: ?>
-                    <a href="<?= BASE_URL ?>cliente/login" class="user-link"><i class="fas fa-user-circle"></i> Login</a>
+
+                    <!-- LINK CORRIGIDO PARA O NOVO PADRÃO -->
+                    <a href="<?= BASE_URL ?>index.php?rota=cliente_area/login" class="user-link">
+                        <i class="fas fa-user-circle"></i> Login
+                    </a>
                 <?php endif; ?>
 
-                <a href="<?= BASE_URL ?>vitrine" class="btn-nav"><i class="fas fa-store"></i> Loja</a>
-                <a href="<?= BASE_URL ?>sobre" class="btn-nav"><i class="fas fa-info-circle"></i> Sobre Nós</a>
+                <a href="<?= BASE_URL ?>index.php?rota=produto/vitrine" class="btn-nav">
+                    <i class="fas fa-store"></i> Loja
+                </a>
+                <a href="<?= BASE_URL ?>index.php?rota=home/sobre" class="btn-nav">
+                    <i class="fas fa-info-circle"></i> Sobre Nós
+                </a>
 
                 <?php if (isset($_SESSION['cliente_id'])): ?>
-                    <a href="<?= BASE_URL ?>cliente/dados" class="btn-nav"><i class="fas fa-id-card"></i> Dados</a>
-                    <a href="<?= BASE_URL ?>cliente/sair" class="btn-nav btn-logout"><i class="fas fa-sign-out-alt"></i>
-                        Sair</a>
+                    <!-- ROTA CORRIGIDA PARA O PAINEL DE DADOS DO CLIENTE -->
+                    <a href="<?= BASE_URL ?>index.php?rota=cliente_area/meusDados" class="btn-nav">
+                        <i class="fas fa-id-card"></i> Dados
+                    </a>
+
+                    <!-- ROTA CORRIGIDA PARA O LOGOUT DO CLIENTE -->
+                    <a href="<?= BASE_URL ?>index.php?rota=cliente_area/sair" class="btn-nav btn-logout">
+                        <i class="fas fa-sign-out-alt"></i> Sair
+                    </a>
                 <?php endif; ?>
             </nav>
         </div>
@@ -873,7 +887,7 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
         }
 
         function verificarRemoverItem(id) {
-            abrirConfirmModal('Remover Produto', 'Deseja retirar este item do seu pedido?', function () {
+            abrirConfirmModal('Remover Produto', 'Deseja retirar este item do seu pedido?', function() {
                 removerItemCarrinho(id);
             });
         }
@@ -899,7 +913,7 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
         }
 
         function verificarLimparCarrinho() {
-            abrirConfirmModal('Esvaziar Carrinho', 'Tem certeza que deseja remover todos os itens?', function () {
+            abrirConfirmModal('Esvaziar Carrinho', 'Tem certeza que deseja remover todos os itens?', function() {
                 limparCarrinhoModal();
             });
         }

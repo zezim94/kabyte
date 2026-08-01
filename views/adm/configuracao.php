@@ -401,7 +401,7 @@
         <p>Altere as cores e informações da loja e veja o resultado em tempo real.</p>
     </div>
 
-    <form action="index.php?rota=configuracao/salvar" method="POST" class="config-grid" enctype="multipart/form-data">
+    <form action="config/salvar" method="POST" class="config-grid" enctype="multipart/form-data">
         <div class="card-form">
 
             <div class="form-group">
@@ -425,7 +425,9 @@
                         <small>Formatos: PNG transparente recomendado</small>
                     </div>
 
-                    <img id="imgPreview" src="<?= $config['logo_loja'] ?? '' ?>"
+                    <!-- A CORREÇÃO ESTÁ AQUI: Removemos o 'public/uploads/' fixo -->
+                    <img id="imgPreview"
+                        src="<?= !empty($config['logo_loja']) ? BASE_URL . $config['logo_loja'] : '' ?>"
                         style="<?= empty($config['logo_loja']) ? 'display: none;' : 'display: block;' ?>">
                 </label>
             </div>
@@ -473,7 +475,7 @@
             // Decodifica a lista de banners do banco de dados
             $bannersSalvos = json_decode($config['banners'] ?? '[]', true);
             if (!empty($bannersSalvos)):
-                ?>
+            ?>
                 <div class="form-group">
                     <label class="main-label">Banners Atuais <small style="color: #e74c3c;">(Marque a caixinha para
                             excluir)</small></label>
@@ -515,7 +517,9 @@
 
                         <div class="preview-logo" id="areaLogoPreview">
                             <?php if (!empty($config['logo_loja'])): ?>
-                                <img src="<?= $config['logo_loja'] ?>" style="max-height: 30px; margin-right:5px;">
+
+                                <!-- A CORREÇÃO ESTÁ AQUI: Adicionado o BASE_URL -->
+                                <img src="<?= BASE_URL . $config['logo_loja'] ?>" style="max-height: 30px; margin-right:5px;">
 
                             <?php else: ?>
                                 <i class="fas fa-bicycle" style="margin-right:5px;"></i>
@@ -594,7 +598,7 @@
         if (input.files && input.files[0]) {
             var reader = new FileReader();
 
-            reader.onload = function (e) {
+            reader.onload = function(e) {
                 // Atualiza a caixa de upload principal
                 previewPequeno.src = e.target.result;
                 previewPequeno.style.display = 'block';

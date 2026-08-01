@@ -89,7 +89,7 @@ async function carregarEnderecosCliente(id) {
   lista.innerHTML = "Carregando...";
 
   try {
-    const res = await fetch(`${BASE_URL}api/enderecos?id=${id}`);
+    const res = await fetch(`${BASE_URL}api/enderecos_cliente&id=${id}`);
     const enderecos = await res.json();
 
     lista.innerHTML = "";
@@ -172,15 +172,33 @@ function processarInput() {
 
 async function buscarProduto(codigo, quantidade = 1) {
   try {
-    const res = await fetch(`${BASE_URL}api/buscar?codigo=${codigo}`);
+    const res = await fetch(
+      `${BASE_URL}api/pesquisarProdutos?codigo=${codigo}`,
+    );
     const data = await res.json();
 
     if (data.sucesso) {
-      adicionarAoCarrinho(data.produto, quantidade);
-      inputCodigo.value = "";
-      inputQtd.value = "1";
-      inputCodigo.focus();
-      fecharModais(); // Fecha pesquisa se estiver aberta
+      // Tenta pegar o produto, quer venha como 'produto' (singular) ou 'produtos' (plural/array)
+      let produtoEncontrado = null;
+
+      if (data.produto && !Array.isArray(data.produto)) {
+        produtoEncontrado = data.produto; // Veio como objeto único
+      } else if (data.produtos && data.produtos.length > 0) {
+        produtoEncontrado = data.produtos[0]; // Veio como array, pega o primeiro
+      } else if (data.produto && data.produto.length > 0) {
+        produtoEncontrado = data.produto[0]; // Veio como array nomeado no singular, pega o primeiro
+      }
+
+      // Se encontrou um produto válido com ID, adiciona ao carrinho
+      if (produtoEncontrado && produtoEncontrado.id) {
+        adicionarAoCarrinho(produtoEncontrado, quantidade);
+        inputCodigo.value = "";
+        inputQtd.value = "1";
+        inputCodigo.focus();
+        fecharModais(); // Fecha pesquisa se estiver aberta
+      } else {
+        showToast("Formato de produto inválido recebido do servidor.", "error");
+      }
     } else {
       showToast("Produto não encontrado!", "warning");
       inputCodigo.select();
@@ -189,7 +207,7 @@ async function buscarProduto(codigo, quantidade = 1) {
     console.error("Erro ao buscar:", error);
     showToast("Erro ao comunicar com o servidor", "error");
   }
-}
+} // <-- Sem ponto e vírgula no final das funções JS também! ;)
 
 function adicionarAoCarrinho(produto, qtdAdicional) {
   const itemExistente = carrinho.find((item) => item.id == produto.id);
@@ -305,11 +323,13 @@ inputPesquisa.addEventListener("keyup", function () {
 
 async function carregarListaProdutos(termo) {
   try {
-    if (termo === "")
+    if (termo === "") {
       listaPesquisa.innerHTML =
         '<div style="padding:15px; text-align:center; color:#999;">Carregando...</div>';
+    }
 
-    const res = await fetch(`${BASE_URL}api/pesquisar?termo=${termo}`);
+    // AQUI ESTAVA O PROBLEMA: Trocado '&' por '?'
+    const res = await fetch(`${BASE_URL}api/pesquisarProdutos?termo=${termo}`);
     const data = await res.json();
 
     listaPesquisa.innerHTML = "";
@@ -366,7 +386,7 @@ inputCliente.addEventListener("keyup", function () {
   }
 
   timeoutCliente = setTimeout(async () => {
-    const res = await fetch(`${BASE_URL}api/pesquisar_cliente?termo=${termo}`);
+    const res = await fetch(`${BASE_URL}api/pesquisarCliente?termo=${termo}`);
     const data = await res.json();
 
     listaClientesResult.innerHTML = "";

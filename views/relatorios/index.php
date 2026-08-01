@@ -270,7 +270,7 @@ $vendedores = $pdo->query("SELECT id, nome FROM usuarios")->fetchAll(PDO::FETCH_
         document.getElementById('tabelaDados').innerHTML = '<tr><td colspan="7" style="text-align:center">Carregando dados...</td></tr>';
 
         try {
-            const res = await fetch('<?= BASE_URL ?>api/relatorio_dados?' + params.toString());
+            const res = await fetch('<?= BASE_URL ?>relatorio/dados?' + params.toString());
             const dados = await res.json();
 
             if (dados.sucesso) {

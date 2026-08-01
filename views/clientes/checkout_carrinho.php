@@ -1,14 +1,11 @@
 <?php 
 require __DIR__ . '/../layout/header_public.php'; 
-<<<<<<< HEAD
 require_once __DIR__ . '/../../models/Chave.php';
 $mpPublicKey = Chave::get('mp_public_key');
-=======
 require_once __DIR__ . '/../../models/Cliente.php';
 
 // Busca o endereço principal do cliente logado na nova tabela de endereços
 $enderecoPadrao = Cliente::buscarEnderecoPadrao($_SESSION['cliente_id']);
->>>>>>> dcadad5945728e292d18bdc11b42d310c9849ab0
 ?>
 <script src="https://sdk.mercadopago.com/js/v2"></script>
 
@@ -328,28 +325,42 @@ $enderecoPadrao = Cliente::buscarEnderecoPadrao($_SESSION['cliente_id']);
                             data_entrega: dataEntregaFinal
                         };
 
-                        fetch("<?= BASE_URL ?>carrinho/processar_pagamento", {
+                      fetch("<?= BASE_URL ?>pagamento/processarPedidoCompleto", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({ formData, dadosExtras })
                         })
-                            .then(res => res.json())
-                            .then(res => {
-                                if (res.sucesso) {
-                                    localStorage.removeItem('meu_carrinho_pdv');
-                                    localStorage.removeItem('carrinho_meta');
-                                    window.location.href = "<?= BASE_URL ?>cliente/pedido_confirmado?id=" + res.venda_id;
-                                    resolve();
-                                } else {
-                                    alert("Erro: " + res.msg);
-                                    reject();
-                                }
-                            })
-                            .catch(err => {
-                                console.error(err);
-                                alert("Erro de comunicação.");
+                        // 1. Lê o resultado como texto puro primeiro
+                        .then(res => res.text())
+                        .then(text => {
+                            try {
+                                // 2. Tenta converter o texto para JSON
+                                return JSON.parse(text); 
+                            } catch (e) {
+                                // Se falhar, joga o HTML do erro do PHP direto na tela para você ver o que é!
+                                console.error("O servidor não retornou JSON:", text);
+                                document.getElementById('paymentBrick_container').innerHTML = 
+                                    "<div style='color:#721c24; background-color:#f8d7da; padding:15px; border-radius:5px; margin-top:15px;'>" + 
+                                    "<b>Erro no PHP interceptado:</b><br>" + text + "</div>";
+                                throw new Error("Parada forçada: Resposta inválida do servidor.");
+                            }
+                        })
+                        .then(res => {
+                            if (res.sucesso) {
+                                localStorage.removeItem('meu_carrinho_pdv');
+                                localStorage.removeItem('carrinho_meta');
+                                // URL CORRIGIDA PARA O NOVO PADRÃO: ?id= em vez de &id=
+                                window.location.href = "<?= BASE_URL ?>pagamento/telaPedidoConfirmado?id=" + res.venda_id;
+                                resolve();
+                            } else {
+                                alert("Atenção: " + res.msg);
                                 reject();
-                            });
+                            }
+                        })
+                        .catch(err => {
+                            console.error("Erro interno:", err);
+                            reject();
+                        });
                     });
                 },
                 onError: (error) => { console.error(error); },

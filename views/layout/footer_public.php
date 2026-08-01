@@ -274,7 +274,6 @@
     function handleEnter(e) {
         if (e.key === 'Enter') enviarMensagemIA();
     }
-
     async function enviarMensagemIA() {
         const input = document.getElementById('chatbotInput');
         const msg = input.value.trim();
@@ -293,11 +292,15 @@
         chatBody.scrollTop = chatBody.scrollHeight;
 
         try {
-            // 3. Envia para o PHP
-            const res = await fetch('<?= BASE_URL ?>api/chatbot', {
+            // 3. Envia para a API (Rota limpa já funcionando perfeitamente)
+            const res = await fetch('<?= BASE_URL ?>api/chatIa', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ mensagem: msg })
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    mensagem: msg
+                })
             });
             const dados = await res.json();
 
@@ -309,7 +312,7 @@
                 // Converte imagens Markdown ![texto](url) em tags HTML bonitas
                 textoFormatado = textoFormatado.replace(/!\[.*?\]\((.*?)\)/g, '<img src="$1" style="max-width: 100px; height: auto; border-radius: 8px; display: block; margin: 10px 0; border: 1px solid #ddd; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">');
 
-                // NOVO: Converte links Markdown [Texto](url) em hiperlinks HTML reais abertos em nova aba
+                // Converte links Markdown [Texto](url) em hiperlinks HTML reais abertos em nova aba
                 textoFormatado = textoFormatado.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" style="color: #3498db; text-decoration: underline; font-weight: bold;">$1</a>');
 
                 // Converte **Negrito** em tags HTML <strong>
@@ -352,11 +355,10 @@
         <div class="footer-col">
             <h3>Links Rápidos</h3>
             <ul class="footer-links">
-                <li><a href="<?= BASE_URL ?>vitrine"><i class="fas fa-chevron-right"></i> Início</a></li>
-                <li><a href="<?= BASE_URL ?>sobre"><i class="fas fa-chevron-right"></i> Sobre</a></li>
-                <li><a href="<?= BASE_URL ?>cliente/login"><i class="fas fa-chevron-right"></i> Minha Conta</a></li>
-                <li><a href="<?= BASE_URL ?>vitrine&busca=oferta"><i class="fas fa-chevron-right"></i> Promoções</a>
-                </li>
+                <li><a href="<?= BASE_URL ?>produto/vitrine"><i class="fas fa-chevron-right"></i> Início</a></li>
+                <li><a href="<?= BASE_URL ?>home/sobre"><i class="fas fa-chevron-right"></i> Sobre</a></li>
+                <li><a href="<?= BASE_URL ?>cliente_area/login"><i class="fas fa-chevron-right"></i> Minha Conta</a></li>
+                <li><a href="<?= BASE_URL ?>produto/vitrine?promocao=1"><i class="fas fa-chevron-right"></i> Promoções</a></li>
                 <li><a href="#"><i class="fas fa-chevron-right"></i> Política de Troca</a></li>
             </ul>
         </div>

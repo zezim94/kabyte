@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 19-Jun-2026 às 15:38
+-- Tempo de geração: 05-Jul-2026 às 04:06
 -- Versão do servidor: 10.4.32-MariaDB
--- versão do PHP: 8.0.30
+-- versão do PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -50,6 +50,24 @@ INSERT INTO `categorias` (`id`, `nome`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estrutura da tabela `chaves`
+--
+
+CREATE TABLE `chaves` (
+  `id` int(11) NOT NULL,
+  `nome` varchar(50) NOT NULL,
+  `valor` text NOT NULL,
+  `descricao` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Extraindo dados da tabela `chaves`
+--
+
+
+-- --------------------------------------------------------
+
+--
 -- Estrutura da tabela `clientes`
 --
 
@@ -73,7 +91,7 @@ INSERT INTO `clientes` (`id`, `nome`, `cpf`, `telefone`, `email`, `google_id`, `
 (1, 'Ester vitória Moura da Silva', '12345678901', '(13) 97819-0027', 'ester@gmail.com', NULL, NULL, '2025-12-26 19:59:08', '$2y$10$YdzMee5sCI1Rvfa27JoxreidzKCWdfwiIABn5bFI1XR/jwiykiXtm'),
 (2, 'Andelson nascimento', '11098717678', '(13) 97819-0027', 'geovanesilva301@gmail.com', '112725934260905830548', 'https://lh3.googleusercontent.com/a/ACg8ocLj7pL49wvcEq51avYMRBIc-PFcnFqgUdzaF8cqDkhnTJOXrk_xWA=s96-c', '2026-01-24 15:27:32', NULL),
 (3, 'Sarah Stephanie', NULL, NULL, 'stephaniemoura285@gmail.com', '118063862504631323329', 'https://lh3.googleusercontent.com/a/ACg8ocKM2vBoB7D7TgembzR4xIlfZye6MHuIJlSmovqmhQNfnD4myk9n=s96-c', '2026-02-05 14:02:10', NULL),
-(4, 'Andelson Nascimento', '11098717670', '13978190027', 'andelsonascimento@gmail.com', '109035660575826182106', 'https://lh3.googleusercontent.com/a/ACg8ocLzPhlA0uMuEugcpNd18R3XujL0KD8i-USXeOC0gcAZGSMs6lAr=s96-c', '2026-03-02 09:44:18', '$2y$10$MgMREzojnH9WQqeUili7eOod8YcEDiEQ4gsMG.bFzRoWc5kwJ7ANy');
+(4, 'Andelson Nascimento', NULL, NULL, 'andelsonascimento@gmail.com', '109035660575826182106', 'https://lh3.googleusercontent.com/a/ACg8ocLzPhlA0uMuEugcpNd18R3XujL0KD8i-USXeOC0gcAZGSMs6lAr=s96-c', '2026-03-02 09:44:18', '$2y$10$6JpPYwM9PEqYFZDoh9dz0ubM/69bPXHtuzDnpyfnkDaD4BYXTZgmG');
 
 -- --------------------------------------------------------
 
@@ -96,7 +114,7 @@ CREATE TABLE `configuracoes` (
 --
 
 INSERT INTO `configuracoes` (`id`, `logo_loja`, `whatsapp`, `cor_header`, `cor_fundo`, `nome_loja`, `banners`) VALUES
-(1, 'public/uploads/logo_loja.png?v=1774108180', '5511999999999', '#1f3a5f', '#f5f5f5', 'Kabyte', '[\"banner_20260321163744_69bebb487e967.jpg\",\"banner_20260321163744_69bebb487ed4f.jpg\",\"banner_20260321163744_69bebb487f02e.jpg\",\"banner_20260321163744_69bebb487f2e4.jpeg\"]');
+(1, 'public/uploads/logo_loja.png?v=1775863079', '5511999999999', '#1f3a5f', '#f5f5f5', 'Kabyte', '[\"banner_20260410191759_69d9852755920.jpg\",\"banner_20260410191759_69d98527559e1.jpg\",\"banner_20260410191759_69d9852755aba.jpg\",\"banner_20260410191759_69d9852755b8b.jpeg\"]');
 
 -- --------------------------------------------------------
 
@@ -116,14 +134,6 @@ CREATE TABLE `enderecos` (
   `complemento` varchar(255) DEFAULT NULL,
   `is_padrao` tinyint(1) DEFAULT 0 COMMENT '1 para Sim, 0 para Não'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Extraindo dados da tabela `enderecos`
---
-
-INSERT INTO `enderecos` (`id`, `cliente_id`, `rua`, `numero`, `bairro`, `cidade`, `estado`, `cep`, `complemento`, `is_padrao`) VALUES
-(1, 4, 'Avenida Ferroviária', '81', 'Vila dos Pescadores', 'Cubatão', 'SP', '11531000', 'caminho são gabriel', 0),
-(2, 4, 'Rua Benedito Aires', '120', 'Vila Paulista', 'Cubatão', 'SP', '11510120', 'centro', 1);
 
 -- --------------------------------------------------------
 
@@ -246,53 +256,53 @@ CREATE TABLE `produtos` (
 --
 
 INSERT INTO `produtos` (`id`, `codigo_barras`, `nome`, `descricao`, `preco`, `preco_custo`, `promocao`, `preco_promocao`, `estoque`, `imagem`, `categoria_id`) VALUES
-(1, '7891000100103', 'Carregador duplo', 'Original', 10.50, 8.00, 0, NULL, 75, 'prod_20260320205711_69bda697623ee.png', 1),
-(2, '7891000053508', 'C3Tech Base para Notebook', 'NBC-50BK 15,6\" Refrigerada com 2 Coolers, Led de Iluminacao Azul, Inclinacao Ajustável em 5 niveis, com USB, cor Preta', 70.00, 35.00, 1, 49.99, 23, 'prod_20260321163859_69bebb939eea1.png', 7),
-(3, '123', 'Fita Led 5M', 'Fita LED com 5 metros, econômica e flexível, ideal para decoração de ambientes internos e externos. Possui proteção IP65, sendo resistente à água e poeira, garantindo durabilidade e versatilidade na instalação.', 45.00, 20.00, 1, 30.00, 46, 'prod_20260321164112_69bebc1870c8e.png', 5),
-(4, '111', 'Cabo HDMI', 'Cabo HDMI de 10 metros, ideal para transmissão de áudio e vídeo em alta definição. Suporta até 1080p Full HD, possui conexão estável, plug and play e conectores reforçados para maior durabilidade. Compatível com TVs, videogames e outros dispositivos HDMI. Garantia de 30 dias.', 25.00, 10.00, 1, 15.99, 15, 'prod_20260321165712_69bebfd8b26ef.png', 1),
-(7, '321456', 'Cabo USB tipo C Intelbras', 'Esse cabo é ideal para conectar seus dispositivos com facilidade e simplicidade. Dessa forma, você pode transferir dados em apenas alguns passos e de maneira segura e confiável.\r\n\r\n', 20.00, 5.00, 0, NULL, 43, 'prod_20260320205641_69bda6790903a.png', 1),
-(8, '3214', 'Fone De Ouvido Tws Wf200', 'Fone TWS Pulse WF200, com Bluetooth 5.4 e som estéreo de alta qualidade. Possui até 22h de bateria com a base, alcance de 10m e carregamento rápido via USB-C. Compacto, leve e ideal para uso diário.', 80.00, 40.00, 0, NULL, 12, 'prod_20260320205611_69bda65b7aab3.png', 4),
-(9, '789', 'Headset Gamer Havit Gamenote', 'Headset HAVIT H659d, com som de alta qualidade (drivers de 50mm) e microfone omnidirecional flexível. Possui conexão P3 (3,5mm), cabo de 2,3m e design confortável com ajuste de tamanho. Compatível com celular, PC e consoles.', 120.00, 50.00, 0, NULL, 50, 'prod_20260321164251_69bebc7b069e7.png', 4),
-(10, '6548', 'HD Externo 1TB SanDisk', 'HD externo Exbom HDE-S1TA com 1TB, conexão USB 3.1 e velocidades de até 120 MB/s. Compacto (2.5”), leve e resistente à poeira, ideal para backups e armazenamento de dados. Acompanha cabo USB-C para USB-A e é compatível com PC, TV e consoles.', 320.00, 150.00, 1, 280.00, 50, 'prod_20260321173115_69bec7d39743c.png', 6),
-(11, '65479', 'Headset Gamer P2 Power Bass', 'Headset gamer ELG HGAR, com drivers de 40mm e som surround para maior imersão. Possui microfone omnidirecional, design confortável over-ear e iluminação LED verde (via USB). Conexão P2 (fone e mic), cabo de 2m e adaptador para consoles. Garantia de 2 anos.', 250.00, 100.00, 0, NULL, 30, 'prod_20260321164332_69bebca4e949d.png', 4),
-(12, '2354643', 'Fone Headset Ms Jabra Du', 'Headset Jabra Evolve 30 II Duo MS, com conexão USB e P2 (3,5mm), ideal para chamadas e uso profissional. Possui áudio em banda larga, controle de chamadas no cabo e instalação plug-and-play. Compatível com plataformas como Microsoft Teams, Avaya e Cisco.', 470.00, 180.00, 1, 400.00, 30, 'prod_20260321164210_69bebc529c681.png', 4),
-(13, '2356543', 'Hub USB 4 portas', 'Hub USB X-CELL XC-HUB-6 com 4 portas USB 2.0, ideal para expandir conexões. Possui transferência de até 480 Mbps, sistema plug-and-play e compatibilidade com Windows e Mac. Cabo de 45cm e design compacto na cor preta.', 20.00, 10.00, 0, NULL, 54, 'prod_20260320205945_69bda7316fc2a.png', 1),
-(14, '456765', 'Luminária LED para Setup', '', 54.00, 34.00, 0, NULL, 23, 'prod_20260321164643_69bebd6395de1.png', 5),
-(15, '346865', 'Luminária Minimalista para Mesa', 'Luminária de mesa Lumicentro Memphis, com design moderno em metal na cor preta. Possui soquete E27, estrutura resistente e base estável, ideal para iluminar e decorar mesas e escritórios com estilo.', 50.00, 25.00, 0, NULL, 34, 'prod_20260321172251_69bec5db5a19f.png', 5),
-(16, '2335457', 'Luminária Para Monitor Led Screen Pcyes 5 Níveis De Calor ', 'Luminária LED para monitor PCYES ScreenBar, com 5 níveis de brilho e temperatura de cor ajustável. Instalação sobre o monitor, economizando espaço. Alimentação via USB, controle touch e vida útil de até 25.000 horas. Ideal para reduzir fadiga visual. Garantia de 12 meses.', 200.00, 100.00, 0, NULL, 34, 'prod_20260321164612_69bebd4487587.png', 5),
-(17, '345667', 'Mouse Ergonômico', 'Mouse ergonômico vertical Logitech Lift, com design de 57° para maior conforto e redução de esforço. Possui cliques silenciosos, roda SmartWheel e 4 botões personalizáveis. Conecta até 3 dispositivos via Bluetooth ou USB e tem bateria de até 2 anos. Compatível com diversos sistemas operacionais.', 295.00, 160.00, 1, 235.00, 32, 'prod_20260320205816_69bda6d8ed9fd.png', 2),
-(18, '25481', 'Mouse Gamer 7200 DPI', 'Mouse gamer War Shark G-90, com sensor óptico e DPI ajustável até 7200. Possui 8 botões, design ergonômico e cabo de 1,8m, ideal para jogos com precisão e conforto.', 60.00, 30.00, 0, NULL, 32, 'prod_20260321171443_69bec3f34977f.png', 2),
-(19, '21458', 'Mouse Gamer Optico Usb Flatshop', 'Mouse óptico FlatShop S1 com conexão USB e 1200 DPI, garantindo boa precisão e controle. Possui design ambidestro, 3 botões e iluminação RGB. Compatível com Windows e Linux, ideal para uso diário e jogos leves.', 40.00, 15.00, 0, NULL, 32, 'prod_20260321171412_69bec3d4063b6.png', 2),
-(20, '10254', 'Mouse Óptico K-Mex Com Fio', 'Mouse K-Mex MO-M235, com sensor óptico preciso e design ergonômico, leve e compacto. Ideal para uso confortável no dia a dia e fácil de transportar.', 25.00, 10.00, 0, NULL, 36, 'prod_20260321171258_69bec38a23887.png', 2),
-(21, '14785', 'Mouse Pad Gamer Fortrek', 'Mouse pad gamer Fortrek MPG104 (90x40cm), superfície speed para mais precisão e conforto. Feito em borracha e tecido, com base antiderrapante e 4mm de espessura. Não possui LED nem apoio de pulso.', 55.00, 20.00, 0, NULL, 32, 'prod_20260321171208_69bec358cf900.png', 7),
-(22, '145273', 'Pad Mouse Gamer Rgb', 'Mouse pad Letron RGB modelo RS-02 (35x25cm), com borda iluminada em LED. Feito em borracha e tecido, possui 4mm de espessura, sendo ideal para maior conforto e precisão. Garantia de 7 dias.', 125.00, 60.00, 0, NULL, 33, 'prod_20260320210232_69bda7d82da20.png', 7),
-(23, '254874', 'Mouse Sem Fio Multilaser', 'Mouse sem fio Multilaser MO277, com conexão 2.4GHz e bateria de lítio recarregável via Micro USB. Possui até 1600 DPI, é leve, compacto e compatível com Windows, Mac e Linux. Garantia de 90 dias.', 75.00, 35.00, 0, NULL, 32, 'prod_20260320210101_69bda77d9ca7f.png', 2),
-(24, '012574', 'Organizador de Cabos', 'Organizador de cabos Tecnollev para 7 cabos, ideal para manter fios organizados e acessíveis. Possui instalação com fita dupla face, design compacto e material resistente. Perfeito para mesas e escritórios. Garantia de 7 dias.', 20.00, 5.00, 0, NULL, 32, 'prod_20260320205912_69bda71057c75.png', 7),
-(25, '102452', 'Pendrive 64gb Kingston', 'Pendrive Kingston Exodia S com 64GB, conexão USB 3.2, ideal para armazenar e transferir arquivos com rapidez. Compacto, resistente e compatível com Windows, Mac, Linux e Chrome OS.', 80.00, 35.00, 0, NULL, 33, 'prod_20260321171006_69bec2ded47de.png', 6),
-(26, '452178', 'SSD Externo 500GB', 'SSD portátil SanDisk com 500GB, alta velocidade de leitura (até 1050 MB/s) e conexão USB 3.1 Gen 2. Resistente à água e poeira (IP55), quedas de até 2m e impactos. Compacto, leve e ideal para armazenar e transportar dados com segurança. Acompanha cabo USB-C e adaptador USB-A.', 1100.00, 500.00, 0, NULL, 33, 'prod_20260320203919_69bda26749920.png', 6),
-(27, '14527', 'Suporte Articulado Monitor Notebook Fortrek', 'Suporte articulado de mesa Fortrek FK485S para monitor (17” a 32”) e notebook (até 15,6”). Suporta até 9kg (monitor) e 4kg (notebook), com rotação e articulação ajustáveis. Compatível com padrão VESA 100x100, fácil de instalar e ideal para melhor ergonomia.', 300.00, 150.00, 0, NULL, 33, 'prod_20260321170252_69bec12c16167.png', 7),
-(28, '145278', 'Suporte de Celular de Mesa', 'Suporte de mesa ajustável para celular e tablet, com articulação de até 72º e altura de até 14cm. Possui base estável, design portátil e compatibilidade universal. Feito em plástico, leve e ideal para vídeos e chamadas. Garantia de 3 meses.', 20.00, 10.00, 0, NULL, 33, 'prod_20260320203745_69bda209068f8.png', 7),
-(29, '1254563', 'Suporte Para Headset Gamer Redragon', '- Suporte RGB para Headsets - Construção reforçada em Aluminio e plástico ABS militar - Modos de iluminação RGB - 4 Entradas USB 2.0 (2 em compartimento escondido) - Conexão Tipo-C e cabo removivél Peso e dimensões Peso: 267 g Apróx (A) 25CM x (L) 10CM (C) 10CM', 199.99, 90.00, 0, NULL, 33, 'prod_20260320203609_69bda1a949a2f.png', 7),
-(30, '1025547', 'Teclado portátil de 60%,', 'Teclado mecânico compacto 60% com 61 teclas, ideal para economizar espaço e transportar. Possui switches vermelhos, anti-ghosting (N-Key Rollover), teclas duráveis em dupla injeção e conexão USB-C removível. Conta com iluminação LED colorida com 19 modos e ajuste de altura para maior conforto.', 210.00, 110.00, 0, NULL, 33, 'prod_20260320203332_69bda10ca4617.png', 3),
-(31, '254887', 'Teclado Semi Mecânico', 'Teclado semi mecânico com layout ABNT2, teclas silenciosas e anti-ghost. Possui conexão USB, cabo de 1,5m, design ergonômico e resistência a respingos. Compatível com diversos dispositivos e ideal para uso diário. Garantia de 30 dias.', 50.00, 20.00, 0, NULL, 36, 'prod_20260320203229_69bda0cddc3be.png', 3),
-(32, '1478526', 'Teclado Gamer Semi Mecânico', 'Teclado gamer semi mecânico com iluminação LED RGB (7 cores), teclas macias e silenciosas. Possui 107 teclas, conexão USB, design resistente a respingos e impactos. Iluminação pode ser ligada/desligada. Garantia de 3 meses.', 69.90, 30.00, 0, NULL, 35, 'prod_20260320203522_69bda17a2b984.png', 3),
-(33, '236988', 'Teclado Pro Fit Media Keyboard Kensington', 'Teclado com fio Kensington Pro Fit (ABNT2), na cor preta, confortável e prático para uso diário. Possui teclado numérico, é resistente a respingos e tem design semimecânico. Não possui retroiluminação nem cabo removível.', 270.00, 150.00, 1, 220.00, 34, 'prod_20260320203301_69bda0ed51d4d.png', 3),
-(34, '14875', 'Teclado Portátil Bluetooth 5.0 Ts400', 'Teclado Bluetooth 5.0 sem fio com suporte para celular/tablet. Conecta até 3 dispositivos, possui 14 teclas multimídia e funciona com 2 pilhas AAA (inclusas). Acompanha guia rápido e tem garantia de 3 anos.', 180.00, 100.00, 0, NULL, 36, 'prod_20260320203359_69bda12713e57.png', 3),
-(35, '45887558', 'Smartwatch Samsung Galaxy Fit3 Display 1.6\" Grafite', 'Para usar o Galaxy Fit3, é necessário ter uma conta Samsung cadastrada no celular. Os dados de saúde são armazenados com segurança na Samsung Cloud. Se a bateria estiver totalmente descarregada, o dispositivo não ligará e deverá ser carregado antes do uso. A tela sensível ao toque pode não funcionar corretamente quando estiver molhada ou em contato com água.\r\n', 269.91, 100.00, 0, NULL, 20, 'prod_20260320203944_69bda280ef021.png', 8),
-(36, '02454552', 'Smartwatch Militar Masculino,Relógio Inteligente com Chamadas,Tela HD de 1.45\"', 'Smartwatch IOWODO W50Pro com tela 1.45\" Full HD, chamadas Bluetooth, notificações de apps, 100 modos esportivos, bateria duradoura, resistência IP68 e funções inteligentes. Acompanha duas pulseiras ajustáveis.\r\n', 299.90, 120.00, 0, NULL, 22, 'prod_20260320204022_69bda2a630b90.png', 8),
-(37, '236522', 'Smartwatch com Monitor Cardíaco', 'Smartwatch X Watch XSWUQPI003A PXT com monitor cardíaco, contador de passos e calorias, notificações inteligentes e modos esportivos. Possui tela touch, design moderno e auxilia no acompanhamento da saúde, treinos e atividades do dia a dia.\r\n', 269.99, 100.00, 0, NULL, 21, 'prod_20260320204116_69bda2dc44fe6.png', 8),
-(38, '124541225', 'Smartwatch Bluetooth', 'Smartwatch IDW26 BLACKULTRA com tela HD de 1,83\", chamadas Bluetooth, assistente Alexa, monitoramento de saúde (batimentos, sono e oxigênio), modos esportivos, notificações de apps e resistência IP68. Bateria de 5 a 7 dias e compatível com Android e iOS.\r\n', 169.90, 70.00, 0, NULL, 20, 'prod_20260320204138_69bda2f24a210.png', 8),
-(39, '1254581', 'Smartwatch AMOLED', 'Smartwatch com GPS de 5 satélites e impermeabilidade 3ATM, ideal para esportes outdoor. Possui mais de 100 modos esportivos, análise de sono com IA, monitoramento de saúde (batimentos, estresse, oxigênio e respiração), chamadas Bluetooth, notificações e mostradores personalizáveis.\r\n', 309.43, 130.00, 1, 250.00, 20, 'prod_20260320204216_69bda31898ae4.png', 8),
-(40, '12545822', 'Pulseira Inteligente Xiaomi Smart Band 9 Active', 'Smartband com tela touch de 1,47\", Bluetooth 5.3 e resistência 5 ATM. Possui 50 modos de treino, monitoramento de batimentos cardíacos, oxigênio no sangue, sono e estresse, além de notificações, controle de música e câmera. Bateria de até 18 dias e compatível com Android e iOS.\r\n', 289.99, 120.00, 0, NULL, 30, 'prod_20260321170740_69bec24c05b64.png', 8),
-(41, '2011251', 'Carregador Smartwatch Compátivel Microwear', 'Cabo carregador magnético USB para smartwatch Microwear, 1 metro, saída 5V/1A, feito em ABS e metal. Compatível com diversos modelos Microwear com carregamento magnético.\r\n', 23.90, 10.00, 0, NULL, 30, 'prod_20260321164036_69bebbf44ba2f.webp', 8),
-(42, '10225544', 'Pulseira de Reposição para Smartwatch', 'Pulseira confortável e resistente, feita em silicone macio e durável. Ideal para uso diário e atividades físicas, oferece ajuste seguro no pulso e fácil instalação no relógio. Compatível com diversos modelos de smartwatch que utilizam encaixe de 18mm, 20mm ou 22mm. Design moderno, leve e fácil de limpar, perfeita para renovar o visual do seu relógio.\r\n', 15.00, 5.00, 0, NULL, 20, 'prod_20260321170855_69bec29713d45.avif', 8),
-(43, '125487', 'Fone Tws Bluetooth 5.4', 'Fone TWS com cancelamento de ruído ativo, som com driver 8mm, até 22h de bateria, Bluetooth 5.4 com conexão dupla, design ergonômico e IP54.\r\nDados técnicos: Bluetooth 5.4 (A2DP/AVRCP/HFP), codec SBC, 6–7h (fones) + até 15h (case), recarga ~1,5h, 20Hz–20kHz, USB-C.', 269.03, 120.00, 0, NULL, 20, 'prod_20260320210446_69bda85e7c6dc.png', 4),
-(44, '2325885', 'Monitor Gamer Curvo Concórdia Gamer ', 'Monitor LED 27\" com baixo consumo de energia, oferecendo cores vivas, ótima nitidez e resolução Full HD (1920x1080). Sua tela ampla proporciona mais conforto visual e melhor aproveitamento de espaço para multitarefas, sendo ideal para trabalho, estudos e entretenimento. Com boa fidelidade de imagem, garante uma experiência agradável ao assistir filmes, séries ou navegar no dia a dia.', 700.00, 450.00, 0, NULL, 11, 'prod_20260321172036_69bec5543dd84.png', 9),
-(45, '2598566', 'Monitor Gamer Samsung Odyssey G30 24” FHD', 'Monitor gamer de 24” com resolução Full HD e taxa de atualização de 144Hz, ideal para jogos e uso diário. Possui tempo de resposta de 1ms, painel VA com alto contraste e tecnologia AMD FreeSync para imagens mais suaves e sem travamentos. Conta com design moderno sem bordas e ajuste ergonômico para maior conforto.', 1000.00, 500.00, 0, NULL, 15, 'prod_20260320210144_69bda7a89cc3a.png', 9),
-(46, '44514778', 'Monitor LG UltraGear™ G4', 'Monitor gamer de 24” com tela IPS Full HD e taxa de atualização de 144Hz (overclock), oferecendo imagens fluidas e cores mais vivas. Possui tempo de resposta de 1ms (MBR), compatibilidade com NVIDIA G-SYNC e AMD FreeSync, garantindo jogabilidade sem travamentos. Conta com HDR10 e 99% sRGB para melhor qualidade de imagem, além de recursos gamer como Black Stabilizer e Crosshair para maior precisão nos jogos. Conexões HDMI, DisplayPort e saída para fone de ouvido.', 770.00, 330.00, 0, NULL, 20, 'prod_20260321171944_69bec520b349d.png', 9),
-(47, '2014522', 'Monitor Profissional LG UltraFine 27\"', 'Monitor profissional de 27” com resolução 4K UHD (3840x2160), ideal para trabalho, edição e uso diário. Possui painel IPS com cores precisas e amplos ângulos de visão, além de 90% DCI-P3 para maior fidelidade em imagens. Conta com design moderno sem bordas, alto brilho e excelente qualidade visual, perfeito para quem busca desempenho e precisão em projetos criativos.', 1600.00, 1000.00, 0, NULL, 15, 'prod_20260320210620_69bda8bcc4239.png', 9),
-(48, '10348787', 'Monitor Gamer LG UltraGear 27\"', 'Monitor gamer de 27” com painel IPS Full HD, taxa de atualização de 180Hz e tempo de resposta de 1ms (GtG), garantindo imagens rápidas e sem travamentos. Conta com compatibilidade com NVIDIA G-SYNC e AMD FreeSync para jogabilidade mais fluida, além de HDR10 e 99% sRGB para cores mais vivas e realistas. Possui conexões HDMI e DisplayPort, sendo ideal para quem busca desempenho e qualidade em jogos.', 1360.00, 800.00, 0, NULL, 15, 'prod_20260321171718_69bec48e93c28.png', 9),
-(49, '1552245', 'Monitor Gamer Acer Nitro ', 'Monitor gamer de 23,8” com tela Full HD e painel IPS, oferecendo imagens nítidas e cores vivas. Conta com taxa de atualização de 120Hz e tempo de resposta de 1ms (VRB), garantindo mais fluidez e precisão nos jogos. Possui tecnologia Adaptive-Sync, modos de jogo e design Zero Frame, proporcionando uma experiência mais imersiva. Conexões HDMI e VGA.', 770.00, 330.00, 0, NULL, 20, 'prod_20260321164807_69bebdb7d87a3.png', 9);
+(1, '7891000100103', 'Carregador de Parede Rápido Duplo 20W', 'O Carregador de Parede Rápido Duplo 20W (5+) é um acessório compacto e eficiente, ideal para carregar até dois dispositivos simultaneamente com rapidez e segurança. Com potência de 20W, garante carregamento ágil para smartphones, tablets e outros eletrônicos compatíveis. Possui design leve e portátil, sendo fácil de transportar no dia a dia. Conta com certificação Anatel e garantia de 1 ano, oferecendo confiabilidade e proteção durante o uso.', 10.50, 8.00, 0, NULL, 75, 'prod_20260410192847_69d987af9fd1c.png', 1),
+(2, '7891000053508', 'C3Tech Base para Notebook', 'NBC-50BK 15,6\" Refrigerada com 2 Coolers, Led de Iluminacao Azul, Inclinacao Ajustável em 5 niveis, com USB, cor Preta', 70.00, 35.00, 1, 49.99, 23, 'prod_20260410191947_69d98593bdea9.png', 7),
+(3, '123', 'Fita Led 5M', 'Fita LED com 5 metros, econômica e flexível, ideal para decoração de ambientes internos e externos. Possui proteção IP65, sendo resistente à água e poeira, garantindo durabilidade e versatilidade na instalação.', 45.00, 20.00, 1, 30.00, 46, 'prod_20260410193054_69d9882e69976.png', 5),
+(4, '111', 'Cabo HDMI', 'Cabo HDMI de 10 metros, ideal para transmissão de áudio e vídeo em alta definição. Suporta até 1080p Full HD, possui conexão estável, plug and play e conectores reforçados para maior durabilidade. Compatível com TVs, videogames e outros dispositivos HDMI. Garantia de 30 dias.', 25.00, 10.00, 1, 15.99, 15, 'prod_20260410192027_69d985bbb330b.png', 1),
+(7, '321456', 'Cabo USB tipo C Intelbras', 'Esse cabo é ideal para conectar seus dispositivos com facilidade e simplicidade. Dessa forma, você pode transferir dados em apenas alguns passos e de maneira segura e confiável.\r\n\r\n', 20.00, 5.00, 0, NULL, 43, 'prod_20260410192746_69d9877201a5c.png', 1),
+(8, '3214', 'Fone De Ouvido Tws Wf200', 'Fone TWS Pulse WF200, com Bluetooth 5.4 e som estéreo de alta qualidade. Possui até 22h de bateria com a base, alcance de 10m e carregamento rápido via USB-C. Compacto, leve e ideal para uso diário.', 80.00, 40.00, 0, NULL, 12, 'prod_20260410193215_69d9887f5a33a.png', 4),
+(9, '789', 'Headset Gamer Havit Gamenote', 'Headset HAVIT H659d, com som de alta qualidade (drivers de 50mm) e microfone omnidirecional flexível. Possui conexão P3 (3,5mm), cabo de 2,3m e design confortável com ajuste de tamanho. Compatível com celular, PC e consoles.', 120.00, 50.00, 0, NULL, 50, 'prod_20260410193447_69d9891788780.png', 4),
+(10, '6548', 'HD Externo 1TB SanDisk', 'HD externo Exbom HDE-S1TA com 1TB, conexão USB 3.1 e velocidades de até 120 MB/s. Compacto (2.5”), leve e resistente à poeira, ideal para backups e armazenamento de dados. Acompanha cabo USB-C para USB-A e é compatível com PC, TV e consoles.', 320.00, 150.00, 1, 280.00, 50, 'prod_20260410193414_69d988f639ddb.png', 6),
+(11, '65479', 'Headset Gamer P2 Power Bass', 'Headset gamer ELG HGAR, com drivers de 40mm e som surround para maior imersão. Possui microfone omnidirecional, design confortável over-ear e iluminação LED verde (via USB). Conexão P2 (fone e mic), cabo de 2m e adaptador para consoles. Garantia de 2 anos.', 250.00, 100.00, 0, NULL, 30, 'prod_20260410193510_69d9892e6e212.png', 4),
+(12, '2354643', 'Fone Headset Ms Jabra Du', 'Headset Jabra Evolve 30 II Duo MS, com conexão USB e P2 (3,5mm), ideal para chamadas e uso profissional. Possui áudio em banda larga, controle de chamadas no cabo e instalação plug-and-play. Compatível com plataformas como Microsoft Teams, Avaya e Cisco.', 470.00, 180.00, 1, 400.00, 30, 'prod_20260410193251_69d988a348e13.png', 4),
+(13, '2356543', 'Hub USB 4 portas', 'Hub USB X-CELL XC-HUB-6 com 4 portas USB 2.0, ideal para expandir conexões. Possui transferência de até 480 Mbps, sistema plug-and-play e compatibilidade com Windows e Mac. Cabo de 45cm e design compacto na cor preta.', 20.00, 10.00, 0, NULL, 54, 'prod_20260410193538_69d9894a9780a.png', 1),
+(14, '456765', 'Luminária LED para Setup', 'Transforme seu setup com uma luminária LED moderna e funcional, projetada para oferecer iluminação regulável, eficiente e confortável. Ideal para estações de trabalho, estações de streaming, escritórios ou áreas de estudo, ela proporciona luz uniforme e ajustável para melhorar a visibilidade, reduzir o cansaço visual e valorizar o seu ambiente. Compacta, elegante e fácil de instalar, é a escolha perfeita para quem busca qualidade de luz e estilo no dia a dia.', 54.00, 34.00, 0, NULL, 23, 'prod_20260410193606_69d989668fcc1.png', 5),
+(15, '346865', 'Luminária Minimalista para Mesa', 'Luminária de mesa Lumicentro Memphis, com design moderno em metal na cor preta. Possui soquete E27, estrutura resistente e base estável, ideal para iluminar e decorar mesas e escritórios com estilo.', 50.00, 25.00, 0, NULL, 34, 'prod_20260410193633_69d989811abe0.png', 5),
+(16, '2335457', 'Luminária Para Monitor Led Screen Pcyes 5 Níveis De Calor ', 'Luminária LED para monitor PCYES ScreenBar, com 5 níveis de brilho e temperatura de cor ajustável. Instalação sobre o monitor, economizando espaço. Alimentação via USB, controle touch e vida útil de até 25.000 horas. Ideal para reduzir fadiga visual. Garantia de 12 meses.', 200.00, 100.00, 0, NULL, 34, 'prod_20260410193700_69d9899c694a3.png', 5),
+(17, '345667', 'Mouse Ergonômico', 'Mouse ergonômico vertical Logitech Lift, com design de 57° para maior conforto e redução de esforço. Possui cliques silenciosos, roda SmartWheel e 4 botões personalizáveis. Conecta até 3 dispositivos via Bluetooth ou USB e tem bateria de até 2 anos. Compatível com diversos sistemas operacionais.', 295.00, 160.00, 1, 235.00, 32, 'prod_20260410194242_69d98af20adb9.png', 2),
+(18, '25481', 'Mouse Gamer 7200 DPI', 'Mouse gamer War Shark G-90, com sensor óptico e DPI ajustável até 7200. Possui 8 botões, design ergonômico e cabo de 1,8m, ideal para jogos com precisão e conforto.', 60.00, 30.00, 0, NULL, 32, 'prod_20260410194411_69d98b4b83223.png', 2),
+(19, '21458', 'Mouse Gamer Optico Usb Flatshop', 'Mouse óptico FlatShop S1 com conexão USB e 1200 DPI, garantindo boa precisão e controle. Possui design ambidestro, 3 botões e iluminação RGB. Compatível com Windows e Linux, ideal para uso diário e jogos leves.', 40.00, 15.00, 0, NULL, 32, 'prod_20260410194436_69d98b6464c32.png', 2),
+(20, '10254', 'Mouse Óptico K-Mex Com Fio', 'Mouse K-Mex MO-M235, com sensor óptico preciso e design ergonômico, leve e compacto. Ideal para uso confortável no dia a dia e fácil de transportar.', 25.00, 10.00, 0, NULL, 36, 'prod_20260410194507_69d98b83d2740.png', 2),
+(21, '14785', 'Mouse Pad Gamer Fortrek', 'Mouse pad gamer Fortrek MPG104 (90x40cm), superfície speed para mais precisão e conforto. Feito em borracha e tecido, com base antiderrapante e 4mm de espessura. Não possui LED nem apoio de pulso.', 55.00, 20.00, 0, NULL, 32, 'prod_20260410194530_69d98b9a53b0d.png', 7),
+(22, '145273', 'Pad Mouse Gamer Rgb', 'Mouse pad Letron RGB modelo RS-02 (35x25cm), com borda iluminada em LED. Feito em borracha e tecido, possui 4mm de espessura, sendo ideal para maior conforto e precisão. Garantia de 7 dias.', 125.00, 60.00, 0, NULL, 33, 'prod_20260410194730_69d98c120d41f.png', 7),
+(23, '254874', 'Mouse Sem Fio Multilaser', 'Mouse sem fio Multilaser MO277, com conexão 2.4GHz e bateria de lítio recarregável via Micro USB. Possui até 1600 DPI, é leve, compacto e compatível com Windows, Mac e Linux. Garantia de 90 dias.', 75.00, 35.00, 0, NULL, 32, 'prod_20260410194632_69d98bd860084.png', 2),
+(24, '012574', 'Organizador de Cabos', 'Organizador de cabos Tecnollev para 7 cabos, ideal para manter fios organizados e acessíveis. Possui instalação com fita dupla face, design compacto e material resistente. Perfeito para mesas e escritórios. Garantia de 7 dias.', 20.00, 5.00, 0, NULL, 32, 'prod_20260410194655_69d98bef46b38.png', 7),
+(25, '102452', 'Pendrive 64gb Kingston', 'Pendrive Kingston Exodia S com 64GB, conexão USB 3.2, ideal para armazenar e transferir arquivos com rapidez. Compacto, resistente e compatível com Windows, Mac, Linux e Chrome OS.', 80.00, 35.00, 0, NULL, 33, 'prod_20260410195738_69d98e723e391.png', 6),
+(26, '452178', 'SSD Externo 500GB', 'SSD portátil SanDisk com 500GB, alta velocidade de leitura (até 1050 MB/s) e conexão USB 3.1 Gen 2. Resistente à água e poeira (IP55), quedas de até 2m e impactos. Compacto, leve e ideal para armazenar e transportar dados com segurança. Acompanha cabo USB-C e adaptador USB-A.', 1100.00, 500.00, 0, NULL, 33, 'prod_20260410195253_69d98d5551790.png', 6),
+(27, '14527', 'Suporte Articulado Monitor Notebook Fortrek', 'Suporte articulado de mesa Fortrek FK485S para monitor (17” a 32”) e notebook (até 15,6”). Suporta até 9kg (monitor) e 4kg (notebook), com rotação e articulação ajustáveis. Compatível com padrão VESA 100x100, fácil de instalar e ideal para melhor ergonomia.', 300.00, 150.00, 0, NULL, 33, 'prod_20260410195219_69d98d3320ad8.png', 7),
+(28, '145278', 'Suporte de Celular de Mesa', 'Suporte de mesa ajustável para celular e tablet, com articulação de até 72º e altura de até 14cm. Possui base estável, design portátil e compatibilidade universal. Feito em plástico, leve e ideal para vídeos e chamadas. Garantia de 3 meses.', 20.00, 10.00, 0, NULL, 33, 'prod_20260410195147_69d98d13eedb1.png', 7),
+(29, '1254563', 'Suporte Para Headset Gamer Redragon', '- Suporte RGB para Headsets - Construção reforçada em Aluminio e plástico ABS militar - Modos de iluminação RGB - 4 Entradas USB 2.0 (2 em compartimento escondido) - Conexão Tipo-C e cabo removivél Peso e dimensões Peso: 267 g Apróx (A) 25CM x (L) 10CM (C) 10CM', 199.99, 90.00, 0, NULL, 33, 'prod_20260410195117_69d98cf5253e8.png', 7),
+(30, '1025547', 'Teclado portátil de 60%,', 'Teclado mecânico compacto 60% com 61 teclas, ideal para economizar espaço e transportar. Possui switches vermelhos, anti-ghosting (N-Key Rollover), teclas duráveis em dupla injeção e conexão USB-C removível. Conta com iluminação LED colorida com 19 modos e ajuste de altura para maior conforto.', 210.00, 110.00, 0, NULL, 33, 'prod_20260410194927_69d98c87e991b.png', 3),
+(31, '254887', 'Teclado Semi Mecânico', 'Teclado semi mecânico com layout ABNT2, teclas silenciosas e anti-ghost. Possui conexão USB, cabo de 1,5m, design ergonômico e resistência a respingos. Compatível com diversos dispositivos e ideal para uso diário. Garantia de 30 dias.', 50.00, 20.00, 0, NULL, 36, 'prod_20260410194816_69d98c4005a76.png', 3),
+(32, '1478526', 'Teclado Gamer Semi Mecânico', 'Teclado gamer semi mecânico com iluminação LED RGB (7 cores), teclas macias e silenciosas. Possui 107 teclas, conexão USB, design resistente a respingos e impactos. Iluminação pode ser ligada/desligada. Garantia de 3 meses.', 69.90, 30.00, 0, NULL, 35, 'prod_20260410195043_69d98cd3038e7.png', 3),
+(33, '236988', 'Teclado Pro Fit Media Keyboard Kensington', 'Teclado com fio Kensington Pro Fit (ABNT2), na cor preta, confortável e prático para uso diário. Possui teclado numérico, é resistente a respingos e tem design semimecânico. Não possui retroiluminação nem cabo removível.', 270.00, 150.00, 1, 220.00, 34, 'prod_20260410194856_69d98c68e2553.png', 3),
+(34, '14875', 'Teclado Portátil Bluetooth 5.0 Ts400', 'Teclado Bluetooth 5.0 sem fio com suporte para celular/tablet. Conecta até 3 dispositivos, possui 14 teclas multimídia e funciona com 2 pilhas AAA (inclusas). Acompanha guia rápido e tem garantia de 3 anos.', 180.00, 100.00, 0, NULL, 36, 'prod_20260410195009_69d98cb10c8f3.png', 3),
+(35, '45887558', 'Smartwatch Samsung Galaxy Fit3 Display 1.6\" Grafite', 'Para usar o Galaxy Fit3, é necessário ter uma conta Samsung cadastrada no celular. Os dados de saúde são armazenados com segurança na Samsung Cloud. Se a bateria estiver totalmente descarregada, o dispositivo não ligará e deverá ser carregado antes do uso. A tela sensível ao toque pode não funcionar corretamente quando estiver molhada ou em contato com água.\r\n', 269.91, 100.00, 0, NULL, 20, 'prod_20260410195405_69d98d9d5d657.png', 8),
+(36, '02454552', 'Smartwatch Militar Masculino,Relógio Inteligente com Chamadas,Tela HD de 1.45\"', 'Smartwatch IOWODO W50Pro com tela 1.45\" Full HD, chamadas Bluetooth, notificações de apps, 100 modos esportivos, bateria duradoura, resistência IP68 e funções inteligentes. Acompanha duas pulseiras ajustáveis.\r\n', 299.90, 120.00, 0, NULL, 22, 'prod_20260410195439_69d98dbf0d2c4.png', 8),
+(37, '236522', 'Smartwatch com Monitor Cardíaco', 'Smartwatch X Watch XSWUQPI003A PXT com monitor cardíaco, contador de passos e calorias, notificações inteligentes e modos esportivos. Possui tela touch, design moderno e auxilia no acompanhamento da saúde, treinos e atividades do dia a dia.\r\n', 269.99, 100.00, 0, NULL, 21, 'prod_20260410195508_69d98ddc6fb93.png', 8),
+(38, '124541225', 'Smartwatch Bluetooth', 'Smartwatch IDW26 BLACKULTRA com tela HD de 1,83\", chamadas Bluetooth, assistente Alexa, monitoramento de saúde (batimentos, sono e oxigênio), modos esportivos, notificações de apps e resistência IP68. Bateria de 5 a 7 dias e compatível com Android e iOS.\r\n', 169.90, 70.00, 0, NULL, 20, 'prod_20260410195534_69d98df68e049.png', 8),
+(39, '1254581', 'Smartwatch AMOLED', 'Smartwatch com GPS de 5 satélites e impermeabilidade 3ATM, ideal para esportes outdoor. Possui mais de 100 modos esportivos, análise de sono com IA, monitoramento de saúde (batimentos, estresse, oxigênio e respiração), chamadas Bluetooth, notificações e mostradores personalizáveis.\r\n', 309.43, 130.00, 1, 250.00, 20, 'prod_20260410195601_69d98e11dadd4.png', 8),
+(40, '12545822', 'Pulseira Inteligente Xiaomi Smart Band 9 Active', 'Smartband com tela touch de 1,47\", Bluetooth 5.3 e resistência 5 ATM. Possui 50 modos de treino, monitoramento de batimentos cardíacos, oxigênio no sangue, sono e estresse, além de notificações, controle de música e câmera. Bateria de até 18 dias e compatível com Android e iOS.\r\n', 289.99, 120.00, 0, NULL, 30, 'prod_20260410195637_69d98e351eeeb.png', 8),
+(41, '2011251', 'Carregador Smartwatch Compátivel Microwear', 'Cabo carregador magnético USB para smartwatch Microwear, 1 metro, saída 5V/1A, feito em ABS e metal. Compatível com diversos modelos Microwear com carregamento magnético.\r\n', 23.90, 10.00, 0, NULL, 30, 'prod_20260410192944_69d987e860ae5.webp', 8),
+(42, '10225544', 'Pulseira de Reposição para Smartwatch', 'Pulseira confortável e resistente, feita em silicone macio e durável. Ideal para uso diário e atividades físicas, oferece ajuste seguro no pulso e fácil instalação no relógio. Compatível com diversos modelos de smartwatch que utilizam encaixe de 18mm, 20mm ou 22mm. Design moderno, leve e fácil de limpar, perfeita para renovar o visual do seu relógio.\r\n', 15.00, 5.00, 0, NULL, 20, 'prod_20260410195702_69d98e4e0118f.avif', 8),
+(43, '125487', 'Fone Tws Bluetooth 5.4', 'Fone TWS com cancelamento de ruído ativo, som com driver 8mm, até 22h de bateria, Bluetooth 5.4 com conexão dupla, design ergonômico e IP54.\r\nDados técnicos: Bluetooth 5.4 (A2DP/AVRCP/HFP), codec SBC, 6–7h (fones) + até 15h (case), recarga ~1,5h, 20Hz–20kHz, USB-C.', 269.03, 120.00, 0, NULL, 20, 'prod_20260410193334_69d988ce1054c.png', 4),
+(44, '2325885', 'Monitor Gamer Curvo Concórdia Gamer ', 'Monitor LED 27\" com baixo consumo de energia, oferecendo cores vivas, ótima nitidez e resolução Full HD (1920x1080). Sua tela ampla proporciona mais conforto visual e melhor aproveitamento de espaço para multitarefas, sendo ideal para trabalho, estudos e entretenimento. Com boa fidelidade de imagem, garante uma experiência agradável ao assistir filmes, séries ou navegar no dia a dia.', 700.00, 450.00, 0, NULL, 11, 'prod_20260410193826_69d989f2118c3.png', 9),
+(45, '2598566', 'Monitor Gamer Samsung Odyssey G30 24” FHD', 'Monitor gamer de 24” com resolução Full HD e taxa de atualização de 144Hz, ideal para jogos e uso diário. Possui tempo de resposta de 1ms, painel VA com alto contraste e tecnologia AMD FreeSync para imagens mais suaves e sem travamentos. Conta com design moderno sem bordas e ajuste ergonômico para maior conforto.', 1000.00, 500.00, 0, NULL, 15, 'prod_20260410194100_69d98a8c2ea34.png', 9),
+(46, '44514778', 'Monitor LG UltraGear™ G4', 'Monitor gamer de 24” com tela IPS Full HD e taxa de atualização de 144Hz (overclock), oferecendo imagens fluidas e cores mais vivas. Possui tempo de resposta de 1ms (MBR), compatibilidade com NVIDIA G-SYNC e AMD FreeSync, garantindo jogabilidade sem travamentos. Conta com HDR10 e 99% sRGB para melhor qualidade de imagem, além de recursos gamer como Black Stabilizer e Crosshair para maior precisão nos jogos. Conexões HDMI, DisplayPort e saída para fone de ouvido.', 770.00, 330.00, 0, NULL, 20, 'prod_20260410194138_69d98ab239222.png', 9),
+(47, '2014522', 'Monitor Profissional LG UltraFine 27\"', 'Monitor profissional de 27” com resolução 4K UHD (3840x2160), ideal para trabalho, edição e uso diário. Possui painel IPS com cores precisas e amplos ângulos de visão, além de 90% DCI-P3 para maior fidelidade em imagens. Conta com design moderno sem bordas, alto brilho e excelente qualidade visual, perfeito para quem busca desempenho e precisão em projetos criativos.', 1600.00, 1000.00, 0, NULL, 15, 'prod_20260410194218_69d98ada5dd42.png', 9),
+(48, '10348787', 'Monitor Gamer LG UltraGear 27\"', 'Monitor gamer de 27” com painel IPS Full HD, taxa de atualização de 180Hz e tempo de resposta de 1ms (GtG), garantindo imagens rápidas e sem travamentos. Conta com compatibilidade com NVIDIA G-SYNC e AMD FreeSync para jogabilidade mais fluida, além de HDR10 e 99% sRGB para cores mais vivas e realistas. Possui conexões HDMI e DisplayPort, sendo ideal para quem busca desempenho e qualidade em jogos.', 1360.00, 800.00, 0, NULL, 15, 'prod_20260410194028_69d98a6cdd497.png', 9),
+(49, '1552245', 'Monitor Gamer Acer Nitro ', 'Monitor gamer de 23,8” com tela Full HD e painel IPS, oferecendo imagens nítidas e cores vivas. Conta com taxa de atualização de 120Hz e tempo de resposta de 1ms (VRB), garantindo mais fluidez e precisão nos jogos. Possui tecnologia Adaptive-Sync, modos de jogo e design Zero Frame, proporcionando uma experiência mais imersiva. Conexões HDMI e VGA.', 770.00, 330.00, 0, NULL, 20, 'prod_20260410193751_69d989cfb13c4.png', 9);
 
 -- --------------------------------------------------------
 
@@ -311,104 +321,104 @@ CREATE TABLE `produto_imagens` (
 --
 
 INSERT INTO `produto_imagens` (`id`, `produto_id`, `imagem`) VALUES
-(1, 2, 'galeria_2_1774108569_69bebf991a297.png'),
-(7, 4, 'galeria_4_1774108632_69bebfd8b303d.png'),
-(8, 7, 'galeria_7_1774108671_69bebfff308da.png'),
-(9, 1, 'galeria_1_1774108682_69bec00aa5968.png'),
-(10, 8, 'galeria_8_1774108722_69bec032004ec.png'),
-(11, 8, 'galeria_8_1774108722_69bec03200b8d.png'),
-(12, 31, 'galeria_31_1774108751_69bec04feab2c.png'),
-(13, 33, 'galeria_33_1774108785_69bec07197d8d.png'),
-(14, 30, 'galeria_30_1774108817_69bec091509b8.png'),
-(15, 30, 'galeria_30_1774108817_69bec09150f3e.png'),
-(16, 34, 'galeria_34_1774108836_69bec0a4c2559.png'),
-(17, 29, 'galeria_29_1774108891_69bec0db887d9.png'),
-(18, 29, 'galeria_29_1774108891_69bec0db88e4b.png'),
-(19, 29, 'galeria_29_1774108891_69bec0db8973f.png'),
-(20, 28, 'galeria_28_1774108937_69bec109e29ed.png'),
-(21, 28, 'galeria_28_1774108937_69bec109e2fc1.png'),
-(22, 28, 'galeria_28_1774108937_69bec109e38a0.png'),
-(23, 27, 'galeria_27_1774108972_69bec12c16bb6.png'),
-(24, 27, 'galeria_27_1774108972_69bec12c17419.png'),
-(25, 26, 'galeria_26_1774109003_69bec14b929a0.png'),
-(26, 35, 'galeria_35_1774109026_69bec162901cf.webp'),
-(27, 35, 'galeria_35_1774109026_69bec16290740.webp'),
-(28, 36, 'galeria_36_1774109078_69bec196e0345.webp'),
-(29, 36, 'galeria_36_1774109078_69bec196e0965.webp'),
-(30, 37, 'galeria_37_1774109130_69bec1ca95428.webp'),
-(31, 37, 'galeria_37_1774109130_69bec1ca95933.webp'),
-(32, 38, 'galeria_38_1774109156_69bec1e49bafd.png'),
-(33, 38, 'galeria_38_1774109156_69bec1e49c18d.png'),
-(34, 39, 'galeria_39_1774109203_69bec2134db1c.webp'),
-(35, 39, 'galeria_39_1774109203_69bec2134e1b8.png'),
-(36, 40, 'galeria_40_1774109260_69bec24c0646d.png'),
-(38, 25, 'galeria_25_1774109406_69bec2ded4f51.png'),
-(39, 25, 'galeria_25_1774109406_69bec2ded53e9.png'),
-(40, 23, 'galeria_23_1774109461_69bec315733b3.png'),
-(41, 17, 'galeria_17_1774109475_69bec323ba18f.png'),
-(42, 17, 'galeria_17_1774109475_69bec323ba81a.png'),
-(43, 21, 'galeria_21_1774109528_69bec358d02ff.png'),
-(44, 21, 'galeria_21_1774109528_69bec358d08e9.png'),
-(45, 20, 'galeria_20_1774109578_69bec38a24044.png'),
-(46, 19, 'galeria_19_1774109652_69bec3d406b10.png'),
-(47, 18, 'galeria_18_1774109683_69bec3f34a05d.png'),
-(48, 18, 'galeria_18_1774109683_69bec3f34a5a0.png'),
-(49, 47, 'galeria_47_1774109708_69bec40c45e82.png'),
-(50, 47, 'galeria_47_1774109708_69bec40c46653.png'),
-(51, 47, 'galeria_47_1774109708_69bec40c46baa.png'),
-(52, 47, 'galeria_47_1774109708_69bec40c470db.png'),
-(54, 48, 'galeria_48_1774109838_69bec48e94410.png'),
-(55, 48, 'galeria_48_1774109838_69bec48e94896.png'),
-(56, 46, 'galeria_46_1774109984_69bec520b3eb9.png'),
-(57, 46, 'galeria_46_1774109984_69bec520b4382.png'),
-(58, 44, 'galeria_44_1774110036_69bec5543e76a.png'),
-(59, 44, 'galeria_44_1774110036_69bec5543ebe5.png'),
-(60, 44, 'galeria_44_1774110036_69bec5543ef98.png'),
-(61, 46, 'galeria_46_1774110059_69bec56b3e47b.webp'),
-(62, 49, 'galeria_49_1774110096_69bec590e904e.png'),
-(63, 49, 'galeria_49_1774110096_69bec590e97a4.png'),
-(64, 49, 'galeria_49_1774110096_69bec590e9cde.png'),
-(65, 49, 'galeria_49_1774110096_69bec590ea44e.png'),
-(66, 49, 'galeria_49_1774110096_69bec590eab02.png'),
-(69, 15, 'galeria_15_1774110171_69bec5db5ac36.png'),
-(70, 15, 'galeria_15_1774110171_69bec5db5b14a.png'),
-(71, 15, 'galeria_15_1774110171_69bec5db5b513.png'),
-(72, 12, 'galeria_12_1774110191_69bec5efae81a.png'),
-(73, 12, 'galeria_12_1774110191_69bec5efaf013.png'),
-(74, 12, 'galeria_12_1774110191_69bec5efaf62e.png'),
-(75, 12, 'galeria_12_1774110191_69bec5efafacd.png'),
-(76, 13, 'galeria_13_1774110207_69bec5ff37508.png'),
-(77, 43, 'galeria_43_1774110230_69bec61632661.png'),
-(78, 43, 'galeria_43_1774110230_69bec61632d97.png'),
-(79, 43, 'galeria_43_1774110230_69bec61633544.png'),
-(80, 43, 'galeria_43_1774110230_69bec6163397c.png'),
-(81, 14, 'galeria_14_1774110245_69bec6256b3d1.png'),
-(82, 14, 'galeria_14_1774110245_69bec6256b9b4.png'),
-(83, 11, 'galeria_11_1774110280_69bec64877dd3.png'),
-(84, 11, 'galeria_11_1774110280_69bec6487853d.png'),
-(85, 9, 'galeria_9_1774110300_69bec65c9574e.png'),
-(86, 9, 'galeria_9_1774110300_69bec65c95e03.png'),
-(87, 9, 'galeria_9_1774110300_69bec65c96679.png'),
-(88, 9, 'galeria_9_1774110300_69bec65c96ccf.png'),
-(89, 10, 'galeria_10_1774110319_69bec66f5ef6b.png'),
-(90, 41, 'galeria_41_1774110484_69bec7149559f.png'),
-(91, 41, 'galeria_41_1774110484_69bec71495b88.png'),
-(92, 3, 'galeria_3_1774110572_69bec76c3c553.png'),
-(93, 3, 'galeria_3_1774110572_69bec76c3caa4.png'),
-(94, 10, 'galeria_10_1774110675_69bec7d397d8d.png'),
-(95, 16, 'galeria_16_1774110770_69bec83235c6d.jpg'),
-(96, 16, 'galeria_16_1774110785_69bec84102895.png'),
-(97, 16, 'galeria_16_1774110785_69bec84103018.png'),
-(98, 45, 'galeria_45_1774110828_69bec86c34f61.webp'),
-(99, 45, 'galeria_45_1774110828_69bec86c356bf.webp'),
-(100, 45, 'galeria_45_1774110828_69bec86c35f2f.webp'),
-(101, 45, 'galeria_45_1774110828_69bec86c3648e.png'),
-(102, 45, 'galeria_45_1774110828_69bec86c36d90.webp'),
-(103, 24, 'galeria_24_1774110897_69bec8b1e10e0.png'),
-(104, 32, 'galeria_32_1774110964_69bec8f48e117.png'),
-(105, 42, 'galeria_42_1774111064_69bec95813ff9.png'),
-(106, 42, 'galeria_42_1774111064_69bec958145d5.png'),
-(107, 22, 'galeria_22_1774111091_69bec97369088.png');
+(108, 2, 'galeria_2_1775863187_69d98593be8f6.png'),
+(109, 4, 'galeria_4_1775863227_69d985bbb3d8d.png'),
+(110, 7, 'galeria_7_1775863666_69d9877202639.png'),
+(111, 1, 'galeria_1_1775863727_69d987afa0a02.png'),
+(112, 41, 'galeria_41_1775863784_69d987e86178b.png'),
+(113, 41, 'galeria_41_1775863784_69d987e86199b.png'),
+(114, 3, 'galeria_3_1775863854_69d9882e6ab3d.png'),
+(115, 3, 'galeria_3_1775863854_69d9882e6ae48.png'),
+(116, 8, 'galeria_8_1775863935_69d9887f5aee9.png'),
+(117, 8, 'galeria_8_1775863935_69d9887f5b127.png'),
+(118, 12, 'galeria_12_1775863971_69d988a34a34e.png'),
+(119, 12, 'galeria_12_1775863971_69d988a34a5dc.png'),
+(120, 12, 'galeria_12_1775863971_69d988a34a8ee.png'),
+(121, 12, 'galeria_12_1775863971_69d988a34ab69.png'),
+(122, 43, 'galeria_43_1775864014_69d988ce11921.png'),
+(123, 43, 'galeria_43_1775864014_69d988ce11c26.png'),
+(124, 43, 'galeria_43_1775864014_69d988ce11ee1.png'),
+(125, 43, 'galeria_43_1775864014_69d988ce120f1.png'),
+(126, 10, 'galeria_10_1775864054_69d988f63ac3e.png'),
+(127, 10, 'galeria_10_1775864054_69d988f63af7b.png'),
+(128, 9, 'galeria_9_1775864087_69d98917898b9.png'),
+(129, 9, 'galeria_9_1775864087_69d9891789ae7.png'),
+(130, 9, 'galeria_9_1775864087_69d9891789cad.png'),
+(131, 9, 'galeria_9_1775864087_69d9891789e74.png'),
+(132, 11, 'galeria_11_1775864110_69d9892e6ec55.png'),
+(133, 11, 'galeria_11_1775864110_69d9892e6ee71.png'),
+(134, 13, 'galeria_13_1775864138_69d9894a98061.png'),
+(135, 14, 'galeria_14_1775864166_69d98966908a7.png'),
+(136, 14, 'galeria_14_1775864166_69d9896690aef.png'),
+(137, 15, 'galeria_15_1775864193_69d989811bd2a.png'),
+(138, 15, 'galeria_15_1775864193_69d989811c011.png'),
+(139, 15, 'galeria_15_1775864193_69d989811c28c.png'),
+(140, 16, 'galeria_16_1775864220_69d9899c6a1ac.jpg'),
+(141, 16, 'galeria_16_1775864220_69d9899c6a422.png'),
+(142, 16, 'galeria_16_1775864220_69d9899c6a6ad.png'),
+(143, 49, 'galeria_49_1775864271_69d989cfb2f81.png'),
+(144, 49, 'galeria_49_1775864271_69d989cfb32e4.png'),
+(145, 49, 'galeria_49_1775864271_69d989cfb3655.png'),
+(146, 49, 'galeria_49_1775864271_69d989cfb391e.png'),
+(147, 49, 'galeria_49_1775864271_69d989cfb3be4.png'),
+(148, 44, 'galeria_44_1775864306_69d989f212ef4.png'),
+(149, 44, 'galeria_44_1775864306_69d989f21320a.png'),
+(150, 44, 'galeria_44_1775864306_69d989f2134d9.png'),
+(151, 48, 'galeria_48_1775864428_69d98a6cddfb5.png'),
+(152, 48, 'galeria_48_1775864428_69d98a6cde1a9.png'),
+(153, 45, 'galeria_45_1775864460_69d98a8c2fe93.webp'),
+(154, 45, 'galeria_45_1775864460_69d98a8c300f2.webp'),
+(155, 45, 'galeria_45_1775864460_69d98a8c3036b.webp'),
+(156, 45, 'galeria_45_1775864460_69d98a8c30534.webp'),
+(157, 45, 'galeria_45_1775864460_69d98a8c30779.png'),
+(158, 46, 'galeria_46_1775864498_69d98ab239ee7.png'),
+(159, 46, 'galeria_46_1775864498_69d98ab23a0e6.png'),
+(160, 46, 'galeria_46_1775864498_69d98ab23a2b9.webp'),
+(161, 47, 'galeria_47_1775864538_69d98ada5f987.png'),
+(162, 47, 'galeria_47_1775864538_69d98ada5fce0.png'),
+(163, 47, 'galeria_47_1775864538_69d98ada5fff3.png'),
+(164, 47, 'galeria_47_1775864538_69d98ada602e4.png'),
+(165, 17, 'galeria_17_1775864562_69d98af20bb80.png'),
+(166, 17, 'galeria_17_1775864562_69d98af20be5c.png'),
+(167, 18, 'galeria_18_1775864651_69d98b4b83cba.png'),
+(168, 18, 'galeria_18_1775864651_69d98b4b83e97.png'),
+(169, 19, 'galeria_19_1775864676_69d98b646572c.png'),
+(170, 20, 'galeria_20_1775864707_69d98b83d30a2.png'),
+(171, 21, 'galeria_21_1775864730_69d98b9a54be7.png'),
+(172, 21, 'galeria_21_1775864730_69d98b9a54f6f.png'),
+(173, 23, 'galeria_23_1775864792_69d98bd860cc8.png'),
+(174, 24, 'galeria_24_1775864815_69d98bef473c0.png'),
+(175, 22, 'galeria_22_1775864850_69d98c120de06.png'),
+(176, 31, 'galeria_31_1775864896_69d98c40066e1.png'),
+(177, 33, 'galeria_33_1775864936_69d98c68e2f1a.png'),
+(178, 30, 'galeria_30_1775864967_69d98c87ea963.png'),
+(179, 30, 'galeria_30_1775864967_69d98c87eabe2.png'),
+(180, 34, 'galeria_34_1775865009_69d98cb10d55c.png'),
+(181, 32, 'galeria_32_1775865043_69d98cd3041f1.png'),
+(182, 29, 'galeria_29_1775865077_69d98cf52e4c7.png'),
+(183, 29, 'galeria_29_1775865077_69d98cf52ed50.png'),
+(184, 29, 'galeria_29_1775865077_69d98cf52f7a1.png'),
+(185, 28, 'galeria_28_1775865107_69d98d13efb9c.png'),
+(186, 28, 'galeria_28_1775865107_69d98d13eff74.png'),
+(187, 28, 'galeria_28_1775865107_69d98d13f01c6.png'),
+(188, 27, 'galeria_27_1775865139_69d98d33215ef.png'),
+(189, 27, 'galeria_27_1775865139_69d98d33218ca.png'),
+(190, 26, 'galeria_26_1775865173_69d98d555227d.png'),
+(191, 35, 'galeria_35_1775865245_69d98d9d5e5b8.webp'),
+(192, 35, 'galeria_35_1775865245_69d98d9d5e862.webp'),
+(193, 36, 'galeria_36_1775865279_69d98dbf0de90.webp'),
+(194, 36, 'galeria_36_1775865279_69d98dbf0e0a5.webp'),
+(195, 37, 'galeria_37_1775865308_69d98ddc70650.webp'),
+(196, 37, 'galeria_37_1775865308_69d98ddc70817.webp'),
+(197, 38, 'galeria_38_1775865334_69d98df68eaf4.png'),
+(198, 38, 'galeria_38_1775865334_69d98df68ecf5.png'),
+(199, 39, 'galeria_39_1775865361_69d98e11db892.webp'),
+(200, 39, 'galeria_39_1775865361_69d98e11dbad2.png'),
+(201, 40, 'galeria_40_1775865397_69d98e351f772.png'),
+(202, 42, 'galeria_42_1775865422_69d98e4e021d1.png'),
+(203, 42, 'galeria_42_1775865422_69d98e4e024fa.png'),
+(204, 25, 'galeria_25_1775865458_69d98e723f254.png'),
+(205, 25, 'galeria_25_1775865458_69d98e723f566.png');
 
 -- --------------------------------------------------------
 
@@ -468,7 +478,13 @@ INSERT INTO `sistema_logs` (`id`, `usuario_id`, `acao`, `data_hora`) VALUES
 (38, 2, 'Login: Usuário Andelson entrou.', '2026-03-20 15:24:12'),
 (39, 2, 'Login: Usuário Andelson entrou.', '2026-03-20 16:31:34'),
 (40, 2, 'Login: Usuário Andelson entrou.', '2026-03-20 16:49:01'),
-(41, 2, 'Login: Usuário Andelson entrou.', '2026-03-21 12:37:14');
+(41, 2, 'Login: Usuário Andelson entrou.', '2026-03-21 12:37:14'),
+(42, 2, 'Login: Usuário Andelson entrou.', '2026-03-21 13:42:59'),
+(43, 2, 'Login: Usuário Andelson entrou.', '2026-04-10 16:16:17'),
+(44, 2, 'Login: Usuário Andelson entrou.', '2026-05-14 05:47:14'),
+(45, 7, 'Login: Usuário Andelson Nascimento entrou.', '2026-07-04 22:46:49'),
+(46, 2, 'Login: Usuário Andelson entrou.', '2026-07-04 22:49:32'),
+(47, 7, 'Login: Usuário Andelson Nascimento entrou.', '2026-07-04 22:51:07');
 
 -- --------------------------------------------------------
 
@@ -495,10 +511,10 @@ INSERT INTO `usuarios` (`id`, `nome`, `email`, `google_id`, `usuario`, `senha`, 
 (1, 'Zezinho', NULL, NULL, 'zezim', '$2y$10$YdzMee5sCI1Rvfa27JoxreidzKCWdfwiIABn5bFI1XR/jwiykiXtm', 'master', NULL),
 (2, 'Andelson', NULL, NULL, 'andelson', '$2y$10$YdzMee5sCI1Rvfa27JoxreidzKCWdfwiIABn5bFI1XR/jwiykiXtm', 'master', NULL),
 (3, 'Sarah', NULL, NULL, 'sarah', '$2y$10$YdzMee5sCI1Rvfa27JoxreidzKCWdfwiIABn5bFI1XR/jwiykiXtm', 'usuario', NULL),
-(4, 'Sarah Stephanie', 'stephaniemoura285@gmail.com', '118063862504631323329', 'stephaniemoura285', '', 'usuario', 'https://lh3.googleusercontent.com/a/ACg8ocKM2vBoB7D7TgembzR4xIlfZye6MHuIJlSmovqmhQNfnD4myk9n=s96-c'),
+(4, 'Sarah Stephanie', 'stephaniemoura285@gmail.com', '118063862504631323329', 'stephaniemoura285', '', 'admin', 'https://lh3.googleusercontent.com/a/ACg8ocKM2vBoB7D7TgembzR4xIlfZye6MHuIJlSmovqmhQNfnD4myk9n=s96-c'),
 (5, 'Andelson nascimento', '', '', '', '', '', ''),
 (6, 'Andelson nascimento', 'geovanesilva301@gmail.com', '112725934260905830548', 'geovanesilva301', '', '', 'https://lh3.googleusercontent.com/a/ACg8ocLj7pL49wvcEq51avYMRBIc-PFcnFqgUdzaF8cqDkhnTJOXrk_xWA=s96-c'),
-(7, 'Andelson Nascimento', 'andelsonascimento@gmail.com', '109035660575826182106', 'andelsonascimento', '', '', 'https://lh3.googleusercontent.com/a/ACg8ocLzPhlA0uMuEugcpNd18R3XujL0KD8i-USXeOC0gcAZGSMs6lAr=s96-c');
+(7, 'Andelson Nascimento', 'andelsonascimento@gmail.com', '109035660575826182106', 'andelsonascimento', '', 'admin', 'https://lh3.googleusercontent.com/a/ACg8ocLzPhlA0uMuEugcpNd18R3XujL0KD8i-USXeOC0gcAZGSMs6lAr=s96-c');
 
 -- --------------------------------------------------------
 
@@ -554,6 +570,13 @@ INSERT INTO `vendas` (`id`, `usuario_id`, `total`, `data_venda`, `cliente_id`, `
 --
 ALTER TABLE `categorias`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Índices para tabela `chaves`
+--
+ALTER TABLE `chaves`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `nome` (`nome`);
 
 --
 -- Índices para tabela `clientes`
@@ -640,6 +663,12 @@ ALTER TABLE `categorias`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
+-- AUTO_INCREMENT de tabela `chaves`
+--
+ALTER TABLE `chaves`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
 -- AUTO_INCREMENT de tabela `clientes`
 --
 ALTER TABLE `clientes`
@@ -649,7 +678,7 @@ ALTER TABLE `clientes`
 -- AUTO_INCREMENT de tabela `enderecos`
 --
 ALTER TABLE `enderecos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de tabela `itens_venda`
@@ -673,13 +702,13 @@ ALTER TABLE `produtos`
 -- AUTO_INCREMENT de tabela `produto_imagens`
 --
 ALTER TABLE `produto_imagens`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=108;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=206;
 
 --
 -- AUTO_INCREMENT de tabela `sistema_logs`
 --
 ALTER TABLE `sistema_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
 -- AUTO_INCREMENT de tabela `usuarios`

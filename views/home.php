@@ -558,7 +558,7 @@ require __DIR__ . '/layout/header.php';
         listaDiv.innerHTML = '<p style="padding:10px; color:#777;"><i class="fas fa-spinner fa-spin"></i> Buscando endereços...</p>';
 
         try {
-            const res = await fetch(`${BASE_URL}api/enderecos_cliente?id=${idCliente}`);
+            const res = await fetch(`${BASE_URL}api/enderecos_cliente&id=${idCliente}`);
             const dados = await res.json();
 
             if (dados.sucesso && dados.enderecos.length > 0) {

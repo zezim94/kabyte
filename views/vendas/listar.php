@@ -327,7 +327,7 @@
         document.getElementById('mdlId').innerText = id;
 
         try {
-            const res = await fetch('<?= BASE_URL ?>api/detalhes_admin?id=' + id);
+            const res = await fetch('<?= BASE_URL ?>venda/detalhesVendaAdmin?id=' + id);
             const dados = await res.json();
 
             if (dados.sucesso) {

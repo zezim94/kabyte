@@ -26,7 +26,8 @@ foreach ($minhasCompras as $c) {
         <h2>Meu Painel</h2>
         <div class="user-actions">
             <span>Olá, <b><?= htmlspecialchars($_SESSION['cliente_nome']) ?></b></span>
-            <a href="<?= BASE_URL ?>cliente/sair" class="btn-sair">
+            <!-- Corrigido para a nova estrutura de rotas -->
+            <a href="<?= BASE_URL ?>index.php?rota=cliente/sair" class="btn-sair">
                 <i class="fas fa-sign-out-alt"></i> Sair
             </a>
         </div>
@@ -51,6 +52,40 @@ foreach ($minhasCompras as $c) {
         </div>
     </div>
 
+    <!-- === NOVO: SEÇÃO DE PRODUTOS MAIS VISTOS PELO CLIENTE === -->
+    <?php if (!empty($meusMaisVistos)): ?>
+        <div class="section-tools" style="margin-bottom: 30px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+            <h3 style="margin:0 0 15px 0; color: #2c3e50; border-bottom: 2px solid #f1f2f6; padding-bottom: 10px;">
+                <i class="fas fa-eye" style="color: #3498db;"></i> Vistos Recentemente por Mim
+            </h3>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-top: 15px;">
+                <?php foreach ($meusMaisVistos as $prod): ?>
+                    <?php
+                    // Tratamento de imagem (se não tiver foto, exibe a default)
+                    $imgSrc = !empty($prod['imagem']) ? BASE_URL . 'public/uploads/' . $prod['imagem'] : BASE_URL . 'public/images/default.png';
+                    ?>
+                    <div style="border: 1px solid #eee; border-radius: 8px; padding: 10px; text-align: center; transition: 0.3s; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                        <img src="<?= htmlspecialchars($imgSrc) ?>" alt="<?= htmlspecialchars($prod['nome']) ?>" style="width: 100%; height: 120px; object-fit: contain; margin-bottom: 10px;">
+
+                        <h4 style="font-size: 0.9rem; color: #333; margin: 0 0 5px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="<?= htmlspecialchars($prod['nome']) ?>">
+                            <?= htmlspecialchars($prod['nome']) ?>
+                        </h4>
+
+                        <p style="color: #27ae60; font-weight: bold; margin: 0 0 10px 0;">
+                            R$ <?= number_format($prod['preco'], 2, ',', '.') ?>
+                        </p>
+
+                        <a href="<?= BASE_URL ?>index.php?rota=produto/detalhes&id=<?= $prod['id'] ?>" style="display: block; background: #3498db; color: #fff; padding: 6px; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: 500;">
+                            <i class="fas fa-search"></i> Ver Novamente
+                        </a>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    <?php endif; ?>
+    <!-- ========================================================== -->
+
     <?php if (!empty($topProdutos)): ?>
         <div class="section-tools">
             <div class="chart-container">
@@ -63,8 +98,7 @@ foreach ($minhasCompras as $c) {
     <div class="filter-container">
         <h3 style="margin:0; color: #2c3e50;">Histórico de Pedidos</h3>
         <div>
-            <label for="filtroStatus"
-                style="font-weight:600; font-size: 0.9rem; margin-right:5px; color:#555;">Status:</label>
+            <label for="filtroStatus" style="font-weight:600; font-size: 0.9rem; margin-right:5px; color:#555;">Status:</label>
             <select id="filtroStatus" class="filter-select" onchange="filtrarTabela()">
                 <option value="todos">Todos</option>
                 <option value="pago">Pago</option>
@@ -127,7 +161,7 @@ foreach ($minhasCompras as $c) {
                             </button>
 
                             <?php if ($pendente > 0 && $statusReal != 'pendente_analise'): ?>
-                                <a href="<?= BASE_URL ?>cliente/checkout/<?= $c['id'] ?>" class="btn-acao btn-pagar">
+                                <a href="<?= BASE_URL ?>pagamento/checkout&id=<?= $c['id'] ?>" class="btn-acao btn-pagar">
                                     <i class="fas fa-wallet"></i> Pagar R$ <?= number_format($pendente, 2, ',', '.') ?>
                                 </a>
                             <?php elseif ($pendente <= 0): ?>
@@ -167,16 +201,16 @@ foreach ($minhasCompras as $c) {
 
         // Paleta de cores vibrantes para cada barra
         const backgroundColors = [
-            'rgba(255, 99, 132, 0.7)',  // Vermelho
-            'rgba(54, 162, 235, 0.7)',  // Azul
-            'rgba(255, 206, 86, 0.7)',  // Amarelo
-            'rgba(75, 192, 192, 0.7)',  // Verde Água
+            'rgba(255, 99, 132, 0.7)', // Vermelho
+            'rgba(54, 162, 235, 0.7)', // Azul
+            'rgba(255, 206, 86, 0.7)', // Amarelo
+            'rgba(75, 192, 192, 0.7)', // Verde Água
             'rgba(153, 102, 255, 0.7)', // Roxo
-            'rgba(255, 159, 64, 0.7)',  // Laranja
-            'rgba(231, 76, 60, 0.7)',   // Vermelho Escuro
-            'rgba(46, 204, 113, 0.7)',  // Verde Esmeralda
-            'rgba(52, 152, 219, 0.7)',  // Azul Peter River
-            'rgba(155, 89, 182, 0.7)'   // Roxo Ametista
+            'rgba(255, 159, 64, 0.7)', // Laranja
+            'rgba(231, 76, 60, 0.7)', // Vermelho Escuro
+            'rgba(46, 204, 113, 0.7)', // Verde Esmeralda
+            'rgba(52, 152, 219, 0.7)', // Azul Peter River
+            'rgba(155, 89, 182, 0.7)' // Roxo Ametista
         ];
 
         new Chart(ctx, {
@@ -196,12 +230,16 @@ foreach ($minhasCompras as $c) {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { display: false } // Esconde a legenda para ficar mais limpo
+                    legend: {
+                        display: false
+                    } // Esconde a legenda para ficar mais limpo
                 },
                 scales: {
                     y: {
                         beginAtZero: true,
-                        ticks: { stepSize: 1 }
+                        ticks: {
+                            stepSize: 1
+                        }
                     }
                 }
             }
@@ -228,8 +266,12 @@ foreach ($minhasCompras as $c) {
     const modalIdSpan = document.getElementById("modalPedidoId");
     const modalConteudo = document.getElementById("modalConteudo");
 
-    function fecharModal() { modal.style.display = "none"; }
-    window.onclick = function (e) { if (e.target == modal) fecharModal(); }
+    function fecharModal() {
+        modal.style.display = "none";
+    }
+    window.onclick = function(e) {
+        if (e.target == modal) fecharModal();
+    }
 
     async function abrirModalDetalhes(idVenda) {
         modal.style.display = "flex"; // Flex para centralizar
@@ -237,18 +279,25 @@ foreach ($minhasCompras as $c) {
         modalConteudo.innerHTML = '<div style="text-align:center; padding:20px; color:#666;"><i class="fas fa-spinner fa-spin"></i> Buscando informações...</div>';
 
         try {
-            const response = await fetch('<?= BASE_URL ?>api/itens_venda?id=' + idVenda);
+            const response = await fetch('<?= BASE_URL ?>api/itensVenda?id=' + idVenda);
             const dados = await response.json();
 
-            if (dados.sucesso) { montarTabelaItens(dados.itens); }
-            else { modalConteudo.innerHTML = '<p style="color:red; text-align:center;">' + (dados.msg || 'Erro') + '</p>'; }
+            if (dados.sucesso) {
+                montarTabelaItens(dados.itens);
+            } else {
+                modalConteudo.innerHTML = '<p style="color:red; text-align:center;">' + (dados.msg || 'Erro') + '</p>';
+            }
         } catch (error) {
             modalConteudo.innerHTML = '<p style="color:red; text-align:center;">Erro de conexão.</p>';
         }
     }
 
+
     function montarTabelaItens(itens) {
-        if (itens.length === 0) { modalConteudo.innerHTML = '<p>Nenhum item encontrado.</p>'; return; }
+        if (itens.length === 0) {
+            modalConteudo.innerHTML = '<p>Nenhum item encontrado.</p>';
+            return;
+        }
 
         let html = `
             <div style="overflow-x:auto;">

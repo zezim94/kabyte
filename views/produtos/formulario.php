@@ -1,9 +1,14 @@
 <?php
-// Lógica de Inicialização
+
+// Lógica de Inicialização (Corrigida para Auto-Routing)
 $id = $produto['id'] ?? null;
+
+// ROTA CORRIGIDA PARA O NOVO PADRÃO
 $acao = $id ? "index.php?rota=produto/salvar&id=$id" : "index.php?rota=produto/salvar";
+
 $titulo = $id ? "Editar Produto" : "Novo Produto";
 $btnTexto = $id ? "Salvar Alterações" : "Cadastrar Produto";
+
 
 // Caminho da imagem atual
 $imagemAtual = (!empty($produto['imagem']) && file_exists(__DIR__ . '/../../public/uploads/' . $produto['imagem']))
@@ -69,7 +74,7 @@ $imagensAdicionais = $imagensAdicionais ?? [];
                 <h2><?= $titulo ?></h2>
                 <p>Preencha os dados completos do produto.</p>
             </div>
-            <a href="<?= BASE_URL ?>produtos" class="btn-voltar">
+            <a href="<?= BASE_URL ?>produto" class="btn-voltar">
                 <i class="fas fa-arrow-left"></i> Voltar
             </a>
         </div>

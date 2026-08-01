@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../models/Venda.php';
 require_once __DIR__ . '/../models/Auth.php';
 require_once __DIR__ . '/../models/Endereco.php';
+require_once __DIR__ . '/../models/Cliente.php';
 
 class VendaController
 {
@@ -24,6 +25,45 @@ class VendaController
         require __DIR__ . '/../views/vendas/listar.php';
     }
 
+    public function detalhesVendaAdmin()
+    {
+        // Escudo anti-HTML para garantir que o JavaScript receba um JSON perfeito
+        if (ob_get_length()) {
+            ob_clean();
+        }
+        header('Content-Type: application/json');
+
+        // Segurança básica: Apenas Admins/Vendedores logados podem ver
+        if (!isset($_SESSION['usuario_id'])) {
+            echo json_encode(['sucesso' => false, 'msg' => 'Acesso negado']);
+            exit;
+        }
+
+        $vendaId = (int) ($_GET['id'] ?? 0);
+
+        if ($vendaId <= 0) {
+            echo json_encode(['sucesso' => false, 'msg' => 'ID de venda inválido']);
+            exit;
+        }
+
+        try {
+            // 1. Usa o Model para buscar os dados completos da venda
+            $venda = Venda::buscarDetalhesAdmin($vendaId);
+
+            if (!$venda) {
+                echo json_encode(['sucesso' => false, 'msg' => 'Venda não encontrada']);
+                exit;
+            }
+
+            // 2. Usa o Model para buscar os itens da venda
+            $itens = Venda::listarItensAdmin($vendaId);
+
+            echo json_encode(['sucesso' => true, 'venda' => $venda, 'itens' => $itens]);
+        } catch (Throwable $e) {
+            echo json_encode(['sucesso' => false, 'msg' => 'Erro interno do servidor: ' . $e->getMessage()]);
+        }
+    }
+
     public function apiEnderecos()
     {
         // Define o tipo de conteúdo como JSON
@@ -36,16 +76,10 @@ class VendaController
             exit;
         }
 
-        $pdo = Database::connect();
         $listaFinal = [];
 
-        // 1. BUSCAR O ENDEREÇO PRINCIPAL (Tabela Clientes)
-        // Ajuste os nomes das colunas (rua, numero, bairro) conforme seu banco
-        $sqlCliente = "SELECT rua, numero, bairro, cidade, cep 
-                       FROM clientes WHERE id = ?";
-        $stmt = $pdo->prepare($sqlCliente);
-        $stmt->execute([$clienteId]);
-        $dadosCliente = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $dadosCliente = Cliente::buscarPorId($clienteId);
 
         // Se o cliente tem endereço cadastrado, adiciona na lista
         if ($dadosCliente && !empty($dadosCliente['rua'])) {
@@ -59,12 +93,7 @@ class VendaController
             ];
         }
 
-        // 2. BUSCAR ENDEREÇOS EXTRAS (Tabela Enderecos)
-        $sqlExtras = "SELECT id, logradouro, numero, bairro, cidade, cep 
-                      FROM enderecos WHERE cliente_id = ?";
-        $stmt2 = $pdo->prepare($sqlExtras);
-        $stmt2->execute([$clienteId]);
-        $enderecosExtras = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+        $enderecosExtras = Endereco::listarPorCliente($clienteId);
 
         // Adiciona os extras na lista
         foreach ($enderecosExtras as $extra) {

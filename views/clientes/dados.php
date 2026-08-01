@@ -372,7 +372,7 @@ $enderecos = $enderecos ?? [];
     </div>
 
     <div id="pessoal" class="tab-content active">
-        <form action="<?= BASE_URL ?>cliente/salvarDados" method="POST">
+        <form action="<?= BASE_URL ?>clientearea/salvarDados" method="POST">
             <h3 class="form-section-title">Informações Básicas</h3>
 
             <div class="form-group">
@@ -432,13 +432,13 @@ $enderecos = $enderecos ?? [];
                                 <span class="badge"
                                     style="background:var(--primary); color:white; padding:4px 8px; border-radius:4px; font-size:0.75rem;">Principal</span>
                             <?php else: ?>
-                                <a href="<?= BASE_URL ?>cliente/tornar_padrao?id=<?= $end['id'] ?>" class="btn btn-padrao"
+                                <a href="<?= BASE_URL ?>endereco/tornar_padrao&id=<?= $end['id'] ?>" class="btn btn-padrao"
                                     title="Tornar Principal">
                                     <i class="fas fa-star"></i> Usar Principal
                                 </a>
                             <?php endif; ?>
 
-                            <a href="<?= BASE_URL ?>cliente/excluir_endereco?id=<?= $end['id'] ?>" class="btn-danger"
+                            <a href="<?= BASE_URL ?>endereco/excluir&id=<?= $end['id'] ?>" class="btn-danger"
                                 onclick="return confirm('Excluir este endereço?')">
                                 <i class="fas fa-trash"></i>
                             </a>
@@ -464,7 +464,7 @@ $enderecos = $enderecos ?? [];
         <div id="form-novo-endereco">
             <h4 style="margin-top:0; color:var(--primary);">Cadastrar Novo Endereço</h4>
             <hr>
-            <form action="<?= BASE_URL ?>cliente/salvar_endereco" method="POST">
+            <form action="<?= BASE_URL ?>endereco/salvar" method="POST">
 
                 <div class="row-dupla" style="grid-template-columns: 1fr 3fr;">
                     <div class="form-group">
@@ -576,7 +576,7 @@ $enderecos = $enderecos ?? [];
     }
 
     // Executa assim que a página termina de carregar
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         let abaSalva = sessionStorage.getItem('abaAtivaCliente');
         if (abaSalva) {
             abrirTab(null, abaSalva);
@@ -588,7 +588,9 @@ $enderecos = $enderecos ?? [];
         const modal = document.getElementById('modalAviso');
         if (modal) {
             modal.style.opacity = '0';
-            setTimeout(() => { modal.style.display = 'none'; }, 300);
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
         }
     }
 

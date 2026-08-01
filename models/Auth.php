@@ -28,7 +28,7 @@ class Auth
 
         // Se não tá logado, tchau
         if (!isset($_SESSION['usuario_id'])) {
-            header('Location: index.php?rota=login');
+           header('Location: ' . BASE_URL . 'index.php?rota=produto/vitrine');
             exit;
         }
 
@@ -78,7 +78,7 @@ class Auth
         header("Pragma: no-cache");
 
         // Redireciona corretamente
-        header("Location: " . BASE_URL . "vitrine");
+        header("Location: " . BASE_URL . "index.php?rota=produto/vitrine");
         exit;
     }
 

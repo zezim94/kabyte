@@ -9,7 +9,7 @@
             <h2><i class="fas fa-tags"></i> Gerenciar Categorias</h2>
             <p class="header-desc">Organize os produtos da sua loja por seções.</p>
         </div>
-        <a href="<?= BASE_URL ?>categoria/nova" class="btn-novo">
+        <a href="<?= BASE_URL ?>categoria/criar" class="btn-novo">
             <i class="fas fa-plus"></i> Nova Categoria
         </a>
     </div>

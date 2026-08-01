@@ -286,7 +286,8 @@
 
 <div class="menu-categorias-wrapper">
     <div class="menu-categorias">
-        <a href="<?= BASE_URL ?>vitrine"
+        <!-- Rota limpa para a vitrine geral -->
+        <a href="<?= BASE_URL ?>produto/vitrine"
             class="cat-pill <?= empty($_GET['categoria']) && empty($_GET['busca']) ? 'active' : '' ?>">
             <i class="fas fa-th-large"></i> Todos
         </a>
@@ -296,7 +297,8 @@
                 // Verifica se esta é a categoria que está selecionada agora
                 $isActive = (isset($_GET['categoria']) && $_GET['categoria'] == $cat['id']) ? 'active' : '';
             ?>
-                <a href="<?= BASE_URL ?>vitrine&categoria=<?= $cat['id'] ?>" class="cat-pill <?= $isActive ?>">
+                <!-- Rota limpa com o '?' iniciando o parâmetro da categoria -->
+                <a href="<?= BASE_URL ?>produto/vitrine?categoria=<?= $cat['id'] ?>" class="cat-pill <?= $isActive ?>">
                     <?= htmlspecialchars($cat['nome']) ?>
                 </a>
             <?php endforeach; ?>
@@ -410,7 +412,7 @@ if (!empty($produtos)) {
             <h1><i class="fas fa-search"></i> Resultados da busca</h1>
             <p>
                 Exibindo produtos para: <strong>"<?= htmlspecialchars($_GET['busca']) ?>"</strong><br>
-                <a href="<?= BASE_URL ?>vitrine" class="btn-limpar-busca">
+                <a href="<?= BASE_URL ?>produto/vitrine" class="btn-limpar-busca">
                     <i class="fas fa-times"></i> Limpar Filtro
                 </a>
             </p>
@@ -649,7 +651,8 @@ if (!empty($produtos)) {
         };
 
         try {
-            const res = await fetch('<?= BASE_URL ?>carrinho/salvar', {
+            // 1. ROTA DA API CORRIGIDA (URL Limpa)
+            const res = await fetch('<?= BASE_URL ?>pagamento/salvarSessaoCarrinho', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -659,7 +662,8 @@ if (!empty($produtos)) {
             const dados = await res.json();
 
             if (dados.sucesso) {
-                window.location.href = '<?= BASE_URL ?>cliente/checkout_carrinho';
+                // 2. REDIRECIONAMENTO CORRIGIDO (URL Limpa)
+                window.location.href = '<?= BASE_URL ?>pagamento/telaCheckoutCarrinho';
             } else {
                 alert('Erro: ' + dados.msg);
                 if (btn) {

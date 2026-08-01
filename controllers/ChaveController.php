@@ -34,9 +34,9 @@ class ChaveController
             }
 
             if ($sucesso) {
-                header('Location: ' . BASE_URL . 'index.php?rota=admin/chaves&msg=' . urlencode('Chaves atualizadas com sucesso!') . '&sucesso=1');
+                header('Location: ' . BASE_URL . 'chave&msg=' . urlencode('Chaves atualizadas com sucesso!') . '&sucesso=1');
             } else {
-                header('Location: ' . BASE_URL . 'index.php?rota=admin/chaves&msg=' . urlencode('Ocorreu um erro ao atualizar algumas chaves.') . '&sucesso=0');
+                header('Location: ' . BASE_URL . 'chave&msg=' . urlencode('Ocorreu um erro ao atualizar algumas chaves.') . '&sucesso=0');
             }
             exit;
         }
