@@ -160,8 +160,7 @@
 
 <div class="sobre-hero">
     <h1>Bem-vindo à KaByte</h1>
-    <p>Nós respiramos tecnologia. Descubra como transformamos a paixão por hardware em uma das lojas mais inovadoras do
-        mercado.</p>
+    <p>Nós respiramos conectividade. Descubra como a nossa paixão por periféricos e acessórios se transformou na loja ideal para completar o seu universo digital.</p>
 </div>
 
 <div class="sobre-container">
@@ -169,57 +168,46 @@
     <section class="historia-section">
 
         <div class="historia-texto">
-            <h2><i class="fas fa-microchip"></i> Nossa História</h2>
+            <h2><i class="fas fa-keyboard"></i> Nossa História</h2>
             <p>
-                Tudo começou de forma muito simples: em uma pequena bancada, cercada por cabos, smartphones, peças de
-                computador e muita curiosidade. Os fundadores da <strong>KaByte</strong> eram apaixonados por explorar o
-                universo digital, passando horas testando novidades e descobrindo como a tecnologia poderia facilitar a
-                rotina das pessoas.
+                Tudo começou de forma muito simples: em uma pequena bancada, cercada por cabos, mouses, fones de ouvido e muita curiosidade. Os fundadores da <strong>KaByte</strong> sempre foram apaixonados por explorar a tecnologia, entendendo rapidamente que o dispositivo principal só entrega o seu melhor se estiver acompanhado do acessório certo.
             </p>
             <p>
-                Com o tempo, percebemos que o mercado carecia de algo fundamental: um atendimento que não apenas
-                vendesse caixas, mas que entendesse de verdade a necessidade de cada cliente. Fosse um gamer em busca do
-                desempenho perfeito, um profissional precisando do celular ideal para o trabalho, ou alguém procurando
-                aquele acessório essencial para o dia a dia.
+                Com o tempo, percebemos que o mercado carecia de algo fundamental: um atendimento que ajudasse o cliente a extrair o máximo dos seus aparelhos. Fosse um gamer em busca daquele teclado mecânico para a jogada perfeita, um profissional precisando de ergonomia para o home office, ou alguém procurando capas, cabos e carregadores confiáveis para o dia a dia.
             </p>
             <p>
-                O nome <strong>KaByte</strong> nasceu da nossa filosofia: assim como o <em>Kilobyte</em> é a base da
-                informação digital, acreditamos que grandes soluções começam nos pequenos detalhes. Hoje, evoluímos para
-                um e-commerce completo, entregando desde notebooks e smartphones até uma linha vasta de periféricos e
-                acessórios para todo o país. Crescemos, mas nunca perdemos a essência daquela primeira bancada:
-                respeito, sinceridade e amor pela tecnologia.
+                O nome <strong>KaByte</strong> nasceu da nossa filosofia: assim como o <em>Kilobyte</em> é a base da informação digital, acreditamos que as grandes experiências começam nos pequenos detalhes. Hoje, somos especialistas dedicados a entregar uma linha vasta e selecionada de periféricos e acessórios inovadores. Crescemos, mas nunca perdemos a essência daquela primeira bancada: respeito, sinceridade e amor por facilitar a sua vida conectada.
             </p>
         </div>
 
         <div class="historia-imagem">
+            <!-- Dica: Use uma imagem que mostre teclados, mouses, fones, ou uma mesa gamer/office bem equipada -->
             <img src="<?= BASE_URL ?>public/uploads/sobre-loja.jpg"
-                onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1587202372634-32705e3bf49c?auto=format&fit=crop&q=80&w=800';"
-                alt="Bancada de Informática KaByte">
+                onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&q=80&w=800';"
+                alt="Setup com acessórios e periféricos KaByte">
         </div>
     </section>
 
     <section class="mvv-grid">
         <div class="mvv-card missao">
-            <i class="fas fa-rocket"></i>
+            <i class="fas fa-plug"></i>
             <h3>Nossa Missão</h3>
-            <p>Democratizar o acesso à tecnologia de alta performance, oferecendo produtos de excelência com preço justo
-                e um atendimento técnico especializado que ajude cada cliente a realizar seus objetivos digitais.</p>
+            <p>Democratizar o acesso a acessórios e periféricos de alta qualidade, oferecendo produtos com preço justo e um atendimento especializado que ajude cada cliente a potencializar seus equipamentos.</p>
         </div>
 
         <div class="mvv-card visao">
             <i class="fas fa-eye"></i>
             <h3>Nossa Visão</h3>
-            <p>Ser reconhecida como a principal referência nacional no varejo de informática e hardware, inovando
-                constantemente na forma como as pessoas compram e interagem com a tecnologia.</p>
+            <p>Ser reconhecida como a principal referência nacional no varejo de acessórios tecnológicos, inovando constantemente na forma como as pessoas equipam e personalizam sua rotina digital.</p>
         </div>
 
         <div class="mvv-card valores">
             <i class="fas fa-heart"></i>
             <h3>Nossos Valores</h3>
             <p>
-                <strong>Transparência:</strong> Falamos a verdade sobre o que você realmente precisa.<br>
-                <strong>Inovação:</strong> Sempre atualizados com o que há de mais novo no mercado.<br>
-                <strong>Foco no Cliente:</strong> O seu setup dos sonhos é o nosso maior objetivo.
+                <strong>Transparência:</strong> Falamos a verdade sobre qual acessório realmente atende à sua necessidade.<br>
+                <strong>Inovação:</strong> Sempre atualizados com as tendências em conectividade e estilo.<br>
+                <strong>Foco no Cliente:</strong> Deixar o seu setup ou smartphone perfeitamente equipado é o nosso objetivo.
             </p>
         </div>
     </section>
