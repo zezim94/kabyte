@@ -4,6 +4,7 @@ require_once __DIR__ . '/../models/Auth.php';
 
 class ConfigController
 {
+    public $livre = ['salvar'];
 
     public function index()
     {
@@ -24,7 +25,6 @@ class ConfigController
             $caminhoLogo = $_POST['logo_atual'] ?? '';
 
             if (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
-
                 $extensao = pathinfo($_FILES['logo']['name'], PATHINFO_EXTENSION);
                 $novoNome = "logo_loja." . $extensao;
                 $pastaDestino = __DIR__ . '/../public/uploads/';
@@ -47,44 +47,57 @@ class ConfigController
             // ====================================================
             // 2. LÓGICA DOS BANNERS DINÂMICOS
             // ====================================================
-
-            // Pega os banners que já existem no banco
             $configAtual = Configuracao::get();
             $bannersAtuais = json_decode($configAtual['banners'] ?? '[]', true);
             if (!is_array($bannersAtuais)) {
                 $bannersAtuais = [];
             }
 
-            // Verifica se o admin marcou algum banner antigo para excluir
-            if (!empty($_POST['remover_banners'])) {
-                foreach ($_POST['remover_banners'] as $remover) {
-                    $index = array_search($remover, $bannersAtuais);
-                    if ($index !== false) {
-                        unset($bannersAtuais[$index]); // Remove da lista do array
+            // NOVA LÓGICA: LIMPEZA EXTREMA (Remove espaços e aspas "fantasmas")
+            if (isset($_POST['remover_banners']) && is_array($_POST['remover_banners'])) {
+                $bannersParaManter = [];
 
-                        $caminhoImgBanner = __DIR__ . '/../public/uploads/' . $remover;
+                // Remove espaços e aspas (simples e duplas) dos itens enviados pelo formulário
+                $listaParaRemover = array_map(function ($item) {
+                    return trim($item, " \t\n\r\0\x0B\"'");
+                }, $_POST['remover_banners']);
+
+                foreach ($bannersAtuais as $bannerSalvo) {
+
+                    // Remove aspas e espaços do nome salvo no banco de dados
+                    $bannerBancoLimpo = trim($bannerSalvo, " \t\n\r\0\x0B\"'");
+
+                    if (!in_array($bannerBancoLimpo, $listaParaRemover)) {
+                        $bannersParaManter[] = $bannerSalvo; // Guarda pois não foi marcado para excluir
+                    } else {
+                        // Foi marcado para excluir! Tentamos remover a imagem da pasta.
+                        $caminhoImgBanner = __DIR__ . '/../public/uploads/' . $bannerBancoLimpo;
                         if (file_exists($caminhoImgBanner)) {
-                            unlink($caminhoImgBanner); // Apaga a imagem fisicamente do servidor
+                            @unlink($caminhoImgBanner);
                         }
                     }
                 }
+
+                // Atualizamos a lista apenas com as imagens que sobreviveram
+                $bannersAtuais = $bannersParaManter;
             }
 
             // Fazer upload dos NOVOS banners selecionados (se houver)
-            if (!empty($_FILES['novos_banners']['name'][0])) {
+            if (isset($_FILES['novos_banners']) && !empty($_FILES['novos_banners']['name'][0])) {
                 $totalArquivos = count($_FILES['novos_banners']['name']);
                 $pastaDestino = __DIR__ . '/../public/uploads/';
 
                 for ($i = 0; $i < $totalArquivos; $i++) {
                     if ($_FILES['novos_banners']['error'][$i] === UPLOAD_ERR_OK) {
                         $extensao = pathinfo($_FILES['novos_banners']['name'][$i], PATHINFO_EXTENSION);
+                        $nomeOriginal = pathinfo($_FILES['novos_banners']['name'][$i], PATHINFO_FILENAME);
+                        $nomeOriginalLimpo = preg_replace('/[^a-z0-9]/', '_', strtolower($nomeOriginal));
 
-                        // Gera um nome único para o novo banner para não sobrescrever nenhum
-                        $nomeBanner = "banner_" . date("YmdHis") . "_" . uniqid() . "." . $extensao;
+                        $nomeBanner = "banner_" . date("YmdHis") . "_" . uniqid() . "_" . $nomeOriginalLimpo . "." . $extensao;
                         $destinoBanner = $pastaDestino . $nomeBanner;
 
                         if (move_uploaded_file($_FILES['novos_banners']['tmp_name'][$i], $destinoBanner)) {
-                            $bannersAtuais[] = $nomeBanner; // Adiciona o nome do novo banner na lista do banco
+                            $bannersAtuais[] = $nomeBanner;
                         }
                     }
                 }
@@ -94,22 +107,24 @@ class ConfigController
             // 3. SALVAR TUDO NO BANCO DE DADOS
             // ====================================================
             $dadosParaSalvar = [
-                'nome' => $_POST['nome'],
+                'nome' => $_POST['nome'] ?? '',
                 'whatsapp' => $_POST['whatsapp'] ?? '',
                 'cor_header' => $_POST['cor_header'] ?? '#000000',
                 'cor_fundo' => $_POST['cor_fundo'] ?? '#ffffff',
                 'logo' => $caminhoLogo,
-
-                // Salva o array de banners atualizado em formato JSON no banco
-                // array_values() garante que os índices fiquem corretos caso tenhamos deletado algum
-                'banners' => json_encode(array_values($bannersAtuais))
+                // Adicionámos JSON_UNESCAPED_SLASHES para evitar que o PHP crie "sujeira" ao guardar
+                'banners' => json_encode(array_values($bannersAtuais), JSON_UNESCAPED_SLASHES)
             ];
 
-            Configuracao::salvar($dadosParaSalvar);
+            // Guarda o resultado para sabermos se o banco falhou
+            $sucesso = Configuracao::salvar($dadosParaSalvar);
+
+            if (!$sucesso) {
+                die("ERRO CRÍTICO MYSQL: O servidor não conseguiu gravar as alterações na base de dados!");
+            }
 
             // Recarrega a página com sucesso
-            echo "<script>alert('Configurações salvas com sucesso!'); window.location='index.php?rota=configuracao';</script>";
+            echo "<script>alert('Configurações salvas com sucesso!'); window.location='" . BASE_URL . "index.php?rota=config';</script>";
         }
     }
-
 }

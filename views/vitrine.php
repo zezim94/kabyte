@@ -312,15 +312,45 @@
 $listaBanners = json_decode($config['banners'] ?? '[]', true);
 ?>
 
-<?php if (empty($_GET['busca']) && !empty($listaBanners)): // Só exibe se NÃO for busca e TIVER banners cadastrados 
-?>
+<?php if (empty($_GET['busca']) && !empty($listaBanners)): ?>
+    <?php
+    // 1. Puxamos TODAS as categorias direto do banco de dados
+    // (Assumindo que você tem um Model Categoria)
+    $todasCategorias = Categoria::listar();
+    ?>
     <div class="banner-wrapper">
         <div class="swiper bannerSwiper">
             <div class="swiper-wrapper">
 
                 <?php foreach ($listaBanners as $bannerImagem): ?>
+                    <?php
+                    $nomeImagem = strtolower($bannerImagem);
+                    $linkDestino = BASE_URL . "produto/vitrine?promocao=1"; // Link padrão
+
+                    // 2. O PHP escaneia todas as categorias do banco de dados
+                    foreach ($todasCategorias as $cat) {
+
+                        // Limpa o nome da categoria para ficar igual ao nome do arquivo
+                        // Ex: "Placa de Vídeo" vira "placa_de_video"
+                        $nomeCategoriaLimpo = preg_replace('/[^a-z0-9]/', '_', strtolower($cat['nome']));
+
+                        // 3. Se o nome da categoria estiver dentro do nome da imagem...
+                        if (strpos($nomeImagem, $nomeCategoriaLimpo) !== false) {
+                            // BINGO! Ele monta o link com o ID exato da categoria!
+                            $linkDestino = BASE_URL . "produto/vitrine?categoria=" . $cat['id'];
+                            break; // Para de procurar, pois já achou
+                        }
+                    }
+                    ?>
+
                     <div class="swiper-slide">
-                        <img src="<?= BASE_URL ?>public/uploads/<?= htmlspecialchars($bannerImagem) ?>" alt="Banner Promocional KaByte">
+                        <a href="<?= $linkDestino ?>">
+                            <img src="<?= BASE_URL ?>public/uploads/<?= htmlspecialchars($bannerImagem) ?>"
+                                alt="Banner Promocional"
+                                style="cursor: pointer; transition: opacity 0.3s;"
+                                onmouseover="this.style.opacity=0.9"
+                                onmouseout="this.style.opacity=1">
+                        </a>
                     </div>
                 <?php endforeach; ?>
 

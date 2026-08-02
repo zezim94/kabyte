@@ -247,22 +247,27 @@ class ProdutoController
         // 1. Busca as categorias no banco para montar o submenu
         $categorias = Categoria::listar();
 
+        // 2. Captura os filtros que vieram pela URL
         $termo = $_GET['busca'] ?? '';
         $apenasPromocoes = isset($_GET['promocao']) && $_GET['promocao'] == 1;
+        $categoria_id = $_GET['categoria'] ?? ''; // <-- O nosso novo filtro dos banners!
 
-        // Lógica de filtragem MVC
-        if ($apenasPromocoes) {
-            // Se clicou no botão "Promoções", usa a nova função do Model
-            $produtos = Produto::listarPromocoes();
-        } elseif (empty($termo)) {
-            // Se não digitou nada e não é promoção, traz todos
-            $produtos = Produto::listar();
-        } else {
+        // 3. Lógica de filtragem MVC
+        if (!empty($termo)) {
             // Se digitou algo na barra de pesquisa, busca por texto
             $produtos = Produto::buscarPorTermo($termo);
+        } elseif ($apenasPromocoes) {
+            // Se clicou no botão "Promoções"
+            $produtos = Produto::listarPromocoes();
+        } elseif (!empty($categoria_id)) {
+            // Se clicou no banner inteligente, filtra pela categoria!
+            $produtos = Produto::buscarPorCategoria($categoria_id);
+        } else {
+            // Se entrou na loja normalmente sem nenhum filtro, traz tudo
+            $produtos = Produto::listar();
         }
 
-        // Carrega a View da vitrine
+        // 4. Carrega a View da vitrine
         require __DIR__ . '/../views/vitrine.php';
     }
 }

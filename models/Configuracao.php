@@ -23,12 +23,21 @@ class Configuracao
     }
 
     // Salva as alterações (Incluindo Logo e Banners)
+    // Salva as alterações (Incluindo Logo e Banners)
     public static function salvar($dados)
     {
         $pdo = Database::connect();
 
-        // Adicionamos logo_loja e banners na query SQL
-        $sql = "UPDATE configuracoes SET nome_loja=?, whatsapp=?, cor_header=?, cor_fundo=?, logo_loja=?, banners=? WHERE id=1";
+        // 1. Verifica se a linha id=1 já existe no banco
+        $check = $pdo->query("SELECT id FROM configuracoes WHERE id = 1");
+
+        if ($check->fetch()) {
+            // JÁ EXISTE: Fazemos o UPDATE normal
+            $sql = "UPDATE configuracoes SET nome_loja=?, whatsapp=?, cor_header=?, cor_fundo=?, logo_loja=?, banners=? WHERE id=1";
+        } else {
+            // ESTÁ VAZIO: Criamos a linha pela primeira vez (INSERT)
+            $sql = "INSERT INTO configuracoes (nome_loja, whatsapp, cor_header, cor_fundo, logo_loja, banners, id) VALUES (?, ?, ?, ?, ?, ?, 1)";
+        }
 
         $stmt = $pdo->prepare($sql);
 
@@ -37,8 +46,8 @@ class Configuracao
             $dados['whatsapp'],
             $dados['cor_header'],
             $dados['cor_fundo'],
-            $dados['logo'],    // Caminho da imagem da logo
-            $dados['banners']  // Lista de imagens do banner em formato JSON
+            $dados['logo'],
+            $dados['banners']
         ]);
     }
 }

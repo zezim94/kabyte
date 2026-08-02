@@ -413,7 +413,7 @@
         <p>Altere as cores e informações da loja e veja o resultado em tempo real.</p>
     </div>
 
-    <form action="config/salvar" method="POST" class="config-grid" enctype="multipart/form-data">
+    <form action="<?= BASE_URL ?>config/salvar" method="POST" class="config-grid" enctype="multipart/form-data">
         <div class="card-form">
 
             <div class="form-group">
