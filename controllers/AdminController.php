@@ -6,7 +6,6 @@ require_once __DIR__ . '/../models/Auth.php';
 
 class AdminController
 {
-    // Rota: index.php?rota=admin (ou admin/index)
     public function index()
     {
         // Proteção: Só entra se for Admin ou Master
@@ -20,7 +19,6 @@ class AdminController
         require __DIR__ . '/../views/adm/admin_painel.php';
     }
 
-    // Rota: index.php?rota=admin/master
     public function master()
     {
         // Proteção: Só entra se for Master
@@ -82,7 +80,7 @@ class AdminController
             // Tenta salvar. Se houver um e-mail/usuário duplicado, você pode tratar o erro aqui se quiser.
             Usuario::salvarNovo($dados);
 
-            echo "<script>alert('Usuário cadastrado com sucesso!'); window.location='" . BASE_URL . "usuarios';</script>";
+            echo "<script>alert('Usuário cadastrado com sucesso!'); window.location='" . BASE_URL . "admin/usuarios';</script>";
         }
     }
 
@@ -111,7 +109,7 @@ class AdminController
             echo "<script>alert('Usuário atualizado com sucesso!'); window.location='" . BASE_URL . "admin/usuarios';</script>";
         }
     }
-      public function novo()
+    public function novo()
     {
         Auth::verificar(['admin', 'master']);
         require __DIR__ . '/../views/adm/admin_usuario_novo.php';

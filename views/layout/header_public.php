@@ -687,33 +687,33 @@ $ehPaginaVitrine = ($rotaAtual == 'vitrine');
 
             <nav class="header-nav">
                 <?php if (isset($_SESSION['cliente_id'])): ?>
-                    <a href="<?= BASE_URL ?>index.php?rota=cliente_area/painel" class="user-link">
+                    <a href="<?= BASE_URL ?>cliente_area/painel" class="user-link">
                         <i class="fas fa-user"></i>
                         <span>Olá, <?= htmlspecialchars(explode(' ', $_SESSION['cliente_nome'])[0]) ?></span>
                     </a>
                 <?php else: ?>
 
                     <!-- LINK CORRIGIDO PARA O NOVO PADRÃO -->
-                    <a href="<?= BASE_URL ?>index.php?rota=cliente_area/login" class="user-link">
+                    <a href="<?= BASE_URL ?>cliente_area/login" class="user-link">
                         <i class="fas fa-user-circle"></i> Login
                     </a>
                 <?php endif; ?>
 
-                <a href="<?= BASE_URL ?>index.php?rota=produto/vitrine" class="btn-nav">
+                <a href="<?= BASE_URL ?>produto/vitrine" class="btn-nav">
                     <i class="fas fa-store"></i> Loja
                 </a>
-                <a href="<?= BASE_URL ?>index.php?rota=home/sobre" class="btn-nav">
+                <a href="<?= BASE_URL ?>home/sobre" class="btn-nav">
                     <i class="fas fa-info-circle"></i> Sobre Nós
                 </a>
 
                 <?php if (isset($_SESSION['cliente_id'])): ?>
                     <!-- ROTA CORRIGIDA PARA O PAINEL DE DADOS DO CLIENTE -->
-                    <a href="<?= BASE_URL ?>index.php?rota=cliente_area/meusDados" class="btn-nav">
+                    <a href="<?= BASE_URL ?>cliente_area/meusDados" class="btn-nav">
                         <i class="fas fa-id-card"></i> Dados
                     </a>
 
                     <!-- ROTA CORRIGIDA PARA O LOGOUT DO CLIENTE -->
-                    <a href="<?= BASE_URL ?>index.php?rota=cliente_area/sair" class="btn-nav btn-logout">
+                    <a href="<?= BASE_URL ?>cliente_area/sair" class="btn-nav btn-logout">
                         <i class="fas fa-sign-out-alt"></i> Sair
                     </a>
                 <?php endif; ?>

@@ -66,7 +66,7 @@ $uri = $_SERVER['REQUEST_URI'];
                 <!-- Área do usuário (versão mobile) -->
                 <div class="user-area-mobile">
                     <span class="user-greeting">Olá, <?= htmlspecialchars($primeiroNome, ENT_QUOTES, 'UTF-8') ?></span>
-                    <a href="<?= BASE_URL ?>index.php?rota=login/logout" class="btn-logout" title="Sair">
+                    <a href="<?= BASE_URL ?>login/logout" class="btn-logout" title="Sair">
                         Sair <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
                     </a>
                 </div>
@@ -75,7 +75,7 @@ $uri = $_SERVER['REQUEST_URI'];
             <!-- Área do usuário (desktop) -->
             <div class="user-area-desktop">
                 <span class="user-greeting">Olá, <strong><?= htmlspecialchars($primeiroNome, ENT_QUOTES, 'UTF-8') ?></strong></span>
-                <a href="<?= BASE_URL ?>index.php?rota=login/logout" class="btn-logout" title="Sair" aria-label="Sair do sistema">
+                <a href="<?= BASE_URL ?>login/logout" class="btn-logout" title="Sair" aria-label="Sair do sistema">
                     <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
                 </a>
             </div>

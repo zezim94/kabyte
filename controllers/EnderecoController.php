@@ -12,14 +12,13 @@ class EnderecoController
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
         }
-        
+
         if (!isset($_SESSION['cliente_id'])) {
-            header('Location: ' . BASE_URL . 'index.php?rota=cliente_area/login');
+            header('Location: ' . BASE_URL . 'cliente_area/login');
             exit;
         }
     }
 
-    // Rota: index.php?rota=endereco/salvar
     public function salvar()
     {
         $this->verificarLogin();
@@ -36,14 +35,13 @@ class EnderecoController
         ];
 
         if (Cliente::salvarEndereco($dados)) {
-            header('Location: ' . BASE_URL . 'index.php?rota=cliente_area/meusDados&msg=' . urlencode('Endereço cadastrado com sucesso!') . '&sucesso=1');
+            header('Location: ' . BASE_URL . 'cliente_area/meusDados&msg=' . urlencode('Endereço cadastrado com sucesso!') . '&sucesso=1');
         } else {
-            header('Location: ' . BASE_URL . 'index.php?rota=cliente_area/meusDados&msg=' . urlencode('Erro ao cadastrar endereço.') . '&sucesso=0');
+            header('Location: ' . BASE_URL . 'cliente_area/meusDados&msg=' . urlencode('Erro ao cadastrar endereço.') . '&sucesso=0');
         }
         exit;
     }
 
-    // Rota: index.php?rota=endereco/excluir&id=1
     public function excluir()
     {
         $this->verificarLogin();
@@ -51,14 +49,13 @@ class EnderecoController
         $id = $_GET['id'] ?? 0;
 
         if (Cliente::excluirEndereco($id, $_SESSION['cliente_id'])) {
-            header('Location: ' . BASE_URL . 'index.php?rota=cliente_area/meusDados&msg=' . urlencode('Endereço removido com sucesso!') . '&sucesso=1');
+            header('Location: ' . BASE_URL . 'cliente_area/meusDados&msg=' . urlencode('Endereço removido com sucesso!') . '&sucesso=1');
         } else {
-            header('Location: ' . BASE_URL . 'index.php?rota=cliente_area/meusDados&msg=' . urlencode('Erro ao remover endereço.') . '&sucesso=0');
+            header('Location: ' . BASE_URL . 'cliente_area/meusDados&msg=' . urlencode('Erro ao remover endereço.') . '&sucesso=0');
         }
         exit;
     }
 
-    // Rota: index.php?rota=endereco/tornar_padrao&id=1
     public function tornar_padrao()
     {
         $this->verificarLogin();
@@ -68,12 +65,12 @@ class EnderecoController
 
         if ($enderecoId) {
             if (Cliente::tornarEnderecoPadrao($enderecoId, $clienteId)) {
-                header('Location: ' . BASE_URL . 'index.php?rota=cliente_area/meusDados&msg=' . urlencode('Endereço principal atualizado com sucesso!') . '&sucesso=1');
+                header('Location: ' . BASE_URL . 'cliente_area/meusDados&msg=' . urlencode('Endereço principal atualizado com sucesso!') . '&sucesso=1');
                 exit;
             }
         }
 
-        header('Location: ' . BASE_URL . 'index.php?rota=cliente_area/meusDados&msg=' . urlencode('Erro ao atualizar o endereço principal.') . '&sucesso=0');
+        header('Location: ' . BASE_URL . 'cliente_area/meusDados&msg=' . urlencode('Erro ao atualizar o endereço principal.') . '&sucesso=0');
         exit;
     }
 }

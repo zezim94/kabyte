@@ -27,7 +27,7 @@ class ClienteAreaController
     {
         if (isset($_SESSION['cliente_id'])) {
             // REDIRECIONAMENTO CORRIGIDO PARA O NOVO PADRÃO
-            header('Location: ' . BASE_URL . 'index.php?rota=cliente_area/painel');
+            header('Location: ' . BASE_URL . 'cliente_area/painel');
             exit;
         }
 
@@ -38,7 +38,7 @@ class ClienteAreaController
         $googleClientId = Chave::get('google_client_id');
 
         // URL DE CALLBACK CORRIGIDA PARA O NOVO PADRÃO
-        $callbackUrl = BASE_URL . 'index.php?rota=cliente_area/google_callback';
+        $callbackUrl = BASE_URL . 'cliente_area/google_callback';
 
         $params = [
             'client_id' => $googleClientId,
@@ -73,7 +73,7 @@ class ClienteAreaController
             $this->criarSessaoCliente($cliente);
 
             // REDIRECIONAMENTO CORRIGIDO PARA O NOVO PADRÃO
-            header('Location: ' . BASE_URL . 'index.php?rota=cliente_area/painel');
+            header('Location: ' . BASE_URL . 'cliente_area/painel');
             exit;
         } else {
             // Define a mensagem de erro que aparecerá na View
@@ -84,7 +84,7 @@ class ClienteAreaController
             $googleClientId = Chave::get('google_client_id');
 
             // ROTA DO GOOGLE CORRIGIDA PARA O NOVO PADRÃO
-            $callbackUrl = BASE_URL . 'index.php?rota=cliente_area/google_callback';
+            $callbackUrl = BASE_URL . 'cliente_area/google_callback';
 
             $params = [
                 'client_id' => $googleClientId,
@@ -121,7 +121,7 @@ class ClienteAreaController
                         $this->criarSessaoCliente($cliente);
 
                         // REDIRECIONAMENTO CORRIGIDO: Vai para o painel do cliente
-                        header('Location: ' . BASE_URL . 'index.php?rota=cliente_area/painel');
+                        header('Location: ' . BASE_URL . 'cliente_area/painel');
                         exit;
                     }
                 }
@@ -129,7 +129,7 @@ class ClienteAreaController
         }
 
         // REDIRECIONAMENTO CORRIGIDO: Volta para o login com a variável &erro
-        header('Location: ' . BASE_URL . 'index.php?rota=cliente_area/login&erro=google_fail');
+        header('Location: ' . BASE_URL . 'cliente_area/login&erro=google_fail');
         exit;
     }
 
@@ -162,7 +162,6 @@ class ClienteAreaController
         $_SESSION['cliente_foto'] = $foto;
     }
 
-    // --- HELPERS cURL (Para funcionar sem Composer) ---
     private function pegarTokenGoogle($code)
     {
         // 1. Requer o Model para garantir o acesso ao banco
@@ -307,7 +306,7 @@ class ClienteAreaController
         // REDIRECIONAMENTO LIMPO: Usa ? em vez de & para o primeiro parâmetro
         header('Location: ' . BASE_URL . 'cliente_area/meusDados?msg=' . urlencode($msg) . '&sucesso=' . $sucesso);
         exit;
-    } // <-- Ponto e vírgula removido!
+    }
 
     public function atualizar_senha()
     {

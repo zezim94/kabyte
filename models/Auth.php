@@ -17,7 +17,7 @@ class Auth
         $_SESSION['nivel'] = $usuario['nivel'];
 
         // Se tiver foto do Google usa, senão usa padrão
-        $_SESSION['foto'] = !empty($usuario['foto']) ? $usuario['foto'] : 'public/img/avatar_default.png';
+        $_SESSION['foto'] = !empty($usuario['foto']) ? $usuario['foto'] : 'public/uploads/avatar.jpg';
 
         self::log('Login', "Usuário {$usuario['nome']} entrou.");
     }
@@ -28,7 +28,7 @@ class Auth
 
         // Se não tá logado, tchau
         if (!isset($_SESSION['usuario_id'])) {
-           header('Location: ' . BASE_URL . 'index.php?rota=produto/vitrine');
+            header('Location: ' . BASE_URL . 'produto/vitrine');
             exit;
         }
 
@@ -78,8 +78,7 @@ class Auth
         header("Pragma: no-cache");
 
         // Redireciona corretamente
-        header("Location: " . BASE_URL . "index.php?rota=produto/vitrine");
+        header("Location: " . BASE_URL . "produto/vitrine");
         exit;
     }
-
 }

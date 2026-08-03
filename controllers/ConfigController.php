@@ -6,13 +6,6 @@ class ConfigController
 {
     public $livre = ['salvar'];
 
-    public function index()
-    {
-        Auth::verificar(['admin', 'master']);
-        $config = Configuracao::get();
-        require __DIR__ . '/../views/adm/configuracao.php';
-    }
-
     public function salvar()
     {
         Auth::verificar(['admin', 'master']);
@@ -124,7 +117,7 @@ class ConfigController
             }
 
             // Recarrega a página com sucesso
-            echo "<script>alert('Configurações salvas com sucesso!'); window.location='" . BASE_URL . "index.php?rota=config';</script>";
+            echo "<script>alert('Configurações salvas com sucesso!'); window.location='" . BASE_URL . "admin/config';</script>";
         }
     }
 }

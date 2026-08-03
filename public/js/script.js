@@ -459,9 +459,7 @@ if (inputRecebido) {
 // 6. FINALIZAR VENDA
 // ==========================================
 
-// --- LÓGICA PARA FINALIZAR A VENDA E IMPRIMIR ---
 async function confirmarVenda() {
-  // Verifica se o carrinho tem itens (assumindo que sua variável global chama 'carrinho')
   if (!carrinho || carrinho.length === 0) {
     showToast("Adicione produtos antes de finalizar.", "error");
     return;

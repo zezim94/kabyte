@@ -64,7 +64,7 @@ class ApiController
         } catch (Throwable $e) {
             echo json_encode(['sucesso' => false, 'msg' => 'Erro interno: ' . $e->getMessage()]);
         }
-    } // <-- Sem ponto e vírgula!
+    }
 
     public function pesquisarProdutos()
     {

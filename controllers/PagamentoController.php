@@ -338,12 +338,10 @@ class PagamentoController
             echo json_encode(['sucesso' => false, 'msg' => 'Erro interno do servidor: ' . $e->getMessage()]);
         }
         exit;
-    } // <-- Ponto e vírgula removido!
-
+    }
 
     public function processarPagamento()
     {
-        // Adicionado o escudo anti-HTML aqui também para segurança
         if (ob_get_length()) ob_clean();
         ob_start();
 

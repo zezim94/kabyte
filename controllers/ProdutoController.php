@@ -50,7 +50,7 @@ class ProdutoController
     {
         $id = $_GET['id'] ?? null;
         if (!$id) {
-            header('Location: ' . BASE_URL . 'vitrine');
+            header('Location: ' . BASE_URL . 'produto/vitrine');
             exit;
         }
 
@@ -123,11 +123,11 @@ class ProdutoController
             if ($produtoExistente) {
                 if (!$id) {
                     // ROTA CORRIGIDA PARA O NOVO PADRÃO
-                    $this->redirecionarComErro("Já existe um produto com o código $codigo.", 'index.php?rota=produto/novo');
+                    $this->redirecionarComErro("Já existe um produto com o código $codigo.", BASE_URL . 'produto/criar');
                 }
                 if ($id && $produtoExistente['id'] != $id) {
                     // ROTA CORRIGIDA PARA O NOVO PADRÃO
-                    $this->redirecionarComErro("O código $codigo já pertence a outro produto.", "index.php?rota=produto/editar&id=$id");
+                    $this->redirecionarComErro("O código $codigo já pertence a outro produto.", BASE_URL . "produto/editar&id=$id");
                 }
             }
 
@@ -202,7 +202,7 @@ class ProdutoController
             $msg = $id ? "Produto atualizado" : "Produto criado";
 
             // ROTA CORRIGIDA (Redireciona para o index do ProdutoController)
-            header("Location: " . BASE_URL . "index.php?rota=produto/index&msg=" . urlencode($msg));
+            header("Location: " . BASE_URL . "produto&msg=" . urlencode($msg));
             exit;
         }
     }
@@ -238,7 +238,7 @@ class ProdutoController
         }
 
         // Redireciona usando URL Limpa
-        header('Location: ' . BASE_URL . 'produtos');
+        header('Location: ' . BASE_URL . 'produto');
         exit; // É sempre bom colocar um exit após um redirecionamento (header)
     }
 

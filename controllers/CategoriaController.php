@@ -29,7 +29,7 @@ class CategoriaController
         $categoria = Categoria::buscarPorId($id);
 
         if (!$categoria) {
-            header('Location: index.php?rota=categorias');
+            header('Location: categoria');
             exit;
         }
 
@@ -47,7 +47,7 @@ class CategoriaController
 
         if ($resultado['sucesso']) {
             // REDIRECIONAMENTO CORRIGIDO PARA O NOVO PADRÃO (Vai para a função index do CategoriaController)
-            header('Location: ' . BASE_URL . 'index.php?rota=categoria/index&msg=' . urlencode($resultado['msg']));
+            header('Location: ' . BASE_URL . 'categoria&msg=' . urlencode($resultado['msg']));
             exit;
         } else {
             // Se der erro, volta pro form com os dados preenchidos
@@ -61,6 +61,6 @@ class CategoriaController
     {
         $id = $_GET['id'] ?? 0;
         $resultado = Categoria::excluir($id);
-        header('Location: index.php?rota=categorias&msg=' . urlencode($resultado['msg']));
+        header('Location: ' . BASE_URL . 'categoria&msg=' . urlencode($resultado['msg']));
     }
 }

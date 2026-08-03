@@ -110,8 +110,8 @@ class ClienteController
                     $mail->isSMTP();
                     $mail->Host = 'smtp.gmail.com';
                     $mail->SMTPAuth = true;
-                    $mail->Username = 'andelsonascimento@gmail.com'; // Coloque seu e-mail do Gmail aqui
-                    $mail->Password = 'uera thtq fsuh qbdq';    // Cole a Senha de App de 16 letras aqui (sem espaços)
+                    $mail->Username = 'andelsonascimento@gmail.com'; // e-mail do Gmail aqui
+                    $mail->Password = 'uera thtq fsuh qbdq';    // Senha de App de 16 letras aqui (sem espaços)
                     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
                     $mail->Port = 587;
                     $mail->CharSet = 'UTF-8'; // Para não dar erro em acentos (ç, ã, etc)
