@@ -5,7 +5,6 @@ require_once __DIR__ . '/../models/Auth.php';
 class RelatorioController
 {
     /**
-     * Rota: index.php?rota=relatorio/index (ou apenas index.php?rota=relatorio)
      * Carrega a página HTML dos relatórios
      */
     public function index()
@@ -15,7 +14,6 @@ class RelatorioController
     }
 
     /**
-     * Rota: index.php?rota=relatorio/dados
      * Endpoint API para retornar o JSON com os dados filtrados
      */
     public function dados()
@@ -42,10 +40,9 @@ class RelatorioController
                 'resumo'   => $metricas['resumo'],
                 'graficos' => $metricas['graficos']
             ]);
-
         } catch (Exception $e) {
             echo json_encode([
-                'sucesso' => false, 
+                'sucesso' => false,
                 'msg'     => 'Erro ao gerar relatório: ' . $e->getMessage()
             ]);
         }

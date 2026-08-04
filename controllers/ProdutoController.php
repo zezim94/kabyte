@@ -57,7 +57,7 @@ class ProdutoController
         $produto = Produto::buscarPorId($id);
 
         if (!$produto) {
-            echo "Produto não encontrado."; // Ou redirecionar
+            header("Location: " . BASE_URL . "produto/vitrine");
             exit;
         }
 

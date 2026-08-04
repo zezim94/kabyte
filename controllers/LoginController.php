@@ -12,7 +12,6 @@ class LoginController
     {
         $googleClientId = Chave::get('google_client_id');
 
-        // URL LIMPA (Sem index.php?rota=)
         $callbackUrl = BASE_URL . 'login/google_callback';
 
         $params = [
@@ -31,7 +30,6 @@ class LoginController
 
         require __DIR__ . '/../views/login.php';
     }
-
 
     public function entrar()
     {
@@ -86,7 +84,6 @@ class LoginController
         $googleClientId = Chave::get('google_client_id');
         $googleClientSecret = Chave::get('google_client_secret');
 
-        // URL LIMPA (Sem index.php?rota=)
         $callbackUrl = BASE_URL . 'login/google_callback';
 
         $url = 'https://oauth2.googleapis.com/token';

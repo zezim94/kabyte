@@ -34,7 +34,6 @@ class MercadoPagoService
         ]);
 
         $response = curl_exec($ch);
-        curl_close($ch);
 
         return json_decode($response, true);
     }
