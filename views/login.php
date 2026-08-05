@@ -203,7 +203,7 @@
             </div>
         <?php endif; ?>
 
-        <form method="POST" action="<?= BASE_URL ?>index.php?rota=autenticar">
+        <form method="POST" action="<?= BASE_URL ?>login/entrar">
 
             <div class="input-group">
                 <i class="fas fa-user"></i>
