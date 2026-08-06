@@ -1,5 +1,5 @@
 <?php
-// index.php
+session_name("loja_kabyte");
 
 require_once 'config/Config.php';
 require_once 'config/Database.php';
