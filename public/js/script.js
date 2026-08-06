@@ -235,14 +235,21 @@ function atualizarTela(ultimoNome) {
   carrinho.forEach((item, index) => {
     totalVenda += item.subtotal;
     const tr = document.createElement("tr");
+
+    // Adicionamos a coluna extra (<td>) com o botão vermelho de remover, chamando o index daquele item
     tr.innerHTML = `
             <td>${index + 1}</td>
             <td>${item.nome}</td>
             <td>${item.qtd}</td>
-            <td>R$ ${item.preco.toFixed(2)}</td>
-            <td>R$ ${item.subtotal.toFixed(2)}</td>
+            <td>R$ ${item.preco.toFixed(2).replace(".", ",")}</td>
+            <td>R$ ${item.subtotal.toFixed(2).replace(".", ",")}</td>
+            <td style="text-align: center;">
+                <button onclick="removerDoCarrinho(${index})" title="Remover item" style="background: #e74c3c; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </td>
         `;
-    tabela.prepend(tr);
+    tabela.prepend(tr); // Adiciona no topo da lista
   });
 
   const totalFormatado = totalVenda.toLocaleString("pt-BR", {
@@ -251,6 +258,25 @@ function atualizarTela(ultimoNome) {
   });
   divTotal.innerText = totalFormatado;
   divUltimo.innerText = ultimoNome;
+}
+
+// === NOVA FUNÇÃO DE REMOÇÃO ===
+function removerDoCarrinho(index) {
+  // Remove 1 item da lista (array) baseado na posição exata dele
+  carrinho.splice(index, 1);
+
+  // Define o que aparecerá no painel de "Último Item" após apagar
+  let nomePainel =
+    carrinho.length > 0 ? carrinho[carrinho.length - 1].nome : "...";
+
+  // Refaz a tabela e os cálculos totais
+  atualizarTela(nomePainel);
+
+  // Dispara a notificação de aviso
+  showToast("Produto removido do carrinho!", "warning");
+
+  // Devolve o foco para o leitor de código de barras
+  document.getElementById("codigo").focus();
 }
 
 // ==========================================
@@ -377,41 +403,60 @@ async function carregarListaProdutos(termo) {
 let timeoutCliente;
 inputCliente.addEventListener("keyup", function () {
   clearTimeout(timeoutCliente);
-  const termo = inputCliente.value;
 
-  if (termo === "") {
+  // Limpa os espaços iniciais e finais
+  const termoRaw = inputCliente.value.trim();
+
+  // Se estiver vazio, esconde a lista
+  if (termoRaw === "") {
     hiddenIdCliente.value = "";
     listaClientesResult.style.display = "none";
     return;
   }
 
+  // Define um tempo de espera para não sobrecarregar o servidor
   timeoutCliente = setTimeout(async () => {
-    const res = await fetch(`${BASE_URL}api/pesquisarCliente?termo=${termo}`);
-    const data = await res.json();
+    try {
+      // Envia o termo exatamente como o operador digitou para o PHP tratar
+      const res = await fetch(
+        `${BASE_URL}api/pesquisarCliente?termo=${encodeURIComponent(termoRaw)}`,
+      );
+      const data = await res.json();
 
-    listaClientesResult.innerHTML = "";
-    if (data.clientes && data.clientes.length > 0) {
-      listaClientesResult.style.display = "block";
-      data.clientes.forEach((c) => {
-        const div = document.createElement("div");
-        div.style.padding = "10px";
-        div.style.borderBottom = "1px solid #eee";
-        div.style.cursor = "pointer";
-        div.innerHTML = `<b>${c.nome}</b> <small>(${c.cpf || "S/ CPF"})</small>`;
+      listaClientesResult.innerHTML = "";
 
-        div.onmousedown = function () {
-          inputCliente.value = c.nome;
-          hiddenIdCliente.value = c.id;
-          listaClientesResult.style.display = "none";
-        };
-        listaClientesResult.appendChild(div);
-      });
-    } else {
-      listaClientesResult.style.display = "none";
+      if (data.clientes && data.clientes.length > 0) {
+        listaClientesResult.style.display = "block";
+
+        data.clientes.forEach((c) => {
+          const div = document.createElement("div");
+          div.style.padding = "10px";
+          div.style.borderBottom = "1px solid #eee";
+          div.style.cursor = "pointer";
+
+          // Exibe o Nome e o CPF (com a máscara recebida do PHP)
+          div.innerHTML = `<b>${c.nome}</b> <small>(${c.cpf || "S/ CPF"})</small>`;
+
+          div.onmousedown = function () {
+            // Quando clica, o nome vai para o input e o ID fica escondido
+            inputCliente.value = c.nome;
+            hiddenIdCliente.value = c.id;
+            listaClientesResult.style.display = "none";
+          };
+
+          listaClientesResult.appendChild(div);
+        });
+      } else {
+        // Se não encontrou, mostra a mensagem e limpa o ID escondido (evita associar compras a clientes errados)
+        hiddenIdCliente.value = "";
+        listaClientesResult.style.display = "block";
+        listaClientesResult.innerHTML = `<div style="padding:10px; color:#e74c3c; font-size:0.9rem;">Nenhum cliente encontrado.</div>`;
+      }
+    } catch (e) {
+      console.error("Erro na busca de clientes:", e);
     }
-  }, 300);
+  }, 400); // Aumentei ligeiramente o tempo de debounce para 400ms para o operador ter tempo de digitar o CPF
 });
-
 // --- CÁLCULOS ---
 function calcularTroco() {
   const recebido = parseFloat(inputRecebido.value);
@@ -458,7 +503,6 @@ if (inputRecebido) {
 // ==========================================
 // 6. FINALIZAR VENDA
 // ==========================================
-
 async function confirmarVenda() {
   if (!carrinho || carrinho.length === 0) {
     showToast("Adicione produtos antes de finalizar.", "error");
@@ -472,6 +516,19 @@ async function confirmarVenda() {
     '<i class="fas fa-spinner fa-spin"></i> Processando...';
   btnFinalizar.disabled = true;
 
+  // --- NOVA LÓGICA DE DATA E HORA ---
+  let dataEscolhida = document.getElementById("data-entrega").value;
+  let horaEscolhida = document.getElementById("hora-entrega").value;
+  let dataHoraEntrega = null;
+
+  if (dataEscolhida) {
+    // Se o utilizador preencheu a hora, junta com a data. Se não, manda só a data.
+    dataHoraEntrega = horaEscolhida
+      ? `${dataEscolhida} ${horaEscolhida}:00`
+      : dataEscolhida;
+  }
+  // ----------------------------------
+
   // 1. Monta os dados para enviar para a API (PHP)
   const dadosVenda = {
     cliente_id: document.getElementById("id-cliente-selecionado").value || null,
@@ -479,7 +536,6 @@ async function confirmarVenda() {
     valor_recebido: parseFloat(
       document.getElementById("valor-recebido").value || 0,
     ),
-    // Aqui pegamos o valor total direto do texto (ex: R$ 150,00 -> 150.00)
     total: parseFloat(
       document
         .getElementById("pagamento-total")
@@ -489,8 +545,8 @@ async function confirmarVenda() {
     ),
     tipo_entrega: tipoEntregaAtual,
     endereco_entrega_texto: enderecoTextoAtual,
-    data_entrega: document.getElementById("data-entrega").value || null,
-    itens: carrinho, // Envia o array de produtos
+    data_entrega: dataHoraEntrega, // <-- AQUI ENVIAMOS A DATA JUNTO COM A HORA!
+    itens: carrinho,
   };
 
   try {

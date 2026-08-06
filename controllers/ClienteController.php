@@ -7,6 +7,7 @@ use PHPMailer\PHPMailer\SMTP;
 require_once __DIR__ . '/../models/Cliente.php';
 require_once __DIR__ . '/../models/Auth.php';
 require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../models/Seguranca.php';
 
 class ClienteController
 {
@@ -174,10 +175,18 @@ class ClienteController
             $nome = trim($_POST['nome'] ?? '');
             $email = filter_var($_POST['email'] ?? '', FILTER_SANITIZE_EMAIL);
             $telefone = trim($_POST['telefone'] ?? '');
+            $senha = $_POST['senha'] ?? '';
+
+            // --- NOVO: Validação básica para evitar cadastros "fantasmas" em branco ---
+            if (empty($nome) || empty($email) || empty($senha)) {
+                $erro = "Por favor, preencha todos os campos obrigatórios (Nome, E-mail e Senha).";
+                require __DIR__ . '/../views/cliente_cadastro.php';
+                return;
+            }
 
             // Remove pontuações para salvar o CPF limpo
             $cpf = preg_replace('/[^0-9]/', '', $_POST['cpf'] ?? '');
-            $senha = $_POST['senha'] ?? '';
+            $cpfCriptografado = Seguranca::encriptar($cpf);
 
             // 1. Validação de E-mail
             $clienteExistente = Cliente::buscarPorEmail($email);
@@ -189,7 +198,7 @@ class ClienteController
 
             // 2. Validação de CPF
             if (!empty($cpf)) {
-                $cpfExistente = Cliente::buscarPorCpf($cpf);
+                $cpfExistente = Cliente::buscarPorCpf($cpfCriptografado);
                 if ($cpfExistente) {
                     $erro = "Este CPF já está cadastrado em nossa base de dados.";
                     require __DIR__ . '/../views/cliente_cadastro.php';
@@ -205,7 +214,7 @@ class ClienteController
                 'nome' => $nome,
                 'email' => $email,
                 'telefone' => $telefone,
-                'cpf' => $cpf,
+                'cpf' => $cpfCriptografado,
                 'senha' => $senhaCriptografada
             ];
 

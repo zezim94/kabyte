@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/Database.php';
+require_once __DIR__ . '/Seguranca.php';
 
 class Cliente
 {
@@ -14,16 +15,29 @@ class Cliente
     {
         $pdo = Database::connect();
 
-        $termoFormatado = "%{$termo}%";
+        // Remove espaços e traços para testar se é um CPF
+        $termoNumeros = preg_replace('/[^0-9]/', '', $termo);
 
-        $sql = "SELECT id, nome, cpf FROM clientes WHERE nome LIKE ? OR cpf LIKE ? LIMIT 10";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([$termoFormatado, $termoFormatado]);
+        // Se o caixa digitou exatamente 11 números, busca por CPF criptografado!
+        if (strlen($termoNumeros) === 11) {
 
+            // Criptografa o número digitado para bater com o que está no banco
+            $cpfBusca = Seguranca::encriptar($termoNumeros);
+
+            $sql = "SELECT id, nome, cpf FROM clientes WHERE cpf = :cpf LIMIT 10";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindValue(':cpf', $cpfBusca);
+        } else {
+            // Se digitou letras (ou um número incompleto), busca pelo nome normalmente
+            $sql = "SELECT id, nome, cpf FROM clientes WHERE nome LIKE :nome LIMIT 10";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindValue(':nome', "%{$termo}%");
+        }
+
+        $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Busca o cliente pelo ID. 
     // NOTA: Como o endereço agora fica em outra tabela, não precisamos puxar no JOIN aqui para não duplicar linhas caso ele tenha 2 endereços.
     public static function buscarPorId($id)
     {
@@ -49,6 +63,17 @@ class Cliente
     {
         $pdo = Database::connect();
 
+        // ==========================================
+        // BLINDAGEM DO CPF ANTES DE SALVAR
+        // ==========================================
+        if (!empty($dados['cpf'])) {
+            // Verifica se o CPF ainda está em formato normal (só números, pontos e traços)
+            if (preg_match('/^[0-9.\-]+$/', $dados['cpf'])) {
+                $cpfLimpo = preg_replace('/[^0-9]/', '', $dados['cpf']);
+                $dados['cpf'] = Seguranca::encriptar($cpfLimpo);
+            }
+        }
+
         try {
             // Inicia a transação (se uma falhar, cancela tudo)
             $pdo->beginTransaction();
@@ -58,7 +83,7 @@ class Cliente
             $stmt = $pdo->prepare($sqlCliente);
             $stmt->execute([
                 $dados['nome'] ?? null,
-                $dados['cpf'] ?? null,
+                $dados['cpf'] ?? null, // Aqui já entra a versão criptografada!
                 $dados['telefone'] ?? null,
                 $dados['email'] ?? null
             ]);
@@ -98,6 +123,17 @@ class Cliente
     {
         $pdo = Database::connect();
 
+        // ==========================================
+        // BLINDAGEM DO CPF ANTES DE ATUALIZAR
+        // ==========================================
+        if (!empty($dados['cpf'])) {
+            // Evita encriptar duas vezes caso o Controller já tenha feito o trabalho
+            if (preg_match('/^[0-9.\-]+$/', $dados['cpf'])) {
+                $cpfLimpo = preg_replace('/[^0-9]/', '', $dados['cpf']);
+                $dados['cpf'] = Seguranca::encriptar($cpfLimpo);
+            }
+        }
+
         try {
             $pdo->beginTransaction();
 
@@ -106,7 +142,7 @@ class Cliente
             $stmt = $pdo->prepare($sqlCliente);
             $stmt->execute([
                 $dados['nome'] ?? null,
-                $dados['cpf'] ?? null,
+                $dados['cpf'] ?? null, // Aqui já entra a versão criptografada!
                 $dados['telefone'] ?? null,
                 $dados['email'] ?? null,
                 $id
@@ -272,10 +308,6 @@ class Cliente
             die("Erro crítico (Exceção): " . $e->getMessage());
         }
     }
-
-    /* =========================================================================
-       NOVOS MÉTODOS PARA GERENCIAR ENDEREÇOS DO CLIENTE
-       ========================================================================= */
 
     // Busca todos os endereços vinculados a este cliente
     public static function buscarEnderecos($cliente_id)

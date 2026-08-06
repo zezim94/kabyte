@@ -360,6 +360,7 @@
                 <li><a href="<?= BASE_URL ?>cliente_area/login"><i class="fas fa-chevron-right"></i> Minha Conta</a></li>
                 <li><a href="<?= BASE_URL ?>produto/vitrine?promocao=1"><i class="fas fa-chevron-right"></i> Promoções</a></li>
                 <li><a href="<?= BASE_URL ?>home/troca"><i class="fas fa-chevron-right"></i> Política de Troca</a></li>
+                <li><a href="<?= BASE_URL ?>home/privacidade"><i class="fas fa-chevron-right"></i> Privacidade</a></li>
             </ul>
         </div>
 

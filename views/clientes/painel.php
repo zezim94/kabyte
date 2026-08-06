@@ -24,13 +24,6 @@ foreach ($minhasCompras as $c) {
 
     <div class="dashboard-header">
         <h2>Meu Painel</h2>
-        <div class="user-actions">
-            <span>Olá, <b><?= htmlspecialchars($_SESSION['cliente_nome']) ?></b></span>
-            <!-- Corrigido para a nova estrutura de rotas -->
-            <a href="<?= BASE_URL ?>index.php?rota=cliente/sair" class="btn-sair">
-                <i class="fas fa-sign-out-alt"></i> Sair
-            </a>
-        </div>
     </div>
 
     <div class="dashboard-grid">
@@ -52,7 +45,7 @@ foreach ($minhasCompras as $c) {
         </div>
     </div>
 
-    <!-- === NOVO: SEÇÃO DE PRODUTOS MAIS VISTOS PELO CLIENTE === -->
+    <!-- === SEÇÃO DE PRODUTOS MAIS VISTOS PELO CLIENTE === -->
     <?php if (!empty($meusMaisVistos)): ?>
         <div class="section-tools" style="margin-bottom: 30px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
             <h3 style="margin:0 0 15px 0; color: #2c3e50; border-bottom: 2px solid #f1f2f6; padding-bottom: 10px;">
@@ -95,10 +88,12 @@ foreach ($minhasCompras as $c) {
         </div>
     <?php endif; ?>
 
-    <div class="filter-container">
-        <h3 style="margin:0; color: #2c3e50;">Histórico de Pedidos</h3>
+    <!-- === FILTROS AJUSTADOS === -->
+    <div class="filter-container" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+        <h3 style="margin:0; color: #2c3e50; margin-right: auto;">Histórico de Pedidos</h3>
+        
         <div>
-            <label for="filtroStatus" style="font-weight:600; font-size: 0.9rem; margin-right:5px; color:#555;">Status:</label>
+            <label for="filtroStatus" style="font-weight:600; font-size: 0.9rem; margin-right:5px; color:#555;">Pagamento:</label>
             <select id="filtroStatus" class="filter-select" onchange="filtrarTabela()">
                 <option value="todos">Todos</option>
                 <option value="pago">Pago</option>
@@ -106,18 +101,28 @@ foreach ($minhasCompras as $c) {
                 <option value="parcial">Parcial</option>
             </select>
         </div>
+
+        <div>
+            <label for="filtroEntrega" style="font-weight:600; font-size: 0.9rem; margin-right:5px; color:#555;">Modo/Entrega:</label>
+            <select id="filtroEntrega" class="filter-select" onchange="filtrarTabela()">
+                <option value="todos">Todos</option>
+                <option value="entrega">Apenas Entregas</option>
+                <option value="retirada">Pegar na Loja</option>
+            </select>
+        </div>
     </div>
+    <!-- ========================= -->
 
     <div class="tabela-container">
         <table id="tabelaCompras">
             <thead>
                 <tr>
-                    <th width="10%">#ID</th>
-                    <th width="20%">Data</th>
+                    <th width="8%">#ID</th>
+                    <th width="15%">Data</th>
                     <th width="15%">Total</th>
-                    <th width="15%">Pago</th>
-                    <th width="15%">Status</th>
-                    <th width="25%">Ações</th>
+                    <th width="12%">Status Pag.</th>
+                    <th width="20%">Logística</th>
+                    <th width="30%">Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -128,7 +133,7 @@ foreach ($minhasCompras as $c) {
                     $pendente = round($total - $pago, 2);
                     $statusReal = strtolower($c['status_pagamento']);
 
-                    // Classes CSS para Status
+                    // Classes CSS para Pagamento
                     $statusClass = 'st-pago';
                     $textoStatus = 'PAGO';
 
@@ -139,24 +144,45 @@ foreach ($minhasCompras as $c) {
                         $statusClass = 'st-parcial';
                         $textoStatus = 'PARCIAL';
                     } elseif ($pendente <= 0) {
-                        $statusReal = 'pago'; // Força 'pago' se valor zerou
+                        $statusReal = 'pago'; 
+                    }
+
+                    // Logística / Entrega
+                    $tipoEntrega = strtolower($c['tipo_entrega'] ?? 'retirada'); // 'entrega' ou 'retirada'
+                    $statusEntrega = strtolower($c['status_entrega'] ?? 'pendente'); // 'pendente', 'enviado', 'entregue'
+                    
+                    // Tratamento visual para logística
+                    $corEntrega = ($statusEntrega == 'entregue') ? '#27ae60' : '#f39c12';
+                    $textoEntrega = ($statusEntrega == 'entregue') ? 'Entregue' : 'Pendente';
+                    if($tipoEntrega == 'retirada' && $statusEntrega == 'entregue'){
+                        $textoEntrega = 'Retirado';
                     }
                     ?>
 
-                    <tr class="linha-compra" data-status="<?= $statusReal ?>">
+                    <!-- Adicionado data-entrega para o filtro funcionar -->
+                    <tr class="linha-compra" data-status="<?= $statusReal ?>" data-entrega="<?= $tipoEntrega ?>">
                         <td data-label="ID">#<?= $c['id'] ?></td>
                         <td data-label="Data"><?= date('d/m/Y H:i', strtotime($c['data_venda'])) ?></td>
                         <td data-label="Total">R$ <?= number_format($total, 2, ',', '.') ?></td>
-                        <td data-label="Pago">R$ <?= number_format($pago, 2, ',', '.') ?></td>
-
-                        <td data-label="Status">
+                        
+                        <td data-label="Pagamento">
                             <span class="status-badge <?= $statusClass ?>">
                                 <?= $textoStatus ?>
                             </span>
                         </td>
 
+                        <td data-label="Logística">
+                            <?php if($tipoEntrega === 'entrega'): ?>
+                                <div style="font-weight: 500;"><i class="fas fa-truck" style="color:#3498db;"></i> Entrega</div>
+                            <?php else: ?>
+                                <div style="font-weight: 500;"><i class="fas fa-store" style="color:#8e44ad;"></i> Retirada</div>
+                            <?php endif; ?>
+                            <small style="color: <?= $corEntrega ?>; font-weight: bold;"><?= $textoEntrega ?></small>
+                        </td>
+
                         <td data-label="Ações">
-                            <button onclick="abrirModalDetalhes(<?= $c['id'] ?>)" class="btn-acao btn-detalhes">
+                            <!-- Botão modificado para enviar dados de entrega para o modal -->
+                            <button onclick="abrirModalDetalhes(<?= $c['id'] ?>, '<?= $tipoEntrega ?>', '<?= $statusEntrega ?>')" class="btn-acao btn-detalhes">
                                 <i class="fas fa-eye"></i> Detalhes
                             </button>
 
@@ -165,7 +191,7 @@ foreach ($minhasCompras as $c) {
                                     <i class="fas fa-wallet"></i> Pagar R$ <?= number_format($pendente, 2, ',', '.') ?>
                                 </a>
                             <?php elseif ($pendente <= 0): ?>
-                                <span style="color: #27ae60; font-size: 1.2rem; margin-left: 5px;">
+                                <span style="color: #27ae60; font-size: 1.2rem; margin-left: 5px;" title="Pago integralmente">
                                     <i class="fas fa-check-circle"></i>
                                 </span>
                             <?php endif; ?>
@@ -181,6 +207,7 @@ foreach ($minhasCompras as $c) {
     </div>
 </div>
 
+<!-- === MODAL DETALHES === -->
 <div id="modalDetalhes" class="modal">
     <div class="modal-content">
         <span class="close-modal" onclick="fecharModal()">&times;</span>
@@ -199,18 +226,17 @@ foreach ($minhasCompras as $c) {
         const labels = <?= json_encode(array_column($topProdutos, 'nome')) ?>;
         const dados = <?= json_encode(array_column($topProdutos, 'total_qtd')) ?>;
 
-        // Paleta de cores vibrantes para cada barra
         const backgroundColors = [
-            'rgba(255, 99, 132, 0.7)', // Vermelho
-            'rgba(54, 162, 235, 0.7)', // Azul
-            'rgba(255, 206, 86, 0.7)', // Amarelo
-            'rgba(75, 192, 192, 0.7)', // Verde Água
-            'rgba(153, 102, 255, 0.7)', // Roxo
-            'rgba(255, 159, 64, 0.7)', // Laranja
-            'rgba(231, 76, 60, 0.7)', // Vermelho Escuro
-            'rgba(46, 204, 113, 0.7)', // Verde Esmeralda
-            'rgba(52, 152, 219, 0.7)', // Azul Peter River
-            'rgba(155, 89, 182, 0.7)' // Roxo Ametista
+            'rgba(255, 99, 132, 0.7)', 
+            'rgba(54, 162, 235, 0.7)', 
+            'rgba(255, 206, 86, 0.7)', 
+            'rgba(75, 192, 192, 0.7)', 
+            'rgba(153, 102, 255, 0.7)', 
+            'rgba(255, 159, 64, 0.7)', 
+            'rgba(231, 76, 60, 0.7)', 
+            'rgba(46, 204, 113, 0.7)', 
+            'rgba(52, 152, 219, 0.7)', 
+            'rgba(155, 89, 182, 0.7)' 
         ];
 
         new Chart(ctx, {
@@ -223,38 +249,41 @@ foreach ($minhasCompras as $c) {
                     backgroundColor: backgroundColors,
                     borderColor: backgroundColors.map(c => c.replace('0.7', '1')),
                     borderWidth: 1,
-                    borderRadius: 5 // Bordas arredondadas nas barras
+                    borderRadius: 5
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: {
-                        display: false
-                    } // Esconde a legenda para ficar mais limpo
+                    legend: { display: false }
                 },
                 scales: {
                     y: {
                         beginAtZero: true,
-                        ticks: {
-                            stepSize: 1
-                        }
+                        ticks: { stepSize: 1 }
                     }
                 }
             }
         });
     <?php endif; ?>
 
-    // --- 2. FILTRO DE TABELA ---
+    // --- 2. FILTRO DE TABELA DUPLO ---
     function filtrarTabela() {
-        const filtro = document.getElementById('filtroStatus').value;
+        const filtroPagamento = document.getElementById('filtroStatus').value;
+        const filtroLogistica = document.getElementById('filtroEntrega').value;
         const linhas = document.querySelectorAll('.linha-compra');
 
         linhas.forEach(linha => {
-            const status = linha.getAttribute('data-status');
-            if (filtro === 'todos' || status === filtro) {
-                linha.style.display = ''; // Mostra (padrão da tabela ou block no mobile)
+            const statusPagamento = linha.getAttribute('data-status');
+            const statusLogistica = linha.getAttribute('data-entrega');
+
+            // Verifica se a linha bate com ambos os filtros
+            const matchPagamento = (filtroPagamento === 'todos' || statusPagamento === filtroPagamento);
+            const matchLogistica = (filtroLogistica === 'todos' || statusLogistica === filtroLogistica);
+
+            if (matchPagamento && matchLogistica) {
+                linha.style.display = ''; 
             } else {
                 linha.style.display = 'none';
             }
@@ -265,18 +294,43 @@ foreach ($minhasCompras as $c) {
     const modal = document.getElementById("modalDetalhes");
     const modalIdSpan = document.getElementById("modalPedidoId");
     const modalConteudo = document.getElementById("modalConteudo");
+    let modalInfoLogistica = ''; // Armazena a caixa de aviso da logística
 
     function fecharModal() {
         modal.style.display = "none";
     }
+    
     window.onclick = function(e) {
         if (e.target == modal) fecharModal();
     }
 
-    async function abrirModalDetalhes(idVenda) {
-        modal.style.display = "flex"; // Flex para centralizar
+    async function abrirModalDetalhes(idVenda, tipoEntrega, statusEntrega) {
+        modal.style.display = "flex"; 
         modalIdSpan.textContent = idVenda;
         modalConteudo.innerHTML = '<div style="text-align:center; padding:20px; color:#666;"><i class="fas fa-spinner fa-spin"></i> Buscando informações...</div>';
+
+        // Prepara a faixa amarela ou verde com os dados logísticos
+        let iconeTipo = tipoEntrega === 'entrega' ? '<i class="fas fa-truck"></i> Receber no Endereço' : '<i class="fas fa-store"></i> Retirar na Loja';
+        
+        let txtStatus = '';
+        if(statusEntrega === 'entregue'){
+            txtStatus = tipoEntrega === 'entrega' ? 'Entregue ao cliente' : 'Retirado na loja';
+        } else {
+            txtStatus = tipoEntrega === 'entrega' ? 'Aguardando envio' : 'Aguardando retirada';
+        }
+        
+        let corStatus = statusEntrega === 'entregue' ? '#27ae60' : '#f39c12';
+
+        modalInfoLogistica = `
+            <div style="background: #f8f9fa; border-left: 4px solid ${corStatus}; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                    <div style="font-size: 0.95rem; color: #333;"><b>Modo:</b> ${iconeTipo}</div>
+                    <div style="font-size: 0.95rem; color: ${corStatus}; font-weight: bold;">
+                        <i class="fas ${statusEntrega === 'entregue' ? 'fa-check-circle' : 'fa-clock'}"></i> ${txtStatus}
+                    </div>
+                </div>
+            </div>
+        `;
 
         try {
             const response = await fetch('<?= BASE_URL ?>api/itensVenda?id=' + idVenda);
@@ -299,7 +353,8 @@ foreach ($minhasCompras as $c) {
             return;
         }
 
-        let html = `
+        // Injeta a caixa de informações de logística ANTES da tabela
+        let html = modalInfoLogistica + `
             <div style="overflow-x:auto;">
             <table class="table-itens">
                 <thead>

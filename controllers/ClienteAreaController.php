@@ -3,6 +3,7 @@ require_once __DIR__ . '/../models/Cliente.php';
 require_once __DIR__ . '/../models/Venda.php';
 require_once __DIR__ . '/../models/Produto.php';
 require_once __DIR__ . '/../services/MercadoPagoService.php';
+require_once __DIR__ . '/../models/Seguranca.php';
 
 class ClienteAreaController
 {
@@ -280,13 +281,19 @@ class ClienteAreaController
         }
 
         require_once __DIR__ . '/../models/Cliente.php';
+        // A classe Seguranca já deve estar incluída no topo, mas garantimos aqui caso o escopo mude
+        require_once __DIR__ . '/../models/Seguranca.php';
+
+        // Trata o CPF: remove pontos/traços e criptografa
+        $cpfLimpo = preg_replace('/[^0-9]/', '', $_POST['cpf'] ?? '');
+        $cpfCriptografado = Seguranca::encriptar($cpfLimpo);
 
         // 1. Pega APENAS os dados da aba "Meus Dados"
         $dadosPessoais = [
             'nome'     => trim($_POST['nome'] ?? ''),
-            'cpf'      => trim($_POST['cpf'] ?? ''),
+            'cpf'      => $cpfCriptografado, // <-- Agora envia o CPF criptografado para o banco!
             'telefone' => trim($_POST['telefone'] ?? ''),
-            'email'    => trim($_POST['email'] ?? '')
+            'email'    => filter_var($_POST['email'] ?? '', FILTER_SANITIZE_EMAIL)
         ];
 
         // 2. Envia para o Model atualizar no banco de dados

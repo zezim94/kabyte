@@ -5,7 +5,8 @@ class HomeController
 
     public $livre = [
         'sobre',
-        'troca'
+        'troca',
+        'privacidade'
     ];
     public function index()
     {
@@ -24,5 +25,11 @@ class HomeController
     {
         // Como é uma página estática simples, só precisamos puxar a view
         require __DIR__ . '/../views/politica-trocas.php';
+    }
+
+    public function privacidade()
+    {
+        // Como é uma página estática simples, só precisamos puxar a view
+        require __DIR__ . '/../views/privacidade.php';
     }
 }

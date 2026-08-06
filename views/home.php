@@ -265,6 +265,7 @@ require __DIR__ . '/layout/header.php';
                         <th width="10%">Qtd</th>
                         <th width="15%">Unit.</th>
                         <th width="15%">Total</th>
+                        <th width="5%" style="text-align: center;"><i class="fas fa-trash"></i></th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -521,7 +522,7 @@ require __DIR__ . '/layout/header.php';
         }
     }
 
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         const hoje = new Date().toISOString().split('T')[0];
         const campoData = document.getElementById('data-entrega');
         if (campoData) campoData.value = hoje;
@@ -628,5 +629,4 @@ require __DIR__ . '/layout/header.php';
         document.getElementById('modalEntrega').style.display = 'none';
         showToast("Endereço definido!", "success");
     }
-
 </script>

@@ -50,8 +50,25 @@ $uri = $_SERVER['REQUEST_URI'];
                     ['rota' => 'chave', 'url' => BASE_URL . 'chave', 'icone' => 'fa-key', 'texto' => 'Chaves'],
                 ];
 
+                // Limpa a URL para remover variáveis (ex: ?id=1) e focar só no caminho
+                $urlLimpa = parse_url($uri, PHP_URL_PATH);
+
                 foreach ($links as $link) {
-                    $ativo = (strpos($uri, $link['rota']) !== false) ? 'active' : '';
+                    $ativo = '';
+
+                    if ($link['rota'] === 'admin') {
+                        // Se for o Dashboard, aplica uma regra rigorosa: a URL tem de terminar EXATAMENTE em /admin ou /admin/
+                        // Ou a variável da rota deve ser exatamente 'admin' ou vazia (página inicial do painel)
+                        if (preg_match('/\/admin\/?$/', $urlLimpa) || $rotaAtual === 'admin' || $rotaAtual === '') {
+                            $ativo = 'active';
+                        }
+                    } else {
+                        // Para os outros botões, mantemos a sua lógica excelente que deteta sub-páginas
+                        if (strpos($uri, $link['rota']) !== false) {
+                            $ativo = 'active';
+                        }
+                    }
+
                     echo "<a href=\"{$link['url']}\" class=\"menu-item $ativo\">";
                     echo "<i class=\"fas {$link['icone']}\" aria-hidden=\"true\"></i> ";
                     echo "<span>{$link['texto']}</span>";

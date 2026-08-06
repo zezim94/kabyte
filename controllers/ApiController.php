@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../models/Produto.php';
 require_once __DIR__ . '/../models/Venda.php';
 require_once __DIR__ . '/../models/Cliente.php';
+require_once __DIR__ . '/../models/Seguranca.php';
 
 class ApiController
 {
@@ -113,8 +114,23 @@ class ApiController
         $termo = $_GET['termo'] ?? '';
 
         try {
-            // 2. Chama a nova função do Model
+
+            // 1. O Model faz a busca pesada (criptografada ou por nome)
             $clientes = Cliente::pesquisarPorTermo($termo);
+
+            // 2. Antes de enviar para o PDV, destrancamos e filtramos o CPF
+            foreach ($clientes as $chave => $cliente) {
+                if (!empty($cliente['cpf'])) {
+                    $cpfAberto = Seguranca::descriptografar($cliente['cpf']);
+
+                    // Aplica a máscara de segurança (ex: ***.456.789-**)
+                    if (strlen($cpfAberto) === 11) {
+                        $clientes[$chave]['cpf'] = "***." . substr($cpfAberto, 3, 3) . "." . substr($cpfAberto, 6, 3) . "-**";
+                    } else {
+                        $clientes[$chave]['cpf'] = $cpfAberto;
+                    }
+                }
+            }
 
             echo json_encode(['sucesso' => true, 'clientes' => $clientes]);
         } catch (Exception $e) {
