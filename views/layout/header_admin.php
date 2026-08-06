@@ -22,6 +22,147 @@ $uri = $_SERVER['REQUEST_URI'];
     <script>
         const BASE_URL = "<?= BASE_URL ?>";
     </script>
+    <style>
+        /* =========================================
+   ESTILOS MODERNOS DO TOAST (NOTIFICAÇÕES)
+   ========================================= */
+        #toast-container {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            z-index: 999999;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            pointer-events: none;
+            /* Para não bloquear cliques atrás do container */
+        }
+
+        .toast {
+            min-width: 320px;
+            background-color: #ffffff;
+            color: #333333;
+            padding: 18px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08), 0 2px 10px rgba(0, 0, 0, 0.04);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            opacity: 0;
+            transform: translateX(120%);
+            /* Animação elástica (bounce) super moderna */
+            animation: slideInToast 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+            border-left: 6px solid;
+            pointer-events: auto;
+            /* Permite interagir/clicar no toast */
+        }
+
+        .toast.hide {
+            animation: slideOutToast 0.4s ease forwards;
+        }
+
+        /* Cores e Ícones por tipo */
+        .toast.success {
+            border-left-color: #2ecc71;
+        }
+
+        .toast.success i {
+            color: #2ecc71;
+            font-size: 1.5rem;
+        }
+
+        .toast.error {
+            border-left-color: #e74c3c;
+        }
+
+        .toast.error i {
+            color: #e74c3c;
+            font-size: 1.5rem;
+        }
+
+        .toast.warning {
+            border-left-color: #f1c40f;
+        }
+
+        .toast.warning i {
+            color: #f1c40f;
+            font-size: 1.5rem;
+        }
+
+        /* Animações Desktop (Desliza da Direita) */
+        @keyframes slideInToast {
+            0% {
+                opacity: 0;
+                transform: translateX(120%);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideOutToast {
+            0% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateX(120%);
+            }
+        }
+
+        /* Responsividade para Ecrãs Pequenos (Desliza de Baixo) */
+        @media (max-width: 600px) {
+            #toast-container {
+                top: auto;
+                bottom: 20px;
+                right: 15px;
+                left: 15px;
+                align-items: center;
+            }
+
+            .toast {
+                min-width: 100%;
+                box-sizing: border-box;
+                transform: translateY(120%);
+                animation: slideInToastMobile 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+            }
+
+            .toast.hide {
+                animation: slideOutToastMobile 0.4s ease forwards;
+            }
+
+            @keyframes slideInToastMobile {
+                0% {
+                    opacity: 0;
+                    transform: translateY(120%);
+                }
+
+                100% {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes slideOutToastMobile {
+                0% {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+
+                100% {
+                    opacity: 0;
+                    transform: translateY(120%);
+                }
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -98,6 +239,47 @@ $uri = $_SERVER['REQUEST_URI'];
             </div>
         </div>
     </header>
+    <div id="toast-container"></div>
+    <script>
+        // Se a função showToast ainda não estiver incluída neste ficheiro, aqui está ela:
+        function showToast(mensagem, tipo = "success") {
+            const container = document.getElementById("toast-container");
+            if (!container) return;
+
+            let icon = "";
+            if (tipo === "success") icon = '<i class="fas fa-check-circle"></i>';
+            if (tipo === "error") icon = '<i class="fas fa-times-circle"></i>';
+            if (tipo === "warning") icon = '<i class="fas fa-exclamation-triangle"></i>';
+
+            const toast = document.createElement("div");
+            toast.className = `toast ${tipo}`;
+            toast.innerHTML = `${icon} <span>${mensagem}</span>`;
+
+            container.appendChild(toast);
+
+            // Remove após 3.5 segundos
+            setTimeout(() => {
+                toast.classList.add("hide");
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        // --- LEITOR DE URL PARA DISPARAR O TOAST ---
+        document.addEventListener("DOMContentLoaded", function() {
+            const urlParams = new URLSearchParams(window.location.search);
+
+            // Verifica se a URL tem "toast" e "msg" (ex: ?toast=success&msg=Usuário+salvo)
+            if (urlParams.has('toast') && urlParams.has('msg')) {
+                const tipo = urlParams.get('toast');
+                const msg = urlParams.get('msg');
+
+                showToast(msg, tipo);
+
+                // Magia: Limpa a URL silenciosamente para que o Toast não repita se o utilizador apertar F5
+                window.history.replaceState(null, null, window.location.pathname);
+            }
+        });
+    </script>
 
     <script>
         (function() {

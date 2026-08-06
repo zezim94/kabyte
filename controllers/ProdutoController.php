@@ -108,109 +108,119 @@ class ProdutoController
         }
         return null;
     }
+    // Função Auxiliar para erro (Adicione no final da classe, antes do último fecha chaves '}')
+    private function redirecionarComErro($msg, $rota)
+    {
+        header('Location: ' . BASE_URL . $rota . '&erro=' . urlencode($msg));
+        exit;
+    }
 
     public function salvar()
     {
-        // Esta segurança extra pode ser mantida sem problemas!
         Auth::verificar(['admin', 'master']);
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = !empty($_POST['id']) ? $_POST['id'] : null;
             $codigo = $_POST['codigo_barras'] ?? '';
 
-            // VALIDAÇÃO DE DUPLICIDADE
+            // VALIDAÇÃO DE DUPLICIDADE COM TOAST DE AVISO
             $produtoExistente = Produto::buscarPorCodigo($codigo);
             if ($produtoExistente) {
                 if (!$id) {
-                    // ROTA CORRIGIDA PARA O NOVO PADRÃO
-                    $this->redirecionarComErro("Já existe um produto com o código $codigo.", BASE_URL . 'produto/criar');
+                    $msg = urlencode("Já existe um produto com o código $codigo.");
+                    header('Location: ' . BASE_URL . 'produto/criar?toast=warning&msg=' . $msg);
+                    exit;
                 }
                 if ($id && $produtoExistente['id'] != $id) {
-                    // ROTA CORRIGIDA PARA O NOVO PADRÃO
-                    $this->redirecionarComErro("O código $codigo já pertence a outro produto.", BASE_URL . "produto/editar&id=$id");
+                    $msg = urlencode("O código $codigo já pertence a outro produto.");
+                    // Como a rota de editar já usa '&id=', concatenamos o toast com '&'
+                    header('Location: ' . BASE_URL . "produto/editar&id=$id&toast=warning&msg=" . $msg);
+                    exit;
                 }
             }
 
-            // UPLOAD DA IMAGEM PRINCIPAL
-            $nomeImagem = $this->uploadImagem();
-            $isPromocao = isset($_POST['promocao']) ? 1 : 0;
-            $precoCusto = !empty($_POST['preco_custo']) ? str_replace(',', '.', $_POST['preco_custo']) : 0.00;
-            $precoPromo = !empty($_POST['preco_promocao']) ? str_replace(',', '.', $_POST['preco_promocao']) : null;
+            try {
+                // UPLOAD DA IMAGEM PRINCIPAL
+                $nomeImagem = $this->uploadImagem();
+                $isPromocao = isset($_POST['promocao']) ? 1 : 0;
+                $precoCusto = !empty($_POST['preco_custo']) ? str_replace(',', '.', $_POST['preco_custo']) : 0.00;
+                $precoPromo = !empty($_POST['preco_promocao']) ? str_replace(',', '.', $_POST['preco_promocao']) : null;
 
-            $dados = [
-                'codigo' => $codigo,
-                'nome' => $_POST['nome'],
-                'descricao' => $_POST['descricao'] ?? '',
-                'preco' => str_replace(',', '.', $_POST['preco']),
-                'preco_custo' => $precoCusto,
-                'promocao' => $isPromocao,
-                'preco_promocao' => $precoPromo,
-                'estoque' => $_POST['estoque'],
-                'categoria_id' => !empty($_POST['categoria_id']) ? $_POST['categoria_id'] : null,
-                'imagem' => $nomeImagem
-            ];
+                $dados = [
+                    'codigo' => $codigo,
+                    'nome' => trim($_POST['nome']),
+                    'descricao' => trim($_POST['descricao'] ?? ''),
+                    'preco' => str_replace(',', '.', $_POST['preco']),
+                    'preco_custo' => $precoCusto,
+                    'promocao' => $isPromocao,
+                    'preco_promocao' => $precoPromo,
+                    'estoque' => $_POST['estoque'],
+                    'categoria_id' => !empty($_POST['categoria_id']) ? $_POST['categoria_id'] : null,
+                    'imagem' => $nomeImagem
+                ];
 
-            // SALVAR DADOS PRINCIPAIS NO BANCO
-            if ($id) {
-                if ($nomeImagem) {
-                    $produtoAntigo = Produto::buscarPorId($id);
-                    if ($produtoAntigo && !empty($produtoAntigo['imagem'])) {
-                        $caminhoAntigo = __DIR__ . '/../public/uploads/' . $produtoAntigo['imagem'];
-                        if (file_exists($caminhoAntigo))
-                            unlink($caminhoAntigo);
-                    }
-                }
-                Produto::atualizar($id, $dados);
-                $idProdutoFinal = $id;
-            } else {
-                $idProdutoFinal = Produto::salvar($dados);
-            }
-
-            // === LÓGICA DA GALERIA ADICIONAL ===
-            if ($idProdutoFinal) {
-
-                // 1. Excluir fotos marcadas no Checkbox
-                if (!empty($_POST['remover_imagens_extras'])) {
-                    foreach ($_POST['remover_imagens_extras'] as $imgId) {
-                        $imgBanco = Produto::buscarImagemExtraPorId($imgId);
-                        if ($imgBanco) {
-                            $caminho = __DIR__ . '/../public/uploads/' . $imgBanco['imagem'];
-                            if (file_exists($caminho))
-                                unlink($caminho);
-                            Produto::excluirImagemExtra($imgId);
+                // SALVAR DADOS PRINCIPAIS NO BANCO
+                if ($id) {
+                    if ($nomeImagem) {
+                        $produtoAntigo = Produto::buscarPorId($id);
+                        if ($produtoAntigo && !empty($produtoAntigo['imagem'])) {
+                            $caminhoAntigo = __DIR__ . '/../public/uploads/' . $produtoAntigo['imagem'];
+                            if (file_exists($caminhoAntigo))
+                                unlink($caminhoAntigo);
                         }
                     }
+                    Produto::atualizar($id, $dados);
+                    $idProdutoFinal = $id;
+                    $msgFinal = "Produto atualizado com sucesso!";
+                } else {
+                    $idProdutoFinal = Produto::salvar($dados);
+                    $msgFinal = "Produto cadastrado com sucesso!";
                 }
 
-                // 2. Upload de novas fotos da galeria
-                if (!empty($_FILES['imagens_extras']['name'][0])) {
-                    $totalArquivos = count($_FILES['imagens_extras']['name']);
-                    for ($i = 0; $i < $totalArquivos; $i++) {
-                        if ($_FILES['imagens_extras']['error'][$i] === UPLOAD_ERR_OK) {
-                            $ext = pathinfo($_FILES['imagens_extras']['name'][$i], PATHINFO_EXTENSION);
-                            $nomeExtra = "galeria_" . $idProdutoFinal . "_" . time() . "_" . uniqid() . "." . $ext;
-                            $destino = __DIR__ . '/../public/uploads/' . $nomeExtra;
+                // === LÓGICA DA GALERIA ADICIONAL ===
+                if ($idProdutoFinal) {
 
-                            if (move_uploaded_file($_FILES['imagens_extras']['tmp_name'][$i], $destino)) {
-                                Produto::salvarImagemExtra($idProdutoFinal, $nomeExtra);
+                    // 1. Excluir fotos marcadas no Checkbox
+                    if (!empty($_POST['remover_imagens_extras'])) {
+                        foreach ($_POST['remover_imagens_extras'] as $imgId) {
+                            $imgBanco = Produto::buscarImagemExtraPorId($imgId);
+                            if ($imgBanco) {
+                                $caminho = __DIR__ . '/../public/uploads/' . $imgBanco['imagem'];
+                                if (file_exists($caminho))
+                                    unlink($caminho);
+                                Produto::excluirImagemExtra($imgId);
+                            }
+                        }
+                    }
+
+                    // 2. Upload de novas fotos da galeria
+                    if (!empty($_FILES['imagens_extras']['name'][0])) {
+                        $totalArquivos = count($_FILES['imagens_extras']['name']);
+                        for ($i = 0; $i < $totalArquivos; $i++) {
+                            if ($_FILES['imagens_extras']['error'][$i] === UPLOAD_ERR_OK) {
+                                $ext = pathinfo($_FILES['imagens_extras']['name'][$i], PATHINFO_EXTENSION);
+                                $nomeExtra = "galeria_" . $idProdutoFinal . "_" . time() . "_" . uniqid() . "." . $ext;
+                                $destino = __DIR__ . '/../public/uploads/' . $nomeExtra;
+
+                                if (move_uploaded_file($_FILES['imagens_extras']['tmp_name'][$i], $destino)) {
+                                    Produto::salvarImagemExtra($idProdutoFinal, $nomeExtra);
+                                }
                             }
                         }
                     }
                 }
+
+                // REDIRECIONA COM TOAST DE SUCESSO
+                header("Location: " . BASE_URL . "produto?toast=success&msg=" . urlencode($msgFinal));
+                exit;
+            } catch (Exception $e) {
+                // Se der erro ao salvar no banco, volta para a tela de criação/edição com Toast vermelho
+                $msgErro = urlencode("Erro ao salvar produto: " . $e->getMessage());
+                $rotaVolta = $id ? "produto/editar&id=$id&" : "produto/criar?";
+                header("Location: " . BASE_URL . $rotaVolta . "toast=error&msg=" . $msgErro);
+                exit;
             }
-
-            $msg = $id ? "Produto atualizado" : "Produto criado";
-
-            // ROTA CORRIGIDA (Redireciona para o index do ProdutoController)
-            header("Location: " . BASE_URL . "produto&msg=" . urlencode($msg));
-            exit;
         }
-    }
-    // Função Auxiliar para erro (Adicione no final da classe, antes do último fecha chaves '}')
-    private function redirecionarComErro($msg, $rota)
-    {
-        header('Location: ' . BASE_URL . $rota . '&erro=' . urlencode($msg));
-        exit;
     }
 
     // Exclui o produto
@@ -220,26 +230,36 @@ class ProdutoController
         $id = $_GET['id'] ?? null;
 
         if ($id) {
-            // 1. Busca os dados do produto ANTES de excluí-lo do banco
-            $produto = Produto::buscarPorId($id);
+            try {
+                // 1. Busca os dados do produto ANTES de excluí-lo do banco
+                $produto = Produto::buscarPorId($id);
 
-            // 2. Verifica se o produto tem uma imagem cadastrada
-            if ($produto && !empty($produto['imagem'])) {
-                $caminhoImagem = __DIR__ . '/../public/uploads/' . $produto['imagem'];
-
-                // 3. Se o arquivo físico existir na pasta, apaga ele (unlink)
-                if (file_exists($caminhoImagem)) {
-                    unlink($caminhoImagem);
+                // 2. Verifica se o produto tem uma imagem cadastrada e apaga fisicamente
+                if ($produto && !empty($produto['imagem'])) {
+                    $caminhoImagem = __DIR__ . '/../public/uploads/' . $produto['imagem'];
+                    if (file_exists($caminhoImagem)) {
+                        unlink($caminhoImagem);
+                    }
                 }
+
+                // 4. Exclui o registro do banco de dados
+                Produto::excluir($id);
+
+                // Redireciona com Sucesso
+                $msg = urlencode("Produto excluído com sucesso!");
+                header('Location: ' . BASE_URL . 'produto?toast=success&msg=' . $msg);
+                exit;
+            } catch (Exception $e) {
+                // TRATAMENTO EXCELENTE: Se o produto não puder ser apagado (ex: já está numa venda feita no PDV)
+                $msg = urlencode("Ação bloqueada! Este produto já possui histórico de vendas.");
+                header('Location: ' . BASE_URL . 'produto?toast=error&msg=' . $msg);
+                exit;
             }
-
-            // 4. Agora sim, exclui o registro do banco de dados
-            Produto::excluir($id);
+        } else {
+            $msg = urlencode("Nenhum produto selecionado.");
+            header('Location: ' . BASE_URL . 'produto?toast=warning&msg=' . $msg);
+            exit;
         }
-
-        // Redireciona usando URL Limpa
-        header('Location: ' . BASE_URL . 'produto');
-        exit; // É sempre bom colocar um exit após um redirecionamento (header)
     }
 
     public function vitrine()

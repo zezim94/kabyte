@@ -25,13 +25,7 @@
             <i class="fas fa-plus"></i> Nova Categoria
         </a>
     </div>
-
-    <?php if (isset($_GET['msg'])): ?>
-        <div class="alert alert-info">
-            <i class="fas fa-info-circle"></i> <?= htmlspecialchars($_GET['msg']) ?>
-        </div>
-    <?php endif; ?>
-
+   
     <div class="card">
         <div class="card-body">
             <table class="tabela-categorias">

@@ -230,11 +230,45 @@ class ClienteAreaController
 
         require __DIR__ . '/../views/clientes/painel.php';
     }
-
-    public function sair()
+    public function sair($msg = null, $tipoToast = 'success')
     {
-        unset($_SESSION['cliente_id'], $_SESSION['cliente_nome'], $_SESSION['cliente_email']);
-        header('Location: ' . BASE_URL . 'clientearea/login');
+        // 1. Garante que a sessão está iniciada para podermos destruí-la
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // 2. Limpa rigorosamente todas as variáveis de sessão
+        $_SESSION = [];
+        session_unset();
+
+        // 3. Destrói o arquivo da sessão fisicamente no servidor
+        session_destroy();
+
+        // 4. Apaga o cookie do navegador (garante que o "Lembrar-me" ou sessão cache morre)
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(
+                session_name(),
+                '',
+                time() - 42000,
+                $params["path"],
+                $params["domain"],
+                $params["secure"],
+                $params["httponly"]
+            );
+        }
+
+        // 5. Monta a URL base (Corrigido para 'cliente_area' com underline!)
+        $urlDestino = BASE_URL . 'cliente_area/login';
+
+        // 6. Se receber uma mensagem, anexa o Toast na URL
+        if ($msg) {
+            $urlDestino .= '?toast=' . urlencode($tipoToast) . '&msg=' . urlencode($msg);
+        }
+
+        // 7. Redireciona e encerra a execução na mesma hora
+        header('Location: ' . $urlDestino);
+        exit;
     }
 
     private function verificarLogin()
@@ -327,44 +361,49 @@ class ClienteAreaController
 
         // Verifica se está logado
         if (!isset($_SESSION['cliente_id'])) {
-            header('Location: ' . BASE_URL . 'cliente/login');
+            header('Location: ' . BASE_URL . 'cliente_area/login');
             exit;
         }
 
         $nova_senha = $_POST['nova_senha'] ?? '';
         $confirma_senha = $_POST['confirma_senha'] ?? '';
 
-        // 1. Validações Básicas
+        // Defina aqui a rota exata de onde o formulário está (ex: cliente_area/meusDados)
+        $rotaVolta = BASE_URL . 'cliente_area/meusDados';
+
+        // 1. Validações Básicas usando TOAST de aviso/erro
         if (empty($nova_senha) || empty($confirma_senha)) {
-            header('Location: ' . BASE_URL . 'cliente/dados?msg=' . urlencode('Preencha os campos de senha.') . '&sucesso=0');
+            header("Location: {$rotaVolta}?toast=warning&msg=" . urlencode('Preencha os campos de senha.'));
             exit;
         }
 
         if (strlen($nova_senha) < 6) {
-            header('Location: ' . BASE_URL . 'cliente/dados?msg=' . urlencode('A nova senha deve ter no mínimo 6 caracteres.') . '&sucesso=0');
+            header("Location: {$rotaVolta}?toast=warning&msg=" . urlencode('A nova senha deve ter no mínimo 6 caracteres.'));
             exit;
         }
 
         if ($nova_senha !== $confirma_senha) {
-            header('Location: ' . BASE_URL . 'cliente/dados?msg=' . urlencode('As senhas não coincidem.') . '&sucesso=0');
+            header("Location: {$rotaVolta}?toast=error&msg=" . urlencode('As senhas não coincidem.'));
             exit;
         }
-
-        require_once __DIR__ . '/../models/Cliente.php';
 
         // 2. Criptografa a nova senha
         $senhaHash = password_hash($nova_senha, PASSWORD_DEFAULT);
 
+        // Garante que o Model foi carregado
+        require_once __DIR__ . '/../models/Cliente.php';
+
         // 3. Atualiza no banco
         if (Cliente::atualizarSenha($_SESSION['cliente_id'], $senhaHash)) {
-            // Desloga o cliente por segurança (como avisado na tela)
-            unset($_SESSION['cliente_id'], $_SESSION['cliente_nome'], $_SESSION['cliente_email'], $_SESSION['cliente_foto']);
-
-            // Redireciona para o login com mensagem de sucesso
-            header('Location: ' . BASE_URL . 'cliente/login?msg=' . urlencode('Senha atualizada com sucesso! Faça login novamente.') . '&sucesso=1');
+            
+            // A MÁGICA ACONTECE AQUI!
+            // O '$this->sair()' vai apagar a sessão completamente, limpar os cookies e 
+            // redirecionar para o login levando o Toast verde!
+            $this->sair('Senha atualizada com sucesso! Faça login novamente.', 'success');
             exit;
+            
         } else {
-            header('Location: ' . BASE_URL . 'cliente/dados?msg=' . urlencode('Erro ao atualizar a senha no banco de dados.') . '&sucesso=0');
+            header("Location: {$rotaVolta}?toast=error&msg=" . urlencode('Erro ao atualizar a senha no banco de dados.'));
             exit;
         }
     }

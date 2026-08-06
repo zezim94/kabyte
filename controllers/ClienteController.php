@@ -37,11 +37,10 @@ class ClienteController
         $id = $_GET['id'] ?? null;
 
         if (!$id) {
-            header('Location: ' . BASE_URL . 'clientes');
+            $msg = urlencode('ID do cliente não informado.');
+            header('Location: ' . BASE_URL . 'cliente?toast=warning&msg=' . $msg);
             exit;
         }
-
-        require_once __DIR__ . '/../models/Cliente.php';
 
         $cliente = Cliente::buscarPorId($id);
 
@@ -49,36 +48,64 @@ class ClienteController
         $endereco = Cliente::buscarEnderecoPadrao($id);
 
         if (!$cliente) {
-            die('Cliente não encontrado.');
+            // Em vez de 'die()', devolvemos o utilizador para a lista com um Toast de erro
+            $msg = urlencode('Cliente não encontrado na base de dados.');
+            header('Location: ' . BASE_URL . 'cliente?toast=error&msg=' . $msg);
+            exit;
         }
 
         require __DIR__ . '/../views/clientes/formulario.php';
     }
+
     public function salvar()
     {
         Auth::verificar(['admin', 'master']);
         $dados = $_POST; // Pega tudo do POST
 
-        if (isset($_GET['id'])) {
-            Cliente::atualizar($_GET['id'], $dados);
-        } else {
-            Cliente::salvar($dados);
-        }
+        try {
+            if (isset($_GET['id'])) {
+                Cliente::atualizar($_GET['id'], $dados);
+                $msg = urlencode('Cliente atualizado com sucesso!');
+            } else {
+                Cliente::salvar($dados);
+                $msg = urlencode('Cliente cadastrado com sucesso!');
+            }
 
-        // REDIRECIONAMENTO CORRIGIDO: URL Limpa com BASE_URL e exit
-        header('Location: ' . BASE_URL . 'cliente');
-        exit;
+            // Redireciona com Toast de Sucesso
+            header('Location: ' . BASE_URL . 'cliente?toast=success&msg=' . $msg);
+            exit;
+        } catch (Exception $e) {
+            // Redireciona com Toast de Erro caso falhe (ex: CPF duplicado)
+            $msg = urlencode('Erro ao salvar cliente: ' . $e->getMessage());
+            header('Location: ' . BASE_URL . 'cliente?toast=error&msg=' . $msg);
+            exit;
+        }
     }
 
     public function excluir()
     {
         Auth::verificar(['admin', 'master']);
         $id = $_GET['id'] ?? null;
-        if ($id)
-            Cliente::excluir($id);
-        // REDIRECIONAMENTO CORRIGIDO: URL Limpa com BASE_URL e exit
-        header('Location: ' . BASE_URL . 'cliente');
-        exit;
+
+        if ($id) {
+            try {
+                Cliente::excluir($id);
+
+                $msg = urlencode('Cliente excluído com sucesso!');
+                header('Location: ' . BASE_URL . 'cliente?toast=success&msg=' . $msg);
+                exit;
+            } catch (Exception $e) {
+                // Caso haja erro (ex: cliente tem vendas vinculadas e não pode ser apagado)
+                $msg = urlencode('Erro ao excluir: ' . $e->getMessage());
+                header('Location: ' . BASE_URL . 'cliente?toast=error&msg=' . $msg);
+                exit;
+            }
+        } else {
+            // Se tentarem aceder à rota de excluir sem passar o ID
+            $msg = urlencode('Nenhum cliente selecionado para exclusão.');
+            header('Location: ' . BASE_URL . 'cliente?toast=warning&msg=' . $msg);
+            exit;
+        }
     }
 
     // 1. Abre a tela de Esqueci a Senha

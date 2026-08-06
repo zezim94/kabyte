@@ -5,9 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerenciar Chaves - KaByte</title>
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
 </head>
 
 <?php require __DIR__ . '/../layout/header_admin.php'; ?>
@@ -19,16 +17,13 @@
         --text-primary: #1e293b;
         --text-secondary: #64748b;
         --border-color: #e2e8f0;
-        --shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
-        --shadow-hover: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.05);
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
         --radius: 12px;
         --transition: 0.2s ease;
         --green: #10b981;
         --green-hover: #059669;
         --blue: #3b82f6;
         --blue-hover: #2563eb;
-        --red: #ef4444;
-        --dark: #1e293b;
     }
 
     body {
@@ -64,32 +59,6 @@
     .page-header p {
         color: var(--text-secondary);
         margin: 0;
-    }
-
-    /* Mensagem de feedback */
-    .alert {
-        padding: 1rem;
-        border-radius: 8px;
-        margin-bottom: 1.5rem;
-        font-weight: 500;
-        animation: fadeIn 0.3s;
-    }
-
-    .alert-success {
-        background: #d1fae5;
-        color: #065f46;
-        border: 1px solid #a7f3d0;
-    }
-
-    .alert-error {
-        background: #fee2e2;
-        color: #991b1b;
-        border: 1px solid #fecaca;
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(-5px); }
-        to { opacity: 1; transform: translateY(0); }
     }
 
     /* Lista de chaves */
@@ -178,7 +147,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0,0,0,0.5);
+        background: rgba(0, 0, 0, 0.5);
         z-index: 1000;
         display: flex;
         align-items: center;
@@ -200,7 +169,7 @@
         width: 100%;
         max-width: 500px;
         border-radius: var(--radius);
-        box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
         transform: translateY(20px);
         transition: transform 0.3s ease;
     }
@@ -262,7 +231,7 @@
     .modal-body input:focus {
         outline: none;
         border-color: var(--blue);
-        box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     }
 
     .modal-footer {
@@ -311,37 +280,6 @@
         cursor: not-allowed;
     }
 
-    /* Toast */
-    .toast-container {
-        position: fixed;
-        bottom: 1.5rem;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 2000;
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    .toast {
-        background: var(--dark);
-        color: white;
-        padding: 0.75rem 1.5rem;
-        border-radius: 50px;
-        font-weight: 500;
-        font-size: 0.9rem;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        animation: slideUp 0.3s forwards;
-    }
-
-    .toast.success { background: var(--green); }
-    .toast.error { background: var(--red); }
-
-    @keyframes slideUp {
-        from { opacity: 0; transform: translateY(15px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
     /* Responsivo */
     @media (max-width: 600px) {
         .chave-item {
@@ -369,13 +307,6 @@
         <h2><i class="fas fa-key"></i> Gerenciador de Chaves (API)</h2>
         <p>Atualize tokens e chaves de API do sistema com segurança. Clique em "Editar" para modificar cada chave individualmente.</p>
     </div>
-
-    <!-- Mensagem de feedback (via URL) -->
-    <?php if (isset($_GET['msg'])): ?>
-        <div class="alert <?= ($_GET['sucesso'] == 1) ? 'alert-success' : 'alert-error' ?>">
-            <?= htmlspecialchars($_GET['msg']) ?>
-        </div>
-    <?php endif; ?>
 
     <!-- Lista de chaves -->
     <div class="chaves-list">
@@ -416,9 +347,6 @@
     </div>
 </div>
 
-<!-- Toast container -->
-<div class="toast-container" id="toastContainer"></div>
-
 <script>
     let chaveIdAtual = null;
 
@@ -445,7 +373,8 @@
         const valor = document.getElementById('modalValor').value.trim();
 
         if (!valor) {
-            mostrarToast('O valor não pode estar vazio.', 'error');
+            // Utiliza o nosso Toast global
+            if (typeof showToast === "function") showToast('O valor não pode estar vazio.', 'warning');
             return;
         }
 
@@ -465,33 +394,18 @@
             const data = await response.json();
 
             if (data.sucesso) {
-                mostrarToast('Chave atualizada com sucesso!', 'success');
                 fecharModal();
-                // Atualizar a linha correspondente na tabela (recarregar página é mais seguro)
-                setTimeout(() => location.reload(), 1000);
+                // Redireciona com o Toast Global via URL em vez de um reload seco
+                window.location.href = '<?= BASE_URL ?>chave?toast=success&msg=' + encodeURIComponent(data.msg);
             } else {
-                mostrarToast(data.msg || 'Erro ao salvar.', 'error');
+                if (typeof showToast === "function") showToast(data.msg || 'Erro ao salvar.', 'error');
             }
         } catch (error) {
             console.error(error);
-            mostrarToast('Erro de conexão.', 'error');
+            if (typeof showToast === "function") showToast('Erro de conexão.', 'error');
         } finally {
             btn.disabled = false;
             btn.innerHTML = '<i class="fas fa-save"></i> Salvar';
         }
-    }
-
-    function mostrarToast(mensagem, tipo = 'success') {
-        const container = document.getElementById('toastContainer');
-        const toast = document.createElement('div');
-        toast.className = `toast ${tipo}`;
-        toast.innerHTML = `<i class="fas fa-${tipo === 'success' ? 'check' : 'exclamation'}-circle"></i> ${mensagem}`;
-        container.appendChild(toast);
-
-        setTimeout(() => {
-            toast.style.opacity = '0';
-            toast.style.transition = 'opacity 0.3s';
-            setTimeout(() => toast.remove(), 300);
-        }, 3000);
     }
 </script>

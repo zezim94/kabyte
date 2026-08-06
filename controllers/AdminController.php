@@ -34,7 +34,6 @@ class AdminController
         // Apenas admin ou master podem ver a lista de usuários
         Auth::verificar(['admin', 'master']);
 
-        require_once __DIR__ . '/../models/Usuario.php';
 
         // Busca a lista
         $usuarios = Usuario::listarParaAdmin();
@@ -51,7 +50,6 @@ class AdminController
         if (!$id)
             die('Usuário não informado.');
 
-        require_once __DIR__ . '/../models/Usuario.php';
         $usuario = Usuario::buscarPorId($id);
 
         if (!$usuario)
@@ -65,22 +63,29 @@ class AdminController
         Auth::verificar(['admin', 'master']);
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            require_once __DIR__ . '/../models/Usuario.php';
+            try {
+                // Monta os dados
+                $dados = [
+                    'nome' => trim($_POST['nome']),
+                    'email' => trim($_POST['email']),
+                    'usuario' => trim($_POST['usuario']),
+                    'nivel' => $_POST['nivel'],
+                    'senha' => password_hash($_POST['senha'], PASSWORD_DEFAULT)
+                ];
 
-            // Monta os dados
-            $dados = [
-                'nome' => $_POST['nome'],
-                'email' => $_POST['email'],
-                'usuario' => $_POST['usuario'],
-                'nivel' => $_POST['nivel'],
-                // Criptografa a senha antes de salvar no banco
-                'senha' => password_hash($_POST['senha'], PASSWORD_DEFAULT)
-            ];
+                // Tenta salvar
+                Usuario::salvarNovo($dados);
 
-            // Tenta salvar. Se houver um e-mail/usuário duplicado, você pode tratar o erro aqui se quiser.
-            Usuario::salvarNovo($dados);
-
-            echo "<script>alert('Usuário cadastrado com sucesso!'); window.location='" . BASE_URL . "admin/usuarios';</script>";
+                // Redireciona passando os dados do Toast na URL
+                $msg = urlencode('Usuário cadastrado com sucesso!');
+                header('Location: ' . BASE_URL . 'admin/usuarios?toast=success&msg=' . $msg);
+                exit;
+            } catch (Exception $e) {
+                // Se der erro (ex: e-mail duplicado), mostra Toast de erro
+                $msg = urlencode('Erro ao cadastrar: ' . $e->getMessage());
+                header('Location: ' . BASE_URL . 'admin/usuarios?toast=error&msg=' . $msg);
+                exit;
+            }
         }
     }
 
@@ -89,26 +94,33 @@ class AdminController
         Auth::verificar(['admin', 'master']);
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            require_once __DIR__ . '/../models/Usuario.php';
+            try {
+                $id = $_POST['id'];
+                $dados = [
+                    'nome' => trim($_POST['nome']),
+                    'email' => trim($_POST['email']),
+                    'usuario' => trim($_POST['usuario']),
+                    'nivel' => $_POST['nivel']
+                ];
 
-            $id = $_POST['id'];
-            $dados = [
-                'nome' => $_POST['nome'],
-                'email' => $_POST['email'],
-                'usuario' => $_POST['usuario'],
-                'nivel' => $_POST['nivel']
-            ];
+                // Se digitou uma senha nova, criptografa e adiciona aos dados
+                if (!empty($_POST['senha'])) {
+                    $dados['senha'] = password_hash($_POST['senha'], PASSWORD_DEFAULT);
+                }
 
-            // Se digitou uma senha nova, criptografa e adiciona aos dados
-            if (!empty($_POST['senha'])) {
-                $dados['senha'] = password_hash($_POST['senha'], PASSWORD_DEFAULT);
+                Usuario::atualizar($id, $dados);
+
+                $msg = urlencode('Usuário atualizado com sucesso!');
+                header('Location: ' . BASE_URL . 'admin/usuarios?toast=success&msg=' . $msg);
+                exit;
+            } catch (Exception $e) {
+                $msg = urlencode('Erro ao atualizar: ' . $e->getMessage());
+                header('Location: ' . BASE_URL . 'admin/usuarios?toast=error&msg=' . $msg);
+                exit;
             }
-
-            Usuario::atualizar($id, $dados);
-
-            echo "<script>alert('Usuário atualizado com sucesso!'); window.location='" . BASE_URL . "admin/usuarios';</script>";
         }
     }
+    
     public function novo()
     {
         Auth::verificar(['admin', 'master']);
@@ -121,7 +133,6 @@ class AdminController
         $id = $_GET['id'] ?? null;
 
         if ($id && $id != $_SESSION['usuario_id']) { // Trava de segurança extra
-            require_once __DIR__ . '/../models/Usuario.php';
             Usuario::excluir($id);
         }
 

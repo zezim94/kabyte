@@ -679,29 +679,25 @@
     function fecharModal() {
         document.getElementById('modalConfirmacao').style.display = 'none';
         idVendaParaBaixar = 0;
-    }
 
-    // --- FUNÇÕES DO TOAST ---
-    function showToast(msg, type = 'success') {
-        const container = document.getElementById('toast-container');
-        const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
-
-        let icon = type === 'success' ? '<i class="fas fa-check"></i>' : '<i class="fas fa-times"></i>';
-
-        toast.innerHTML = `${icon} <span>${msg}</span>`;
-        container.appendChild(toast);
-
-        // Remove após 3s
-        setTimeout(() => {
-            toast.style.opacity = '0';
-            setTimeout(() => toast.remove(), 300);
-        }, 3000);
+        // Restaura o botão caso tenha sido desativado
+        const btn = document.getElementById('btn-confirmar-modal');
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = 'Confirmar Entrega';
+        }
     }
 
     // --- LÓGICA DE BAIXA ---
     function procederBaixa() {
         if (!idVendaParaBaixar) return;
+
+        // Trava o botão para evitar duplo clique (se tiver ID no botão do modal)
+        const btnModal = document.getElementById('btn-confirmar-modal');
+        if (btnModal) {
+            btnModal.disabled = true;
+            btnModal.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
+        }
 
         const formData = new FormData();
         formData.append('id', idVendaParaBaixar);
@@ -716,29 +712,34 @@
                     // Atualiza UI
                     const card = document.getElementById('card-' + idVendaParaBaixar);
 
-                    // Remove botão
-                    const btn = card.querySelector('.btn-confirm');
-                    if (btn) btn.remove();
+                    if (card) {
+                        // Remove botão
+                        const btn = card.querySelector('.btn-confirm');
+                        if (btn) btn.remove();
 
-                    // Muda estilo
-                    card.style.opacity = '0.6';
-                    card.style.backgroundColor = '#f8f9fa';
-                    card.style.borderTopColor = '#95a5a6';
+                        // Muda estilo
+                        card.style.opacity = '0.6';
+                        card.style.backgroundColor = '#f8f9fa';
+                        card.style.borderTopColor = '#95a5a6';
 
-                    // Adiciona Badge
-                    const header = card.querySelector('.card-header-flex div:last-child');
-                    header.innerHTML = '<span class="status-badge bg-entregue"><i class="fas fa-check"></i> Entregue</span>';
+                        // Adiciona Badge
+                        const header = card.querySelector('.card-header-flex div:last-child');
+                        if (header) {
+                            header.innerHTML = '<span class="status-badge bg-entregue"><i class="fas fa-check"></i> Entregue</span>';
+                        }
+                    }
 
-                    showToast("Entrega confirmada com sucesso!");
+                    // Usa a mensagem que vem direto do PHP (data.msg)
+                    if (typeof showToast === "function") showToast(data.msg || "Entrega confirmada com sucesso!", "success");
                     fecharModal();
                 } else {
-                    showToast("Erro: " + data.msg, "error");
+                    if (typeof showToast === "function") showToast(data.msg || "Erro ao processar.", "error");
                     fecharModal();
                 }
             })
             .catch(err => {
                 console.error(err);
-                showToast("Erro de conexão.", "error");
+                if (typeof showToast === "function") showToast("Erro de conexão.", "error");
                 fecharModal();
             });
     }

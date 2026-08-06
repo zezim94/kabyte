@@ -385,7 +385,7 @@ $enderecos = $enderecos ?? [];
                 <div class="form-group">
                     <label>CPF</label>
                     <input type="text" name="cpf" class="form-control"
-                        value="<?= htmlspecialchars($cpfReal?? '') ?>">
+                        value="<?= htmlspecialchars($cpfReal ?? '') ?>">
                 </div>
                 <div class="form-group">
                     <label>Telefone / WhatsApp</label>
@@ -521,12 +521,18 @@ $enderecos = $enderecos ?? [];
     </div>
 
     <div id="seguranca" class="tab-content">
-        <form action="<?= BASE_URL ?>cliente/atualizar_senha" method="POST">
+        <form action="<?= BASE_URL ?>clientearea/atualizar_senha" method="POST">
             <h3 class="form-section-title">Alterar Senha</h3>
 
             <div class="alert"
                 style="background:#fff3cd; color:#856404; padding:15px; border-radius:5px; margin-bottom:20px;">
                 <i class="fas fa-lock"></i> Por segurança, você precisará fazer login novamente após alterar a senha.
+            </div>
+
+            <div class="form-group">
+                <label>Senha Atual</label>
+                <input type="password" name="senha_atual" class="form-control" required
+                    placeholder="Digite a sua senha atual">
             </div>
 
             <div class="form-group">

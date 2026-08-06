@@ -181,7 +181,7 @@ class ApiController
         $id = (int) ($_POST['id'] ?? 0);
 
         if ($id <= 0) {
-            echo json_encode(['sucesso' => false, 'msg' => 'ID inválido']);
+            echo json_encode(['sucesso' => false, 'msg' => 'ID da venda inválido.']);
             exit;
         }
 
@@ -189,9 +189,12 @@ class ApiController
             // Chama a nova função do Model
             Venda::confirmarEntrega($id);
 
-            echo json_encode(['sucesso' => true]);
+            // Adicionamos a 'msg' aqui para o Toast do JavaScript poder ler!
+            echo json_encode(['sucesso' => true, 'msg' => 'Entrega confirmada com sucesso!']);
+            exit;
         } catch (Exception $e) {
-            echo json_encode(['sucesso' => false, 'msg' => 'Erro ao atualizar: ' . $e->getMessage()]);
+            echo json_encode(['sucesso' => false, 'msg' => 'Erro ao confirmar entrega: ' . $e->getMessage()]);
+            exit;
         }
     }
 
