@@ -385,7 +385,7 @@ $enderecos = $enderecos ?? [];
                 <div class="form-group">
                     <label>CPF</label>
                     <input type="text" name="cpf" class="form-control"
-                        value="<?= htmlspecialchars($cliente['cpf'] ?? '') ?>">
+                        value="<?= htmlspecialchars($cpfReal?? '') ?>">
                 </div>
                 <div class="form-group">
                     <label>Telefone / WhatsApp</label>

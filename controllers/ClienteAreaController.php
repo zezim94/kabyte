@@ -255,15 +255,19 @@ class ClienteAreaController
             exit;
         }
 
-        require_once __DIR__ . '/../models/Cliente.php';
-
         // 1. Busca os dados pessoais (Nome, CPF, Telefone, Email)
         $cliente = Cliente::buscarPorId($_SESSION['cliente_id']);
+
+        // Destranca o CPF aqui e cria a variável que vai ser enviada para a View
+        $cpfReal = '';
+        if (!empty($cliente['cpf'])) {
+            $cpfReal = Seguranca::descriptografar($cliente['cpf']);
+        }
 
         // 2. Busca todos os endereços vinculados a este cliente
         $enderecos = Cliente::buscarEnderecos($_SESSION['cliente_id']);
 
-        // 3. Carrega a View passando as duas variáveis
+        // 3. Carrega a View passando as variáveis (agora a View já conhece a $cpfReal)
         require __DIR__ . '/../views/clientes/dados.php';
     }
 
